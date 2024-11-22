@@ -1,25 +1,23 @@
 import React from 'react'
 import {Button} from "@/components/ui/Button";
-import {Login} from "@/app/(components)/Login";
+import {Restaurant} from "@/app/(components)/Restaurant";
 import Link from "next/link";
 
-export default function owner(){
+export default function createRestaurant(){
     return(
         <>
             <div className="flex justify-between items-center m-5">
                 <div>
-                    <Link href="/">
+                    <Link href="/owners">
                         <Button>Back</Button>
                     </Link>
                 </div>
                 <div>
-                    <Link href="/owners/createRestaurant">
-                        <Button>Create Restaurant</Button>
-                    </Link>
+                    <Button>test</Button>
                 </div>
             </div>
             <div className={`flex justify-center items-center h-full mt-60`}>
-                <Login/>
+                <Restaurant/>
             </div>
 
         </>
