@@ -13,7 +13,9 @@ export default function owner(){
                     </Link>
                 </div>
                 <div>
-                    <Button>Create Restaurant</Button>
+                    <Link href="/owners/NewRestaurant">
+                        <Button>Create Restaurant</Button>
+                    </Link>
                 </div>
             </div>
             <div className={`flex justify-center items-center h-full mt-64`}>
