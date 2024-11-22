@@ -12,19 +12,19 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 
-export function Reservation() {
+export function Restaurant() {
   return (
     <Card className="w-[600px]">
       <CardHeader>
-        <CardTitle>Manage Reservation</CardTitle>
-        <CardDescription>Enter your Email and Confirmation Code</CardDescription>
+        <CardTitle>Create Restaurant</CardTitle>
+        <CardDescription>Enter Restaurant Name and Address</CardDescription>
       </CardHeader>
       <CardContent>
         <form>
           <div className="grid w-full items-center gap-4">
             <div className="flex flex-col space-y-1.5">
-              <Label htmlFor="name">Email</Label>
-              <Input id="name" placeholder="Email" />
+              <Label htmlFor="name">Restaurant Name</Label>
+              <Input id="name" placeholder="Restaurant Name" />
             </div>
           </div>
         </form>
@@ -33,8 +33,8 @@ export function Reservation() {
         <form>
           <div className="grid w-full items-center gap-4">
             <div className="flex flex-col space-y-1.5">
-              <Label htmlFor="name">Confirmation Code</Label>
-              <Input id="name" placeholder="Confirmation Code" />
+              <Label htmlFor="name">Restaurant Address</Label>
+              <Input id="name" placeholder="Restaurant Address" />
             </div>
           </div>
         </form>
@@ -47,4 +47,4 @@ export function Reservation() {
   )
 }
 
-export default Reservation;
+export default Restaurant;
