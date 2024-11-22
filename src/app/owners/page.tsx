@@ -1,8 +1,11 @@
 import React from 'react'
+import {Button} from "@/components/ui/Button";
 export default function owner(){
     return(
         <>
-            <div>Owner</div>
+            <div className={`flex items-center justify-end font-black m-5`}>
+                <Button>Create Restaurant</Button>
+            </div>
         </>
     )
 }
