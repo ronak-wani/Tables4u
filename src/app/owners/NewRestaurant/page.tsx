@@ -10,10 +10,16 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select"
+import Link from "next/link";
 export default function createRestaurantPage() {
     return (
         <>
-            <div className={`flex justify-center items-center h-full mt-64`}>
+            <div className="flex justify-between items-center m-5">
+                <Link href="/owners">
+                    <Button>Back</Button>
+                </Link>
+            </div>
+            <div className={`flex justify-center items-center h-full mt-44`}>
                 <Card className="w-[800px]">
                     <CardHeader>
                         <CardTitle>Restaurant</CardTitle>
@@ -53,5 +59,5 @@ export default function createRestaurantPage() {
                 </Card>
             </div>
         </>
-        )
-        }
+    )
+}
