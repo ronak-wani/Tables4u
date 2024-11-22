@@ -12,11 +12,14 @@ import {
     CommandShortcut,
 } from "@/components/ui/command"
 
+import Date from "@/app/(components)/Date"
+
 export default function Home() {
   return (
       <>
           <Header/>
           <div className="flex items-center justify-center">
+              <Date/>
               <Command>
                   <CommandInput placeholder="Find restaurants ..."/>
                   <div className={`invisible`}>
