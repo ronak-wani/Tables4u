@@ -13,7 +13,7 @@ export default function owner(){
                     </Link>
                 </div>
                 <div>
-                    <Link href="/owners/createRestaurant">
+                    <Link href="/owners/NewRestaurant">
                         <Button>Create Restaurant</Button>
                     </Link>
                 </div>
