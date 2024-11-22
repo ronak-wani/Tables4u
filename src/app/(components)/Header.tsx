@@ -1,6 +1,7 @@
 'use client'
 import React from 'React'
 import {Button} from "@/components/ui/Button";
+import Link from "next/link";
 function Header() {
     return (
         <>
@@ -12,8 +13,12 @@ function Header() {
 
                 {/* Right Side */}
                 <div className={`flex items-center gap-4`}>
-                    <Button variant={"default"} className={`font-black m-2`}> CONSUMERS </Button>
-                    <Button variant={"default"} className={`font-black m-8`}> OWNERS </Button>
+                    <Link href="/consumers">
+                        <Button variant={"default"} className={`font-black m-2`}> CONSUMERS </Button>
+                    </Link>
+                    <Link href="/owners">
+                        <Button variant={"default"} className={`font-black m-8`}> OWNERS </Button>
+                    </Link>
                 </div>
             </div>
         </>
