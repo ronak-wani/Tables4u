@@ -16,7 +16,7 @@ export function Reservation() {
   return (
     <Card className="w-[600px]">
       <CardHeader>
-        <CardTitle>Check Reservation</CardTitle>
+        <CardTitle>Manage Reservation</CardTitle>
         <CardDescription>Enter your Email and Confirmation Code</CardDescription>
       </CardHeader>
       <CardContent>

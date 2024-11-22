@@ -13,7 +13,7 @@ function Header() {
                 {/* Right Side */}
                 <div className={`flex items-center gap-4`}>
                     <Link href="/consumers">
-                        <Button variant={"default"} className={`font-black m-2`}> CONSUMERS </Button>
+                        <Button variant={"default"} className={`font-black m-2`}> Manage Reservation </Button>
                     </Link>
                     <Link href="/owners">
                         <Button variant={"default"} className={`font-black m-8`}> OWNERS </Button>
