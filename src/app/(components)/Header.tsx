@@ -13,10 +13,10 @@ function Header() {
                 {/* Right Side */}
                 <div className={`flex items-center gap-4`}>
                     <Link href="/consumers">
-                        <Button variant={"default"} className={`font-black m-2`}> Consumers </Button>
+                        <Button variant={"default"} className={`font-black m-2`}> CONSUMERS </Button>
                     </Link>
                     <Link href="/owners">
-                        <Button variant={"default"} className={`font-black m-8`}> Owners </Button>
+                        <Button variant={"default"} className={`font-black m-8`}> OWNERS </Button>
                     </Link>
                 </div>
             </div>
