@@ -3,7 +3,7 @@ import {Button} from "@/components/ui/Button";
 import {Reservation} from "@/app/(components)/Reservation";
 import Link from "next/link";
 
-export default function owner(){
+export default function consumer(){
     return(
         <>
             <div className="flex justify-between items-center m-5">
