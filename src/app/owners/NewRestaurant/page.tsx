@@ -16,8 +16,7 @@ export default function createRestaurantPage() {
             <div className={`flex justify-center items-center h-full mt-64`}>
                 <Card className="w-[800px]">
                     <CardHeader>
-                        <CardTitle>Create Restaurant</CardTitle>
-                        <CardDescription>Restaurant Details</CardDescription>
+                        <CardTitle>Restaurant</CardTitle>
                     </CardHeader>
                     <CardContent>
                         <form>
