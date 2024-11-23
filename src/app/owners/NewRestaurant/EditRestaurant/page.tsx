@@ -1,8 +1,18 @@
-import React from 'react';
+'use client';
+import React, {useState} from 'react';
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "@/components/ui/dialog"
 import {Label} from "@/components/ui/label";
 import { Input } from "@/components/ui/input"
 import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
-import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch"
+
 interface EditRestaurantPageProps {
     params: { Name: string; Address: string; numberOfTables: number };
 }
@@ -25,6 +35,17 @@ export default function EditRestaurantPage({ params }: EditRestaurantPageProps) 
             </div>
         );
     }
+    const [isActive, setActive] = useState(false);
+    const [dialogOpen, setDialogOpen] = useState(false);
+    const handleChange = (checked: boolean) => {
+        if (!isActive && dialogOpen) {
+            setActive(checked);
+        }
+        if(checked){
+            setDialogOpen(true);
+        }
+    };
+
     return (
         <>
             <div className={`flex justify-center items-center h-full mt-44`}>
@@ -40,6 +61,39 @@ export default function EditRestaurantPage({ params }: EditRestaurantPageProps) 
                                     <Label>Address: {Address}</Label>
                                     <Label>Number of Tables: {numberOfTables}</Label>
                                     {tables}
+                                </div>
+                                <div className="flex items-center space-x-2">
+                                    <Label htmlFor="activate">Activate</Label>
+                                    <Switch id="activate" checked={isActive} onCheckedChange={handleChange}/>
+                                    <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+                                        <DialogContent>
+                                            <DialogTitle>Are you absolutely sure?</DialogTitle>
+                                            <DialogDescription>
+                                                Once the restaurant is activated then it cannot be undone and nothing
+                                                can be changed
+                                            </DialogDescription>
+                                            <div className="flex justify-end space-x-2">
+                                                <button
+                                                    className="px-4 py-2 bg-gray-200 rounded"
+                                                    onClick={() => {
+                                                        handleChange(false); // Reset the switch if the user cancels
+                                                        setDialogOpen(false);
+                                                    }}
+                                                >
+                                                    Cancel
+                                                </button>
+                                                <button
+                                                    className="px-4 py-2 bg-blue-600 text-white rounded"
+                                                    onClick={() => {
+                                                        handleChange(true); // Confirm the activation
+                                                        setDialogOpen(false);
+                                                    }}
+                                                >
+                                                    Confirm
+                                                </button>
+                                            </div>
+                                        </DialogContent>
+                                    </Dialog>
                                 </div>
                             </div>
                         </form>
