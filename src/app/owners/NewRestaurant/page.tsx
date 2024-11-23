@@ -15,6 +15,9 @@ export default function createRestaurantPage() {
     const [isNotInvisible, setNotInvisible] = React.useState(true);
     const [passcode, setPasscode] = React.useState("");
 
+    const isFormValid:boolean = Name.trim() !== "" && Address.trim() !== "" && numberOfTables !== 0;
+
+
     const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setName(e.target.value);
     };
@@ -61,19 +64,19 @@ export default function createRestaurantPage() {
                         <form>
                             <div className="grid w-full items-center gap-4">
                                 <div className="flex flex-col space-y-5">
-                                    <Label htmlFor="name">Name</Label>
-                                    <Input id="name" placeholder="Restaurant Name" onChange={handleNameChange}/>
-                                    <Label htmlFor="address">Address</Label>
-                                    <Input id="address" placeholder="Restaurant Address" onChange={handleAddressChange}/>
-                                    <Label htmlFor="numberOfTables">Number of Tables</Label>
-                                    <Input type="number" id="numberOfTables" placeholder="Number of Tables" onChange={handleNumberOfTablesChange}/>
+                                    <Label htmlFor="name">Name <span style={{color: 'red'}}>*</span></Label>
+                                    <Input id="name" placeholder="Restaurant Name" onChange={handleNameChange} required={true}/>
+                                    <Label htmlFor="address">Address <span style={{color: 'red'}}>*</span></Label>
+                                    <Input id="address" placeholder="Restaurant Address" onChange={handleAddressChange} required={true}/>
+                                    <Label htmlFor="numberOfTables">Number of Tables <span style={{color: 'red'}}>*</span></Label>
+                                    <Input type="number" id="numberOfTables" placeholder="Number of Tables" onChange={handleNumberOfTablesChange} required={true}/>
                                 </div>
                             </div>
                         </form>
                     </CardContent>
                     <CardFooter className="flex justify-between">
                         <Button variant="outline">Cancel</Button>
-                        <Button onClick={() => handleCreate()}>Create</Button>
+                        <Button disabled={!isFormValid} onClick={() => handleCreate()}>Create</Button>
                     </CardFooter>
                 </Card>
             </div>)}
@@ -96,7 +99,6 @@ export default function createRestaurantPage() {
                             <Label htmlFor="passcode">Remember to save the access key to edit and activate the restaurant </Label>
                             <Button onClick={() => handleCopyClick()}><Copy />Copy</Button>
                         </CardFooter>
-
                     </Card>
                 </div>)}
         </>
