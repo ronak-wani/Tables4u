@@ -49,11 +49,6 @@ export default function createRestaurantPage() {
     }
     return (
         <>
-            <div className="flex justify-between items-center m-5">
-                <Link href="/owners">
-                    <Button>Back</Button>
-                </Link>
-            </div>
             {isNotInvisible && (
             <div className={`flex justify-center items-center h-full mt-44`}>
                 <Card className="w-[800px]">
@@ -75,7 +70,9 @@ export default function createRestaurantPage() {
                         </form>
                     </CardContent>
                     <CardFooter className="flex justify-between">
-                        <Button variant="outline">Cancel</Button>
+                        <Link href="/owners">
+                            <Button variant="outline">Back</Button>
+                        </Link>
                         <Button disabled={!isFormValid} onClick={() => handleCreate()}>Create</Button>
                     </CardFooter>
                 </Card>
