@@ -33,28 +33,16 @@ export default function createRestaurantPage() {
                                     <Label htmlFor="address">Address</Label>
                                     <Input id="address" placeholder="Restaurant Address"/>
                                     <Label htmlFor="numberOfTables">Number of Tables</Label>
-                                    <Select>
-                                        <SelectTrigger id="numberOfTables">
-                                            <SelectValue placeholder="Select"/>
-                                        </SelectTrigger>
-                                        <SelectContent position="popper">
-                                            <SelectItem value="1">1</SelectItem>
-                                            <SelectItem value="2">2</SelectItem>
-                                            <SelectItem value="3">3</SelectItem>
-                                            <SelectItem value="4">4</SelectItem>
-                                            <SelectItem value="5">5</SelectItem>
-                                            <SelectItem value="6">6</SelectItem>
-                                            <SelectItem value="7">7</SelectItem>
-                                            <SelectItem value="8">8</SelectItem>
-                                        </SelectContent>
-                                    </Select>
+                                    <Input type="number" id="numberOfTables" placeholder="Number of Tables"/>
                                 </div>
                             </div>
                         </form>
                     </CardContent>
                     <CardFooter className="flex justify-between">
                         <Button variant="outline">Cancel</Button>
-                        <Button>Create</Button>
+                        <Link href="/owners/NewRestaurant/EditRestaurant">
+                            <Button>Create</Button>
+                        </Link>
                     </CardFooter>
                 </Card>
             </div>
