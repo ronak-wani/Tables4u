@@ -19,7 +19,9 @@ export default function owner(){
                 </div>
             </div>
             <div className={`flex justify-center items-center h-full mt-60`}>
-                <Login/>
+                <Link href="/owners/EditRestaurant">
+                    <Login/>
+                </Link>
             </div>
 
         </>
