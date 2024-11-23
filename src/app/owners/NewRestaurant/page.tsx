@@ -32,6 +32,18 @@ export default function createRestaurantPage() {
         console.log(passcode);
         setNotInvisible(false);
     }
+    async function handleCopyClick() {
+        try {
+            await window.navigator.clipboard.writeText(passcode);
+            alert("Copied to clipboard!");
+        } catch (err) {
+            console.error(
+                "Unable to copy to clipboard.",
+                err
+            );
+            alert("Copy to clipboard failed.");
+        }
+    }
     return (
         <>
             <div className="flex justify-between items-center m-5">
@@ -82,7 +94,7 @@ export default function createRestaurantPage() {
                         </CardContent>
                         <CardFooter className="text-gray-500 flex justify-between">
                             <Label htmlFor="passcode">Remember to save the access key to edit and activate the restaurant </Label>
-                            <Button><Copy />Copy</Button>
+                            <Button onClick={() => handleCopyClick()}><Copy />Copy</Button>
                         </CardFooter>
 
                     </Card>
