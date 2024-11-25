@@ -21,7 +21,7 @@ export default function createRestaurantPage() {
     const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setName(e.target.value);
     };
-
+    
     const handleAddressChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setAddress(e.target.value);
     };
