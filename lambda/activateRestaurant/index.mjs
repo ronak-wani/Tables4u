@@ -11,8 +11,7 @@ export const handler = async (event) => {
 
     let ActivateRestaurant = (name, address, password) => {
         return new Promise((resolve, reject) => {
-            pool.query("UPDATE Tables SET " +
-                "WHERE name = ? AND address = ? AND password = ?;", [name, address, password], (error, rows) => {
+            pool.query("UPDATE Restaurants SET isActive = 'Y' WHERE name = ? AND address = ? AND password = ?;", [name, address, password], (error, rows) => {
                 if (error) { return reject(error); }
                 return resolve(rows);
             })
