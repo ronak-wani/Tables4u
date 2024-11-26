@@ -2,17 +2,21 @@ import mysql from 'mysql'
 
 export const handler = async (event) => {
 
-    // get credentials from the db_access layer (loaded separately via AWS console)
-    var pool = mysql.createPool({
+    const pool = mysql.createPool({
         host: process.env.DB_HOST,
         user: process.env.DB_USER,
         password: process.env.DB_PASS,
         database: process.env.DB_DATABASE,
     })
 
-    let DeleteConstant = (name) => {
+    let response={};
+
+    let DeleteConstant = (name, address) => {
         return new Promise((resolve, reject) => {
-            pool.query("DELETE FROM Restaurants WHERE restaurantID=?", [name], (error, rows) => {
+            pool.query("DELETE FROM Restaurants WHERE name = ? AND address = ?;", [name, address], (error, rows) => {
+                console.log("Name: " + name);
+                console.log("Address: " + address);
+                console.log(rows)
                 if (error) { return reject(error); }
                 if ((rows) && (rows.affectedRows === 1)) {
                     return resolve(true);
@@ -23,16 +27,16 @@ export const handler = async (event) => {
         });
     }
 
-    let response
-
     try {
-        const result = await DeleteConstant(event.name)
+        console.log(event)
+        const result = await DeleteConstant(event.name, event.address)
         if (result) {
             response = { statusCode: 200, result: { "success" : true }}
         } else {
             response = { statusCode: 400, error: "No such constant" }
         }
     } catch (err) {
+        console.log(err)
         response = { statusCode: 400, error: err }
     }
 
