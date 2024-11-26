@@ -64,6 +64,10 @@ next-env.d.ts
 .idea/**/uiDesigner.xml
 .idea/**/dbnavigator.xml
 
+#lambda
+/lambda/*/node_modules
+/lambda/*/*.zip
+
 # Gradle
 .idea/**/gradle.xml
 .idea/**/libraries
