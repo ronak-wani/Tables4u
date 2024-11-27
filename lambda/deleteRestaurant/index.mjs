@@ -11,9 +11,9 @@ export const handler = async (event) => {
 
     let response={};
 
-    let DeleteConstant = (name, address) => {
+    let DeleteConstant = (name, address, password) => {
         return new Promise((resolve, reject) => {
-            pool.query("DELETE FROM Restaurants WHERE name = ? AND address = ?;", [name, address], (error, rows) => {
+            pool.query("DELETE FROM Restaurants WHERE name = ? AND address = ? AND password = ?;", [name, address, password], (error, rows) => {
                 console.log("Name: " + name);
                 console.log("Address: " + address);
                 console.log(rows)
@@ -29,7 +29,7 @@ export const handler = async (event) => {
 
     try {
         console.log(event)
-        const result = await DeleteConstant(event.name, event.address)
+        const result = await DeleteConstant(event.name, event.address, event.password)
         if (result) {
             response = { statusCode: 200, result: { "success" : true }}
         } else {
