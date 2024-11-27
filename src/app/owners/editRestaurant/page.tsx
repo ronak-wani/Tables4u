@@ -15,6 +15,7 @@ import { Switch } from "@/components/ui/switch"
 import axios from "axios";
 import { useSearchParams } from 'next/navigation';
 import {Button} from "@/components/ui/Button";
+import {Trash} from "lucide-react";
 
 const instance = axios.create({
     baseURL: 'https://8ng83lxa6k.execute-api.us-east-1.amazonaws.com/table'
@@ -81,6 +82,7 @@ export default function EditRestaurantPage() {
     }
     const [isActive, setActive] = useState(false);
     const [dialogOpen, setDialogOpen] = useState(false);
+    const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
     const handleChange = (checked: boolean) => {
         if (!isActive && dialogOpen) {
             setActive(checked);
@@ -97,8 +99,28 @@ export default function EditRestaurantPage() {
                     return error
                 })
         }
+        else{
+            setDialogOpen(false);
+        }
     };
 
+    const handleDelete = (checked: boolean) => {
+        setDeleteDialogOpen(true);
+        if(checked){
+            instance.post('/deleteRestaurant', {"name":Name, "address":Address})
+                .then(function (response) {
+                    let status = response.data.statusCode;
+                    let resultComp = response.data.result;
+                })
+                .catch(function (error) {
+                    // this is a 500-type error, where there is no such API on the server side
+                    return error
+                })
+        }
+        else{
+            setDialogOpen(false);
+        }
+    }
     return (
         <>
             <div className={`flex justify-center items-center h-full mt-44`}>
@@ -116,6 +138,7 @@ export default function EditRestaurantPage() {
                                     <Label>Number of Tables: {numberOfTables}</Label>
                                     {tables}
                                 </div>
+                                <div className={`flex flex-row`}>
                                 <div className="flex items-center space-x-2">
                                     <Label htmlFor="activate">Activate</Label>
                                     <Switch id="activate" checked={isActive} onCheckedChange={handleChange}/>
@@ -131,7 +154,7 @@ export default function EditRestaurantPage() {
                                                     className="px-4 py-2 bg-gray-200 rounded"
                                                     onClick={() => {
                                                         handleChange(false); // Reset the switch if the user cancels
-                                                        setDialogOpen(false);
+                                                        setDeleteDialogOpen(false);
                                                     }}
                                                 >
                                                     Cancel
@@ -140,7 +163,7 @@ export default function EditRestaurantPage() {
                                                     className="px-4 py-2 bg-blue-600 text-white rounded"
                                                     onClick={() => {
                                                         handleChange(true); // Confirm the activation
-                                                        setDialogOpen(false);
+                                                        setDeleteDialogOpen(false);
                                                     }}
                                                 >
                                                     Confirm
@@ -148,6 +171,38 @@ export default function EditRestaurantPage() {
                                             </div>
                                         </DialogContent>
                                     </Dialog>
+                                </div>
+                                <div className="flex ml-auto space-x-2">
+                                    <Button type="button" className={`bg-red-600 hover:bg-red-400`} onClick={() => setDeleteDialogOpen(true)}> <Trash />Delete</Button>
+                                    <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+                                        <DialogContent>
+                                            <DialogTitle>Are you absolutely sure?</DialogTitle>
+                                            <DialogDescription>
+                                                Once the restaurant is deleted then it cannot be undone
+                                            </DialogDescription>
+                                            <div className="flex justify-end space-x-2">
+                                                <button
+                                                    className="px-4 py-2 bg-gray-200 rounded"
+                                                    onClick={() => {
+                                                        handleDelete(false); // Reset the switch if the user cancels
+                                                        setDeleteDialogOpen(false);
+                                                    }}
+                                                >
+                                                    Cancel
+                                                </button>
+                                                <button
+                                                    className="px-4 py-2 bg-blue-600 text-white rounded"
+                                                    onClick={() => {
+                                                        // handleDelete(true); // Confirm the activation
+                                                        setDeleteDialogOpen(false);
+                                                    }}
+                                                >
+                                                    Confirm
+                                                </button>
+                                            </div>
+                                        </DialogContent>
+                                    </Dialog>
+                                </div>
                                 </div>
                             </div>
                         </form>
