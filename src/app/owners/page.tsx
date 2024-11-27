@@ -6,16 +6,21 @@ import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} f
 import {Label} from "@/components/ui/label";
 import {Input} from "@/components/ui/input";
 
+<<<<<<< HEAD
 export default function Owner(){
     const [passcode, setPasscode] = React.useState("");
+=======
+export default function owner(){
+    const [password, setPassword] = React.useState("");
+>>>>>>> dev-branch
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setPasscode(e.target.value);
+        setPassword(e.target.value);
     };
     return(
         <>
             <div className="flex justify-end items-center m-5">
                 <div>
-                    <Link href="/owners/NewRestaurant">
+                    <Link href="/owners/createRestaurant">
                         <Button>Create Restaurant</Button>
                     </Link>
                 </div>
@@ -30,8 +35,8 @@ export default function Owner(){
                             <form>
                                 <div className="grid w-full items-center gap-4">
                                     <div className="flex flex-col space-y-1.5">
-                                        <Label htmlFor="passcode">Access Key</Label>
-                                        <Input id="passcode" placeholder="Access Key" onChange={handleChange} required={true}/>
+                                        <Label htmlFor="password">Access Key</Label>
+                                        <Input id="password" placeholder="Access Key" onChange={handleChange} required={true}/>
                                     </div>
                                 </div>
                             </form>
@@ -41,8 +46,8 @@ export default function Owner(){
                                 <Button variant="outline">Back</Button>
                             </Link>
 
-                                <Button disabled={passcode === ""}>
-                                    <Link href="/owners/EditRestaurant">
+                                <Button disabled={password === ""}>
+                                    <Link href="/owners/editRestaurant">
                                         Login
                                     </Link>
                                     </Button>
