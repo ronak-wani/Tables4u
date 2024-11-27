@@ -30,6 +30,8 @@ export default function EditRestaurantPage() {
     const Name = searchParams.get('Name');
     const Address = searchParams.get('Address');
     const numberOfTables = Number(searchParams.get('numberOfTables') || 0);
+    const openingHour = Number(searchParams.get('openHour') || 0);
+    const closingHour = Number(searchParams.get('closeHour') || 0);
     const [password, setPassword] = React.useState("");
     const [openHour, setOpenHour] = React.useState(-1);
     const [closeHour, setCloseHour] = React.useState(-1);
@@ -96,6 +98,7 @@ export default function EditRestaurantPage() {
     const [isActive, setActive] = useState(false);
     const [dialogOpen, setDialogOpen] = useState(false);
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+    const [saveDialogOpen, setSaveDialogOpen] = useState(false);
     const handleChange = (checked: boolean) => {
         if (!isActive && dialogOpen) {
             setActive(checked);
@@ -132,7 +135,25 @@ export default function EditRestaurantPage() {
             router.push(`/`);
         }
         else{
-            setDialogOpen(false);
+            setDeleteDialogOpen(false);
+        }
+    }
+
+    const handleSave = (checked: boolean) => {
+        setSaveDialogOpen(true);
+        if(checked){
+            instance.post('/editRestaurant', {"name":Name, "address":Address, "password":password, "openHour":openHour, "closeHour":closeHour})
+                .then(function (response) {
+                    let status = response.data.statusCode
+                    let resultComp = response.data.body
+                })
+                .catch(function (error) {
+                    // this is a 500-type error, where there is no such API on the server side
+                    return error
+                })
+        }
+        else{
+            setSaveDialogOpen(false);
         }
     }
     return (
@@ -151,80 +172,120 @@ export default function EditRestaurantPage() {
                                     <Label>Address: {Address}</Label>
                                     <Label>Number of Tables: {numberOfTables}</Label>
                                     <Label htmlFor="openHour">Open Hour <span style={{color: 'red'}}>*</span></Label>
-                                    <Input type="number" className={`w-1/2`} id="openHour" placeholder="Open Hour" onChange={handleOpenHour} required={true}/>
+                                    <Input type="number" className={`w-1/2`} id="openHour" placeholder = {openingHour?.toString()}  onChange={handleOpenHour} required={true}/>
                                     <Label htmlFor="closeHour">Close Hour <span style={{color: 'red'}}>*</span></Label>
-                                    <Input type="number" className={`w-1/2`} id="closeHour" placeholder="Close Hour" onChange={handleCloseHour} required={true}/>
+                                    <Input type="number" className={`w-1/2`} id="closeHour" placeholder={closingHour?.toString()} onChange={handleCloseHour} required={true}/>
                                     {tables}
                                 </div>
-                                <div className={`flex flex-row`}>
-                                <div className="flex items-center space-x-2">
-                                    <Label htmlFor="activate">Activate</Label>
-                                    <Switch id="activate" checked={isActive} onCheckedChange={handleChange}/>
-                                    <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-                                        <DialogContent>
-                                            <DialogTitle>Are you absolutely sure?</DialogTitle>
-                                            <DialogDescription>
-                                                Once the restaurant is activated then it cannot be undone and nothing
-                                                can be changed
-                                            </DialogDescription>
-                                            <div className="flex justify-end space-x-2">
-                                                <Input type="password" className={`w-1/2`} id="password" placeholder="Access key" onChange={handleAccessKey} required={true}/>
-                                                <button
-                                                    className="px-4 py-2 bg-gray-200 rounded"
-                                                    onClick={() => {
-                                                        handleChange(false); // Reset the switch if the user cancels
-                                                        setDeleteDialogOpen(false);
-                                                    }}
-                                                >
-                                                    Cancel
-                                                </button>
-                                                <button
-                                                    className="px-4 py-2 bg-blue-600 text-white rounded"
-                                                    onClick={() => {
-                                                        handleChange(true); // Confirm the activation
-                                                        setDeleteDialogOpen(false);
-                                                    }}
-                                                >
-                                                    Confirm
-                                                </button>
-                                            </div>
-                                        </DialogContent>
-                                    </Dialog>
+                                <div className={`flex flex-row mt-8`}>
+                                    <div className="flex items-center space-x-2">
+                                        <Label htmlFor="activate">Activate</Label>
+                                        <Switch id="activate" checked={isActive} onCheckedChange={handleChange}/>
+                                        <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+                                            <DialogContent>
+                                                <DialogTitle>Are you absolutely sure?</DialogTitle>
+                                                <DialogDescription>
+                                                    Once the restaurant is activated then it cannot be undone and
+                                                    nothing
+                                                    can be changed
+                                                </DialogDescription>
+                                                <div className="flex justify-end space-x-2">
+                                                    <Input type="password" className={`w-1/2`} id="password"
+                                                           placeholder="Access key" onChange={handleAccessKey}
+                                                           required={true}/>
+                                                    <button
+                                                        className="px-4 py-2 bg-gray-200 rounded"
+                                                        onClick={() => {
+                                                            handleChange(false); // Reset the switch if the user cancels
+                                                            setDeleteDialogOpen(false);
+                                                        }}
+                                                    >
+                                                        Cancel
+                                                    </button>
+                                                    <button
+                                                        className="px-4 py-2 bg-blue-600 text-white rounded"
+                                                        onClick={() => {
+                                                            handleChange(true); // Confirm the activation
+                                                            setDeleteDialogOpen(false);
+                                                        }}
+                                                    >
+                                                        Confirm
+                                                    </button>
+                                                </div>
+                                            </DialogContent>
+                                        </Dialog>
+                                    </div>
+                                    <div className="flex ml-auto space-x-2">
+                                        <Button type="button" onClick={() => setSaveDialogOpen(true)}>Save</Button>
+                                        <Dialog open={saveDialogOpen} onOpenChange={setSaveDialogOpen}>
+                                            <DialogContent>
+                                                <DialogTitle>Are you absolutely sure?</DialogTitle>
+                                                <DialogDescription>
+                                                    Confirm to save the changes
+                                                </DialogDescription>
+                                                <div className="flex justify-end space-x-2">
+                                                    <Input type="password" className={`w-1/2`} id="password"
+                                                           placeholder="Access key" onChange={handleAccessKey}
+                                                           required={true}/>
+                                                    <button
+                                                        className="px-4 py-2 bg-gray-200 rounded"
+                                                        onClick={() => {
+                                                            handleSave(false); // Reset the switch if the user cancels
+                                                            setSaveDialogOpen(false);
+                                                        }}
+                                                    >
+                                                        Cancel
+                                                    </button>
+                                                    <button
+                                                        className="px-4 py-2 bg-blue-600 text-white rounded"
+                                                        onClick={() => {
+                                                            handleSave(true); // Confirm the activation
+                                                            setSaveDialogOpen(false);
+                                                        }}
+                                                    >
+                                                        Confirm
+                                                    </button>
+                                                </div>
+                                            </DialogContent>
+                                        </Dialog>
+                                    </div>
+                                        <div className="flex ml-auto space-x-2">
+                                            <Button type="button" className={`bg-red-600 hover:bg-red-400`}
+                                                    onClick={() => setDeleteDialogOpen(true)}> <Trash/>Delete</Button>
+                                            <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+                                                <DialogContent>
+                                                    <DialogTitle>Are you absolutely sure?</DialogTitle>
+                                                    <DialogDescription>
+                                                        Once the restaurant is deleted then it cannot be undone
+                                                    </DialogDescription>
+                                                    <div className="flex justify-end space-x-2">
+                                                        <Input type="password" className={`w-1/2`} id="password"
+                                                               placeholder="Access key" onChange={handleAccessKey}
+                                                               required={true}/>
+                                                        <button
+                                                            className="px-4 py-2 bg-gray-200 rounded"
+                                                            onClick={() => {
+                                                                handleDelete(false); // Reset the switch if the user cancels
+                                                                setDeleteDialogOpen(false);
+                                                            }}
+                                                        >
+                                                            Cancel
+                                                        </button>
+                                                        <button
+                                                            className="px-4 py-2 bg-blue-600 text-white rounded"
+                                                            onClick={() => {
+                                                                handleDelete(true); // Confirm the activation
+                                                                setDeleteDialogOpen(false);
+                                                            }}
+                                                        >
+                                                            Confirm
+                                                        </button>
+                                                    </div>
+                                                </DialogContent>
+                                            </Dialog>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div className="flex ml-auto space-x-2">
-                                    <Button type="button" className={`bg-red-600 hover:bg-red-400`} onClick={() => setDeleteDialogOpen(true)}> <Trash />Delete</Button>
-                                    <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-                                        <DialogContent>
-                                            <DialogTitle>Are you absolutely sure?</DialogTitle>
-                                            <DialogDescription>
-                                                Once the restaurant is deleted then it cannot be undone
-                                            </DialogDescription>
-                                            <div className="flex justify-end space-x-2">
-                                                <Input type="password" className={`w-1/2`} id="password" placeholder="Access key" onChange={handleAccessKey} required={true}/>
-                                                <button
-                                                    className="px-4 py-2 bg-gray-200 rounded"
-                                                    onClick={() => {
-                                                        handleDelete(false); // Reset the switch if the user cancels
-                                                        setDeleteDialogOpen(false);
-                                                    }}
-                                                >
-                                                    Cancel
-                                                </button>
-                                                <button
-                                                    className="px-4 py-2 bg-blue-600 text-white rounded"
-                                                    onClick={() => {
-                                                        handleDelete(true); // Confirm the activation
-                                                        setDeleteDialogOpen(false);
-                                                    }}
-                                                >
-                                                    Confirm
-                                                </button>
-                                            </div>
-                                        </DialogContent>
-                                    </Dialog>
-                                </div>
-                                </div>
-                            </div>
                         </form>
                     </CardContent>
                 </Card>
