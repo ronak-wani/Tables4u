@@ -7,9 +7,9 @@ import {Label} from "@/components/ui/label";
 import {Input} from "@/components/ui/input";
 
 export default function owner(){
-    const [passcode, setPasscode] = React.useState("");
+    const [password, setPassword] = React.useState("");
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setPasscode(e.target.value);
+        setPassword(e.target.value);
     };
     return(
         <>
@@ -30,8 +30,8 @@ export default function owner(){
                             <form>
                                 <div className="grid w-full items-center gap-4">
                                     <div className="flex flex-col space-y-1.5">
-                                        <Label htmlFor="passcode">Access Key</Label>
-                                        <Input id="passcode" placeholder="Access Key" onChange={handleChange} required={true}/>
+                                        <Label htmlFor="password">Access Key</Label>
+                                        <Input id="password" placeholder="Access Key" onChange={handleChange} required={true}/>
                                     </div>
                                 </div>
                             </form>
@@ -41,7 +41,7 @@ export default function owner(){
                                 <Button variant="outline">Back</Button>
                             </Link>
 
-                                <Button disabled={passcode === ""}>
+                                <Button disabled={password === ""}>
                                     <Link href="/owners/EditRestaurant">
                                         Login
                                     </Link>

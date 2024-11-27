@@ -6,14 +6,18 @@ import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/Button";
 import Link from "next/link";
 import { Copy } from 'lucide-react';
+import axios from 'axios';
 
+const instance = axios.create({
+    baseURL: 'https://8ng83lxa6k.execute-api.us-east-1.amazonaws.com/owners'
+});
 
 export default function createRestaurantPage() {
     const [Name, setName] = React.useState("");
     const [Address, setAddress] = React.useState("");
     const [numberOfTables, setNumberOfTables] = React.useState(0);
     const [isNotInvisible, setNotInvisible] = React.useState(true);
-    const [passcode, setPasscode] = React.useState("");
+    const [password, setPassword] = React.useState("");
 
     const isFormValid:boolean = Name.trim() !== "" && Address.trim() !== "" && numberOfTables !== 0;
 
@@ -31,13 +35,24 @@ export default function createRestaurantPage() {
     };
 
     function handleCreate(){
-        setPasscode((Math.random() * 999999).toString(36).slice(0));
-        console.log(passcode);
+        const newPassword = (Math.random() * 999999).toString(36).slice(0);
+        setPassword(newPassword);
+        console.log(newPassword);
         setNotInvisible(false);
+        instance.post('/createRestaurant', {"name":Name, "address":Address, "numberOfTables": numberOfTables, "password":newPassword})
+            .then(function (response) {
+                let status = response.data.statusCode
+                let resultComp = response.data.body
+            })
+            .catch(function (error) {
+                // this is a 500-type error, where there is no such API on the server side
+                return error
+            })
     }
+
     async function handleCopyClick() {
         try {
-            await window.navigator.clipboard.writeText(passcode);
+            await window.navigator.clipboard.writeText(password);
             alert("Copied to clipboard!");
         } catch (err) {
             console.error(
@@ -87,13 +102,13 @@ export default function createRestaurantPage() {
                             <form>
                                 <div className="grid w-full items-center gap-4">
                                     <div className="flex flex-col space-y-5">
-                                        <Label htmlFor="passcode">ACCESS KEY: {passcode} </Label>
+                                        <Label htmlFor="password">ACCESS KEY: {password} </Label>
                                     </div>
                                 </div>
                             </form>
                         </CardContent>
                         <CardFooter className="text-gray-500 flex justify-between">
-                            <Label htmlFor="passcode">Remember to save the access key to edit and activate the restaurant </Label>
+                            <Label htmlFor="password">Remember to save the access key to edit and activate the restaurant </Label>
                             <Button onClick={() => handleCopyClick()}><Copy />Copy</Button>
                         </CardFooter>
                     </Card>
