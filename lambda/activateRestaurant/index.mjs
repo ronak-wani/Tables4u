@@ -11,14 +11,14 @@ export const handler = async (event) => {
 
     let ActivateRestaurant = (name, address, password, openHour, closeHour) => {
         return new Promise((resolve, reject) => {
-            pool.query("UPDATE Restaurants SET isActive = 'Y', openHour = ?, closeHour = ? WHERE name = ? AND address = ? AND password = ?;", [name, address, password, openHour, closeHour], (error, rows) => {
+            pool.query("UPDATE Restaurants SET isActive = 'Y', openHour = ?, closeHour = ? WHERE name = ? AND address = ? AND password = ?;", [openHour, closeHour, name, address, password], (error, rows) => {
                 if (error) { return reject(error); }
                 return resolve(rows);
             })
         })
     }
     try{
-        const all_restaurants = await ActivateRestaurant(event.name, event.address, event.password)
+        const all_restaurants = await ActivateRestaurant(event.name, event.address, event.password, event.openHour, event.closeHour)
         response = {
             statusCode: 200,
             result: {
