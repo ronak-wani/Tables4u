@@ -12,10 +12,16 @@ import {Label} from "@/components/ui/label";
 import { Input } from "@/components/ui/input"
 import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch"
+import axios from "axios";
 
 interface EditRestaurantPageProps {
     params: { Name: string; Address: string; numberOfTables: number };
 }
+
+const instance = axios.create({
+    baseURL: 'https://8ng83lxa6k.execute-api.us-east-1.amazonaws.com/owners'
+});
+
 export default function EditRestaurantPage({ params }: EditRestaurantPageProps) {
     const { Name, Address, numberOfTables } = params;
     const tables = [];
