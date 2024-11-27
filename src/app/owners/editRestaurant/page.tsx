@@ -32,7 +32,7 @@ export default function EditRestaurantPage() {
     const numberOfTables = Number(searchParams.get('numberOfTables') || 0);
     const openingHour = Number(searchParams.get('openHour') || 0);
     const closingHour = Number(searchParams.get('closeHour') || 0);
-    const isActivated:string|null = searchParams.get('isActive');
+    const [isActivated, setIsActivated] = React.useState(searchParams.get('isActive'));
     const [password, setPassword] = React.useState("");
     const [openHour, setOpenHour] = React.useState(openingHour ? Number(openingHour) : 0);
     const [closeHour, setCloseHour] = React.useState(closingHour ? Number(closingHour) : 0);
@@ -106,6 +106,7 @@ export default function EditRestaurantPage() {
         }
         if(checked){
             setDialogOpen(true);
+            setIsActivated('Y');
             instance.post('/activateRestaurant', {"name":Name, "address":Address, "password":password, "openHour":openHour, "closeHour":closeHour})
                 .then(function (response) {
                     let status = response.data.statusCode;
