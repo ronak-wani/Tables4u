@@ -167,7 +167,7 @@ export default function Home() {
           {!loading && !error && restaurants.map((restaurant) => (
             <div
               key={restaurant.restaurantID} 
-              className="flex flex-col p-4 border-b last:border-none hover:bg-gray-100 cursor-pointer"
+              className="flex flex-col p-4 border-b last:border-none hover:bg-red-100 cursor-pointer"
               onClick={() => handleRestaurantClick(restaurant)} 
             >
               <h3 className="text-lg font-semibold">{restaurant.name}</h3>
