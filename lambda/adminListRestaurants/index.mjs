@@ -11,32 +11,25 @@ const pool = mysql.createPool({
 
     let ListRestauraunts = () => {
         return new Promise((resolve, reject) => {
-            pool.query("SELECT name, address FROM Restaurants", (error, rows) => {
+            pool.query("SELECT restaurantID, name, address FROM Restaurants WHERE isActive = 'Y'", (error, rows) => {
                 if (error) { return reject(error); }
-                return resolve(rows);
+                let output = JSON.parse(JSON.stringify(rows))
+                return resolve(output)
             })
         })
     }
-    if(event.adminPass === process.env.ADMIN_PASS){
-
     
     try{
-    const all_restaurants = await ListRestauraunts()
+    const activeRestaurants = await ListRestauraunts()
     response = {
         statusCode: 200,
-        restaurants: all_restaurants,
+        restaurants: activeRestaurants
         
       }
     }
     catch(err) {
         response = {statusCode: 400, error: err}
     }
-}
-else {
-    response = {statusCode: 400, error: "Incorrect Admin Password"}
-}
-
-  
 
 pool.end()
     return response;
