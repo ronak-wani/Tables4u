@@ -182,9 +182,25 @@ export default function EditRestaurantPage() {
                                     <Label>Address: {Address}</Label>
                                     <Label>Number of Tables: {numberOfTables}</Label>
                                     <Label htmlFor="openHour">Open Hour <span style={{color: 'red'}}>*</span></Label>
-                                    <Input type="number" className={`w-1/2`} id="openHour" placeholder = {openingHour?.toString()}  onChange={handleOpenHour} required={true}/>
+                                    <Input
+                                        type="number"
+                                        className={`w-1/2`}
+                                        id="openHour"
+                                        placeholder={openingHour?.toString()}
+                                        onChange={handleOpenHour}
+                                        required={true}
+                                        disabled={isActivated === 'Y'}
+                                    />
                                     <Label htmlFor="closeHour">Close Hour <span style={{color: 'red'}}>*</span></Label>
-                                    <Input type="number" className={`w-1/2`} id="closeHour" placeholder={closingHour?.toString()} onChange={handleCloseHour} required={true}/>
+                                    <Input
+                                        type="number"
+                                        className={`w-1/2`}
+                                        id="closeHour"
+                                        placeholder={closingHour?.toString()}
+                                        onChange={handleCloseHour}
+                                        required={true}
+                                        disabled={isActivated === 'Y'}
+                                    />
                                     {tables}
                                 </div>
                                 <div className={`flex flex-row mt-8`}>
