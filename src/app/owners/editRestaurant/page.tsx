@@ -37,7 +37,7 @@ export default function EditRestaurantPage() {
     const [closeHour, setCloseHour] = React.useState(closingHour ? Number(closingHour) : 0);
     const [numberOfSeats, setNumberOfSeats] = React.useState(0);
     const [disabledTables, setDisabledTables] = useState<{ [key: number]: boolean }>({});
-    const [numberOfTables, setNumberOfTables] = React.useState(0);
+    const [numberOfTables, setNumberOfTables] = React.useState(Number(searchParams.get('numberOfTables')) || 0);
 
     const handleOpenHour = (e: React.ChangeEvent<HTMLInputElement>) => {
         setOpenHour(Number(e.target.value));
@@ -184,7 +184,7 @@ export default function EditRestaurantPage() {
                                     <Label>Name: {Name}</Label>
                                     <Label>Address: {Address}</Label>
                                     <Label htmlFor="numberOfTables">Number of Tables <span style={{color: 'red'}}>*</span></Label>
-                                    <Input disabled={isActivated === 'Y'} type="number" className={`w-1/2`} id="numberOfTables" placeholder="Number of Tables" onChange={handleNumberOfTablesChange} required={true}/>
+                                    <Input disabled={isActivated === 'Y'} type="number" className={`w-1/2`} id="numberOfTables" placeholder={numberOfTables.toString()} onChange={handleNumberOfTablesChange} required={true}/>
                                     <Label htmlFor="openHour">Open Hour <span style={{color: 'red'}}>*</span></Label>
                                     <Input
                                         type="number"
