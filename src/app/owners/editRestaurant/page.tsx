@@ -80,6 +80,15 @@ export default function EditRestaurantPage() {
         }
         if(checked){
             setDialogOpen(true);
+            instance.post('/activateRestaurant', {"name":Name, "address":Address})
+                .then(function (response) {
+                    let status = response.data.statusCode;
+                    let resultComp = response.data.result;
+                })
+                .catch(function (error) {
+                    // this is a 500-type error, where there is no such API on the server side
+                    return error
+                })
         }
     };
 
