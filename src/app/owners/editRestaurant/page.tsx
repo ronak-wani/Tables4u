@@ -23,17 +23,24 @@ const instance = axios.create({
 });
 
 export default function EditRestaurantPage() {
+    
     const router = useRouter();
     const searchParams = useSearchParams();
     const restaurantID = searchParams.get('restaurantID');
     const Name = searchParams.get('Name');
     const Address = searchParams.get('Address');
     const numberOfTables = Number(searchParams.get('numberOfTables') || 0);
-
+    const [openHour, setOpenHour] = React.useState(-1);
+    const [closeHour, setCloseHour] = React.useState(-1);
     const [numberOfSeats, setNumberOfSeats] = React.useState(0);
     const [disabledTables, setDisabledTables] = useState<{ [key: number]: boolean }>({});
-
-
+    
+    const handleOpenHour = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setOpenHour(Number(e.target.value));
+    };
+    const handleCloseHour = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setCloseHour(Number(e.target.value));
+    };
     const handleNumberOfSeatsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const newNumberOfSeats = Number(e.target.value);
         if (newNumberOfSeats > 8) {
@@ -139,6 +146,10 @@ export default function EditRestaurantPage() {
                                     <Label>Name: {Name}</Label>
                                     <Label>Address: {Address}</Label>
                                     <Label>Number of Tables: {numberOfTables}</Label>
+                                    <Label htmlFor="openHour">Open Hour <span style={{color: 'red'}}>*</span></Label>
+                                    <Input type="number" className={`w-1/2`} id="openHour" placeholder="Open Hour" onChange={handleOpenHour} required={true}/>
+                                    <Label htmlFor="closeHour">Close Hour <span style={{color: 'red'}}>*</span></Label>
+                                    <Input type="number" className={`w-1/2`} id="closeHour" placeholder="Close Hour" onChange={handleCloseHour} required={true}/>
                                     {tables}
                                 </div>
                                 <div className={`flex flex-row`}>
