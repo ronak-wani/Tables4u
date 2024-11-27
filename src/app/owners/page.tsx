@@ -6,7 +6,7 @@ import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} f
 import {Label} from "@/components/ui/label";
 import {Input} from "@/components/ui/input";
 
-export default function owner(){
+export default function Owner(){
     const [passcode, setPasscode] = React.useState("");
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setPasscode(e.target.value);
