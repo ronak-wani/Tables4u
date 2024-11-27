@@ -32,6 +32,7 @@ export default function EditRestaurantPage() {
     const numberOfTables = Number(searchParams.get('numberOfTables') || 0);
     const openingHour = Number(searchParams.get('openHour') || 0);
     const closingHour = Number(searchParams.get('closeHour') || 0);
+    const isActivated:string = searchParams.get('isActive');
     const [password, setPassword] = React.useState("");
     const [openHour, setOpenHour] = React.useState(openingHour ? Number(openingHour) : 0);
     const [closeHour, setCloseHour] = React.useState(closingHour ? Number(closingHour) : 0);
@@ -95,13 +96,13 @@ export default function EditRestaurantPage() {
             </div>
         );
     }
-    const [isActive, setActive] = useState(false);
+    const [on, setOn] = useState(false);
     const [dialogOpen, setDialogOpen] = useState(false);
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
     const [saveDialogOpen, setSaveDialogOpen] = useState(false);
     const handleChange = (checked: boolean) => {
-        if (!isActive && dialogOpen) {
-            setActive(checked);
+        if (!on && dialogOpen) {
+            setOn(checked);
         }
         if(checked){
             setDialogOpen(true);
@@ -189,7 +190,7 @@ export default function EditRestaurantPage() {
                                 <div className={`flex flex-row mt-8`}>
                                     <div className="flex items-center space-x-2">
                                         <Label htmlFor="activate">Activate</Label>
-                                        <Switch id="activate" checked={isActive} onCheckedChange={handleChange}/>
+                                        <Switch id="activate" checked={isActivated === 'Y' || on} onCheckedChange={isActivated === 'Y' ? undefined : handleChange}/>
                                         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
                                             <DialogContent>
                                                 <DialogTitle>Are you absolutely sure?</DialogTitle>
