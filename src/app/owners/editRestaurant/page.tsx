@@ -32,7 +32,7 @@ export default function EditRestaurantPage() {
     const numberOfTables = Number(searchParams.get('numberOfTables') || 0);
     const openingHour = Number(searchParams.get('openHour') || 0);
     const closingHour = Number(searchParams.get('closeHour') || 0);
-    const isActivated:string = searchParams.get('isActive');
+    const isActivated:string|null = searchParams.get('isActive');
     const [password, setPassword] = React.useState("");
     const [openHour, setOpenHour] = React.useState(openingHour ? Number(openingHour) : 0);
     const [closeHour, setCloseHour] = React.useState(closingHour ? Number(closingHour) : 0);
@@ -86,7 +86,7 @@ export default function EditRestaurantPage() {
                     placeholder={`Enter number of seats for Table ${i}`}
                     min={1}
                     max={8}
-                    disabled={disabledTables[i]}
+                    disabled={disabledTables[i] || isActivated === 'Y'}
                     onChange={handleNumberOfSeatsChange}
                 />
                 <Button type="button" disabled={disabledTables[i]} onClick={(e) =>
