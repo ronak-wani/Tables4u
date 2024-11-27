@@ -11,13 +11,13 @@ const pool = mysql.createPool({
 
     let ListRestauraunts = () => {
         return new Promise((resolve, reject) => {
-            pool.query("SELECT name, address FROM Restaurants WHERE isActive = 'Y'", (error, rows) => {
+            pool.query("SELECT restaurantID, name, address FROM Restaurants WHERE isActive = 'Y'", (error, rows) => {
                 if (error) { return reject(error); }
-                return resolve(rows);
+                let output = JSON.parse(JSON.stringify(rows))
+                return resolve(output)
             })
         })
     }
-
     
     try{
     const activeRestaurants = await ListRestauraunts()
@@ -30,10 +30,6 @@ const pool = mysql.createPool({
     catch(err) {
         response = {statusCode: 400, error: err}
     }
-
-
-
-  
 
 pool.end()
     return response;
