@@ -33,8 +33,8 @@ export default function EditRestaurantPage() {
     const openingHour = Number(searchParams.get('openHour') || 0);
     const closingHour = Number(searchParams.get('closeHour') || 0);
     const [password, setPassword] = React.useState("");
-    const [openHour, setOpenHour] = React.useState(-1);
-    const [closeHour, setCloseHour] = React.useState(-1);
+    const [openHour, setOpenHour] = React.useState(openingHour ? Number(openingHour) : 0);
+    const [closeHour, setCloseHour] = React.useState(closingHour ? Number(closingHour) : 0);
     const [numberOfSeats, setNumberOfSeats] = React.useState(0);
     const [disabledTables, setDisabledTables] = useState<{ [key: number]: boolean }>({});
     
@@ -91,6 +91,7 @@ export default function EditRestaurantPage() {
                 <Button type="button" disabled={disabledTables[i]} onClick={(e) =>
                 {
                     createTable(i);
+                    handleSave(true, i);
                 }}> Confirm </Button>
             </div>
         );
@@ -139,10 +140,19 @@ export default function EditRestaurantPage() {
         }
     }
 
-    const handleSave = (checked: boolean) => {
+    const handleSave = (checked: boolean, i: number) => {
         setSaveDialogOpen(true);
         if(checked){
-            instance.post('/editRestaurant', {"name":Name, "address":Address, "password":password, "openHour":openHour, "closeHour":closeHour})
+            instance.post('/editRestaurant', {"password":password, "openHour":openHour, "closeHour":closeHour})
+                .then(function (response) {
+                    let status = response.data.statusCode
+                    let resultComp = response.data.body
+                })
+                .catch(function (error) {
+                    // this is a 500-type error, where there is no such API on the server side
+                    return error
+                })
+            instance.post('/editRestaurant', {"restaurantID":restaurantID, "tableID":i, "numberOfSeats":numberOfSeats})
                 .then(function (response) {
                     let status = response.data.statusCode
                     let resultComp = response.data.body
