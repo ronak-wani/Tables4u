@@ -9,21 +9,22 @@ export const handler = async (event) => {
     })
     let response = {}
 
-    let ActivateRestaurant = (name, address, password, openHour, closeHour) => {
+    let ActivateRestaurant = (name, address, numberOfTables, password, openHour, closeHour) => {
         return new Promise((resolve, reject) => {
-            pool.query("UPDATE Restaurants SET isActive = 'Y', openHour = ?, closeHour = ? WHERE name = ? AND address = ? AND password = ?;", [openHour, closeHour, name, address, password], (error, rows) => {
+            pool.query("UPDATE Restaurants SET isActive = 'Y', openHour = ?, closeHour = ?, numberOfTables = ? WHERE name = ? AND address = ? AND password = ?;", [openHour, closeHour, numberOfTables, name, address, password], (error, rows) => {
                 if (error) { return reject(error); }
                 return resolve(rows);
             })
         })
     }
     try{
-        const all_restaurants = await ActivateRestaurant(event.name, event.address, event.password, event.openHour, event.closeHour)
+        const all_restaurants = await ActivateRestaurant(event.name, event.address, event.numberOfTables, event.password, event.openHour, event.closeHour)
         response = {
             statusCode: 200,
             result: {
                 "name" : event.name,
                 "address" : event.address,
+                "numberOfTables": event.numberOfTables,
                 "isActive" : event.isActive,
                 "openHour" : event.openHour,
                 "closeHour": event.closeHour
