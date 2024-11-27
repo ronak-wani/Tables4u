@@ -242,7 +242,7 @@ export default function EditRestaurantPage() {
                                         </Dialog>
                                     </div>
                                     <div className="flex ml-auto space-x-2">
-                                        <Button type="button" onClick={() => setSaveDialogOpen(true)}>Save</Button>
+                                        <Button disabled={isActivated === 'Y'} type="button" onClick={() => setSaveDialogOpen(true)}>Save</Button>
                                         <Dialog open={saveDialogOpen} onOpenChange={setSaveDialogOpen}>
                                             <DialogContent>
                                                 <DialogTitle>Are you absolutely sure?</DialogTitle>
