@@ -23,17 +23,28 @@ const instance = axios.create({
 });
 
 export default function EditRestaurantPage() {
+    
     const router = useRouter();
     const searchParams = useSearchParams();
     const restaurantID = searchParams.get('restaurantID');
     const Name = searchParams.get('Name');
     const Address = searchParams.get('Address');
     const numberOfTables = Number(searchParams.get('numberOfTables') || 0);
-
+    const [password, setPassword] = React.useState("");
+    const [openHour, setOpenHour] = React.useState(-1);
+    const [closeHour, setCloseHour] = React.useState(-1);
     const [numberOfSeats, setNumberOfSeats] = React.useState(0);
     const [disabledTables, setDisabledTables] = useState<{ [key: number]: boolean }>({});
-
-
+    
+    const handleOpenHour = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setOpenHour(Number(e.target.value));
+    };
+    const handleCloseHour = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setCloseHour(Number(e.target.value));
+    };
+    const handleAccessKey = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setPassword(e.target.value);
+    };
     const handleNumberOfSeatsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const newNumberOfSeats = Number(e.target.value);
         if (newNumberOfSeats > 8) {
@@ -91,7 +102,7 @@ export default function EditRestaurantPage() {
         }
         if(checked){
             setDialogOpen(true);
-            instance.post('/activateRestaurant', {"name":Name, "address":Address})
+            instance.post('/activateRestaurant', {"name":Name, "address":Address, "password":password, "openHour":openHour, "closeHour":closeHour})
                 .then(function (response) {
                     let status = response.data.statusCode;
                     let resultComp = response.data.result;
@@ -109,7 +120,7 @@ export default function EditRestaurantPage() {
     const handleDelete = (checked: boolean) => {
         setDeleteDialogOpen(true);
         if(checked){
-            instance.post('/deleteRestaurant', {"name":Name, "address":Address})
+            instance.post('/deleteRestaurant', {"name":Name, "address":Address, "password":password})
             .then(function (response) {
                 let status = response.data.statusCode
                 let resultComp = response.data.body
@@ -139,6 +150,10 @@ export default function EditRestaurantPage() {
                                     <Label>Name: {Name}</Label>
                                     <Label>Address: {Address}</Label>
                                     <Label>Number of Tables: {numberOfTables}</Label>
+                                    <Label htmlFor="openHour">Open Hour <span style={{color: 'red'}}>*</span></Label>
+                                    <Input type="number" className={`w-1/2`} id="openHour" placeholder="Open Hour" onChange={handleOpenHour} required={true}/>
+                                    <Label htmlFor="closeHour">Close Hour <span style={{color: 'red'}}>*</span></Label>
+                                    <Input type="number" className={`w-1/2`} id="closeHour" placeholder="Close Hour" onChange={handleCloseHour} required={true}/>
                                     {tables}
                                 </div>
                                 <div className={`flex flex-row`}>
@@ -153,6 +168,7 @@ export default function EditRestaurantPage() {
                                                 can be changed
                                             </DialogDescription>
                                             <div className="flex justify-end space-x-2">
+                                                <Input type="password" className={`w-1/2`} id="password" placeholder="Access key" onChange={handleAccessKey} required={true}/>
                                                 <button
                                                     className="px-4 py-2 bg-gray-200 rounded"
                                                     onClick={() => {
@@ -184,6 +200,7 @@ export default function EditRestaurantPage() {
                                                 Once the restaurant is deleted then it cannot be undone
                                             </DialogDescription>
                                             <div className="flex justify-end space-x-2">
+                                                <Input type="password" className={`w-1/2`} id="password" placeholder="Access key" onChange={handleAccessKey} required={true}/>
                                                 <button
                                                     className="px-4 py-2 bg-gray-200 rounded"
                                                     onClick={() => {
