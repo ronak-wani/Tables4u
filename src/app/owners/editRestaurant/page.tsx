@@ -102,7 +102,7 @@ export default function EditRestaurantPage() {
         }
         if(checked){
             setDialogOpen(true);
-            instance.post('/activateRestaurant', {"name":Name, "address":Address, "password":password, "openHour":openHour, "closeHour":openHour})
+            instance.post('/activateRestaurant', {"name":Name, "address":Address, "password":password, "openHour":openHour, "closeHour":closeHour})
                 .then(function (response) {
                     let status = response.data.statusCode;
                     let resultComp = response.data.result;
