@@ -9,10 +9,10 @@ export const handler = async (event) => {
     })
     let response = {}
 
-    let saveRestaurant = (password, openHour, closeHour) => {
+    let saveRestaurant = (numberOfTables, password, openHour, closeHour) => {
         return new Promise((resolve, reject) => {
-            pool.query("UPDATE Restaurants SET openHour = ?, closeHour = ? " +
-                "WHERE password = ?;", [openHour, closeHour, password], (error, rows) => {
+            pool.query("UPDATE Restaurants SET numberOfTables = ?, openHour = ?, closeHour = ? " +
+                "WHERE password = ?;", [numberOfTables, openHour, closeHour, password], (error, rows) => {
                 if (error) {
                     return reject(error);
                 }
@@ -31,10 +31,11 @@ export const handler = async (event) => {
     }
     try{
 
-        await saveRestaurant(event.password, event.openHour, event.closeHour);
+        await saveRestaurant(event.numberOfTables, event.password, event.openHour, event.closeHour);
         const restaurantResponse = {
             name: event.name,
             address: event.address,
+            numberOfTables: event.numberOfTables,
             isActive: event.isActive,
             openHour: event.openHour,
             closeHour: event.closeHour,
