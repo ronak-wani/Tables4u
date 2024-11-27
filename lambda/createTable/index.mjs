@@ -9,32 +9,28 @@ export const handler = async (event) => {
     })
     let response = {}
 
-    let ActivateRestaurant = (name, address, password) => {
+    let CreateTable = (restaurantID, tableID, numberOfSeats) => {
         return new Promise((resolve, reject) => {
-            pool.query("UPDATE Tables SET " +
-                "WHERE name = ? AND address = ? AND password = ?;", [name, address, password], (error, rows) => {
+            pool.query("INSERT INTO Tables (restaurantID, tableID, numberOfSeats) VALUES (?, ?, ?);", [restaurantID, tableID, numberOfSeats], (error, rows) => {
                 if (error) { return reject(error); }
                 return resolve(rows);
             })
         })
     }
     try{
-        const all_restaurants = await ActivateRestaurant(event.name, event.address, event.password)
+        const table = await CreateTable(event.restaurantID, event.tableID, event.numberOfSeats)
         response = {
             statusCode: 200,
             result: {
-                "name" : event.name,
-                "isActive" : event.isActive,
-                "address" : event.address
+                "restaurantID" : event.restaurantID,
+                "tableID" : event.tableID,
+                "numberOfSeats" : event.numberOfSeats
             }
         }
     }
     catch(err) {
         response = {statusCode: 400, error: err}
     }
-
-
-
 
     pool.end()
     return response;

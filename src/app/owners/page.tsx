@@ -5,17 +5,50 @@ import Link from "next/link";
 import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} from "@/components/ui/card";
 import {Label} from "@/components/ui/label";
 import {Input} from "@/components/ui/input";
+import axios from "axios";
+import { useRouter } from 'next/navigation';
+
+const instance = axios.create({
+    baseURL: 'https://8ng83lxa6k.execute-api.us-east-1.amazonaws.com/G2Iteration1'
+});
 
 export default function owner(){
-    const [passcode, setPasscode] = React.useState("");
+    let [password, setPassword] = React.useState("");
+    const router = useRouter();
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setPasscode(e.target.value);
+        const newPassword = e.target.value;
+        setPassword(newPassword);
+        password = newPassword;
     };
+    const handleLogin = () => {
+        instance.post('/loginAdministrator', { adminPass: password }) 
+            .then((response) => {
+                if (response.data.statusCode === 200) {
+                    router.push("/admin");
+                } else {
+                    instance.post('/loginRestaurant', { password })
+                        .then(function (response) {
+                            console.log("Success");
+                            console.log(response.data);
+                            let status = response.data.statusCode;
+                            const result = response.data.result.restaurant[0];
+                            router.push(
+                                `/owners/editRestaurant?restaurantID=${encodeURIComponent(result.restaurantID)}&Name=${encodeURIComponent(result.name)}&Address=${encodeURIComponent(result.address)}&numberOfTables=${result.numberOfTables}`
+                            );
+                        })
+                        .catch(function (error) {
+                            console.error("Error logging in:", error);
+                            alert("Invalid access key. Please try again.");
+                        });
+                }
+            })
+    };
+    
     return(
         <>
             <div className="flex justify-end items-center m-5">
                 <div>
-                    <Link href="/owners/NewRestaurant">
+                    <Link href="/owners/createRestaurant">
                         <Button>Create Restaurant</Button>
                     </Link>
                 </div>
@@ -30,8 +63,8 @@ export default function owner(){
                             <form>
                                 <div className="grid w-full items-center gap-4">
                                     <div className="flex flex-col space-y-1.5">
-                                        <Label htmlFor="passcode">Access Key</Label>
-                                        <Input id="passcode" placeholder="Access Key" onChange={handleChange} required={true}/>
+                                        <Label htmlFor="password">Access Key</Label>
+                                        <Input id="password" placeholder="Access Key" onChange={handleChange} required={true}/>
                                     </div>
                                 </div>
                             </form>
@@ -41,10 +74,8 @@ export default function owner(){
                                 <Button variant="outline">Back</Button>
                             </Link>
 
-                                <Button disabled={passcode === ""}>
-                                    <Link href="/owners/EditRestaurant">
+                                <Button disabled={password === ""} onClick={() => handleLogin()}>
                                         Login
-                                    </Link>
                                     </Button>
                         </CardFooter>
                     </Card>
