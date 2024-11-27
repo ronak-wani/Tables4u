@@ -89,7 +89,7 @@ export default function EditRestaurantPage() {
                     disabled={disabledTables[i] || isActivated === 'Y'}
                     onChange={handleNumberOfSeatsChange}
                 />
-                <Button type="button" disabled={disabledTables[i]} onClick={(e) =>
+                <Button type="button" disabled={disabledTables[i]  || isActivated === 'Y'} onClick={(e) =>
                 {
                     createTable(i);
                 }}> Confirm </Button>
