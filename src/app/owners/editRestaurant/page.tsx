@@ -13,17 +13,17 @@ import { Input } from "@/components/ui/input"
 import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch"
 import axios from "axios";
-
-interface EditRestaurantPageProps {
-    params: { Name: string; Address: string; numberOfTables: number };
-}
+import { useSearchParams } from 'next/navigation';
 
 const instance = axios.create({
     baseURL: 'https://8ng83lxa6k.execute-api.us-east-1.amazonaws.com/owners'
 });
 
-export default function EditRestaurantPage({ params }: EditRestaurantPageProps) {
-    const { Name, Address, numberOfTables } = params;
+export default function EditRestaurantPage() {
+    const searchParams = useSearchParams();
+    const Name = searchParams.get('Name');
+    const Address = searchParams.get('Address');
+    const numberOfTables = Number(searchParams.get('numberOfTables') || 0);
     const tables = [];
 
     for (let i = 1; i <= numberOfTables; i++) {
