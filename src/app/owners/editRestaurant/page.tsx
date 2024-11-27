@@ -14,16 +14,41 @@ import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch"
 import axios from "axios";
 import { useSearchParams } from 'next/navigation';
+import {Button} from "@/components/ui/Button";
 
 const instance = axios.create({
-    baseURL: 'https://8ng83lxa6k.execute-api.us-east-1.amazonaws.com/owners'
+    baseURL: 'https://8ng83lxa6k.execute-api.us-east-1.amazonaws.com/table'
 });
 
 export default function EditRestaurantPage() {
     const searchParams = useSearchParams();
+    const restaurantID = searchParams.get('restaurantID');
     const Name = searchParams.get('Name');
     const Address = searchParams.get('Address');
     const numberOfTables = Number(searchParams.get('numberOfTables') || 0);
+
+    const [numberOfSeats, setNumberOfSeats] = React.useState(0);
+    const [disabledTables, setDisabledTables] = useState<{ [key: number]: boolean }>({});
+
+    const handleNumberOfSeatsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const newNumberOfSeats = Number(e.target.value);
+        setNumberOfSeats(Number(newNumberOfSeats));
+    };
+    function createTable(i:number){
+        instance.post('/createTable', {"restaurant":restaurantID, "tableID":i,"numberOfSeats": numberOfSeats})
+            .then(function (response) {
+                let status = response.data.statusCode;
+                let resultComp = response.data.result;
+            })
+            .catch(function (error) {
+                // this is a 500-type error, where there is no such API on the server side
+                return error
+            })
+        setDisabledTables((prev) => ({
+            ...prev,
+            [i]: true, // Disable this specific table
+        }));
+    }
     const tables = [];
 
     for (let i = 1; i <= numberOfTables; i++) {
@@ -37,7 +62,13 @@ export default function EditRestaurantPage() {
                     placeholder={`Enter number of seats for Table ${i}`}
                     min={1}
                     max={8}
+                    disabled={disabledTables[i]}
+                    onChange={handleNumberOfSeatsChange}
                 />
+                <Button type="button" onClick={(e) =>
+                {
+                    createTable(i);
+                }}> Confirm </Button>
             </div>
         );
     }
@@ -63,6 +94,7 @@ export default function EditRestaurantPage() {
                         <form>
                             <div className="grid w-full items-center gap-4">
                                 <div className="flex flex-col space-y-5">
+                                    <Label>RestaurantID: {restaurantID}</Label>
                                     <Label>Name: {Name}</Label>
                                     <Label>Address: {Address}</Label>
                                     <Label>Number of Tables: {numberOfTables}</Label>

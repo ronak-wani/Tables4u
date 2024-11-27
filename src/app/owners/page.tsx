@@ -28,7 +28,7 @@ export default function owner(){
                 let status = response.data.statusCode;
                 const result = response.data.result.restaurant[0];
                 router.push(
-                    `/owners/editRestaurant?Name=${encodeURIComponent(result.name)}&Address=${encodeURIComponent(result.address)}&numberOfTables=${result.numberOfTables}`
+                    `/owners/editRestaurant?restaurantID=${encodeURIComponent(result.restaurantID)}&Name=${encodeURIComponent(result.name)}&Address=${encodeURIComponent(result.address)}&numberOfTables=${result.numberOfTables}`
                 );
             })
             .catch(function (error) {
