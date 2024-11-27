@@ -91,7 +91,6 @@ export default function EditRestaurantPage() {
                 <Button type="button" disabled={disabledTables[i]} onClick={(e) =>
                 {
                     createTable(i);
-                    handleSave(true, i);
                 }}> Confirm </Button>
             </div>
         );
@@ -140,7 +139,7 @@ export default function EditRestaurantPage() {
         }
     }
 
-    const handleSave = (checked: boolean, i: number) => {
+    const handleSave = (checked: boolean, i?: number) => {
         setSaveDialogOpen(true);
         if(checked){
             instance.post('/editRestaurant', {"password":password, "openHour":openHour, "closeHour":closeHour})
