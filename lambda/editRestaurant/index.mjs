@@ -9,31 +9,57 @@ export const handler = async (event) => {
     })
     let response = {}
 
-    let ActivateRestaurant = (name, address, password) => {
+    let saveRestaurant = (password, openHour, closeHour) => {
         return new Promise((resolve, reject) => {
-            pool.query("UPDATE Tables SET " +
-                "WHERE name = ? AND address = ? AND password = ?;", [name, address, password], (error, rows) => {
+            pool.query("UPDATE Restaurants SET openHour = ?, closeHour = ? " +
+                "WHERE password = ?;", [openHour, closeHour, password], (error, rows) => {
+                if (error) {
+                    return reject(error);
+                }
+                return resolve(rows);
+            })
+        })
+    }
+    let saveTable = (restaurantID, tableID, numberOfSeats) => {
+        return new Promise((resolve, reject) => {
+            pool.query("UPDATE Tables SET numberOfSeats = ? " +
+                "WHERE restaurantID = ? AND tableID = ?;", [numberOfSeats, restaurantID, tableID], (error, rows) => {
                 if (error) { return reject(error); }
                 return resolve(rows);
             })
         })
     }
     try{
-        const all_restaurants = await ActivateRestaurant(event.name, event.address, event.password)
+
+        await saveRestaurant(event.password, event.openHour, event.closeHour);
+        const restaurantResponse = {
+            name: event.name,
+            address: event.address,
+            isActive: event.isActive,
+            openHour: event.openHour,
+            closeHour: event.closeHour,
+        };
+
+        // Call saveTable
+        await saveTable(event.restaurantID, event.tableID, event.numberOfSeats);
+        const tableResponse = {
+            restaurantID: event.restaurantID,
+            tableID: event.tableID,
+            numberOfSeats: event.numberOfSeats,
+        };
+
+        // Consolidate responses
         response = {
             statusCode: 200,
             result: {
-                "name" : event.name,
-                "isActive" : event.isActive,
-                "address" : event.address
-            }
-        }
+                restaurant: restaurantResponse,
+                table: tableResponse,
+            },
+        };
     }
     catch(err) {
         response = {statusCode: 400, error: err}
     }
-
-
 
 
     pool.end()
