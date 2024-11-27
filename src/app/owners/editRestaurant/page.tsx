@@ -18,7 +18,7 @@ import {Button} from "@/components/ui/Button";
 import {Trash} from "lucide-react";
 
 const instance = axios.create({
-    baseURL: 'https://8ng83lxa6k.execute-api.us-east-1.amazonaws.com/table'
+    baseURL: 'https://8ng83lxa6k.execute-api.us-east-1.amazonaws.com/G2Iteration1'
 });
 
 export default function EditRestaurantPage() {

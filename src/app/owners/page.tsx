@@ -9,7 +9,7 @@ import axios from "axios";
 import { useRouter } from 'next/navigation';
 
 const instance = axios.create({
-    baseURL: 'https://8ng83lxa6k.execute-api.us-east-1.amazonaws.com/ownerLogin'
+    baseURL: 'https://8ng83lxa6k.execute-api.us-east-1.amazonaws.com/G2Iteration1'
 });
 
 export default function owner(){
@@ -42,13 +42,6 @@ export default function owner(){
                 <div>
                     <Link href="/owners/createRestaurant">
                         <Button>Create Restaurant</Button>
-                    </Link>
-                </div>
-            </div>
-            <div className="flex justify-end items-center m-5">
-                <div>
-                    <Link href="/owners/deleteRestaurant">
-                        <Button>Delete Restaurant</Button>
                     </Link>
                 </div>
             </div>
