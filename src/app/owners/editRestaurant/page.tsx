@@ -4,9 +4,9 @@ import {
     Dialog,
     DialogContent,
     DialogDescription,
-    DialogHeader,
+   // DialogHeader,
     DialogTitle,
-    DialogTrigger,
+   // DialogTrigger,
 } from "@/components/ui/dialog"
 import {Label} from "@/components/ui/label";
 import { Input } from "@/components/ui/input"
@@ -18,7 +18,7 @@ import {Button} from "@/components/ui/Button";
 import {Trash} from "lucide-react";
 
 const instance = axios.create({
-    baseURL: 'https://8ng83lxa6k.execute-api.us-east-1.amazonaws.com/table'
+    baseURL: 'https://8ng83lxa6k.execute-api.us-east-1.amazonaws.com/G2Iteration1'
 });
 
 export default function EditRestaurantPage() {
@@ -107,6 +107,15 @@ export default function EditRestaurantPage() {
     const handleDelete = (checked: boolean) => {
         setDeleteDialogOpen(true);
         if(checked){
+            instance.post('/deleteRestaurant', {"name":Name, "address":Address})
+            .then(function (response) {
+                let status = response.data.statusCode
+                let resultComp = response.data.body
+            })
+            .catch(function (error) {
+                // this is a 500-type error, where there is no such API on the server side
+                return error
+            })
         }
         else{
             setDialogOpen(false);

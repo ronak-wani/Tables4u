@@ -1,6 +1,6 @@
 'use client'
 import React from 'react';
-import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} from "@/components/ui/card";
+import {Card, CardContent, /*CardDescription*/ CardFooter, CardHeader, CardTitle} from "@/components/ui/card";
 import {Label} from "@/components/ui/label";
 import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/Button";
@@ -9,10 +9,10 @@ import { Copy } from 'lucide-react';
 import axios from 'axios';
 
 const instance = axios.create({
-    baseURL: 'https://8ng83lxa6k.execute-api.us-east-1.amazonaws.com/owners'
+    baseURL: 'https://8ng83lxa6k.execute-api.us-east-1.amazonaws.com/G2Iteration1'
 });
 
-export default function createRestaurantPage() {
+export default function CreateRestaurantPage() {
     const [Name, setName] = React.useState("");
     const [Address, setAddress] = React.useState("");
     const [numberOfTables, setNumberOfTables] = React.useState(0);
