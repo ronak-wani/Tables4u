@@ -30,6 +30,10 @@ export default function CreateRestaurantPage() {
         setAddress(e.target.value);
     };
 
+    const handleNumberOfTablesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setNumberOfTables(Number(e.target.value));
+    };
+
     function handleCreate(){
         const newPassword = (Math.random() * 999999).toString(36).slice(0);
         setPassword(newPassword);
@@ -74,6 +78,8 @@ export default function CreateRestaurantPage() {
                                     <Input id="name" placeholder="Restaurant Name" onChange={handleNameChange} required={true}/>
                                     <Label htmlFor="address">Address <span style={{color: 'red'}}>*</span></Label>
                                     <Input id="address" placeholder="Restaurant Address" onChange={handleAddressChange} required={true}/>
+                                    <Label htmlFor="numberOfTables">Number of Tables <span style={{color: 'red'}}>*</span></Label>
+                                    <Input type="number" id="numberOfTables" placeholder="Number of Tables" onChange={handleNumberOfTablesChange} required={true}/>
                                 </div>
                             </div>
                         </form>
