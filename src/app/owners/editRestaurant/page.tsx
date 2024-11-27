@@ -30,10 +30,17 @@ export default function EditRestaurantPage() {
     const [numberOfSeats, setNumberOfSeats] = React.useState(0);
     const [disabledTables, setDisabledTables] = useState<{ [key: number]: boolean }>({});
 
+
     const handleNumberOfSeatsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const newNumberOfSeats = Number(e.target.value);
-        setNumberOfSeats(Number(newNumberOfSeats));
+        if (newNumberOfSeats > 8) {
+            alert("Maximum number of seats allowed is 8. If a value above 8 is entered then it will default to 8");
+            setNumberOfSeats(Number(8));
+        } else {
+            setNumberOfSeats(Number(newNumberOfSeats));
+        }
     };
+
     function createTable(i:number){
         instance.post('/createTable', {"restaurantID":restaurantID, "tableID":i,"numberOfSeats": numberOfSeats})
             .then(function (response) {

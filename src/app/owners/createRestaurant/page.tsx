@@ -110,6 +110,9 @@ export default function createRestaurantPage() {
                         <CardFooter className="text-gray-500 flex justify-between">
                             <Label htmlFor="password">Remember to save the access key to edit and activate the restaurant </Label>
                             <Button onClick={() => handleCopyClick()}><Copy />Copy</Button>
+                            <Link href="/owners">
+                                <Button>Login</Button>
+                            </Link>
                         </CardFooter>
                     </Card>
                 </div>)}
