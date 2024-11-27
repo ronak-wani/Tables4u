@@ -35,7 +35,7 @@ export default function EditRestaurantPage() {
         setNumberOfSeats(Number(newNumberOfSeats));
     };
     function createTable(i:number){
-        instance.post('/createTable', {"restaurant":restaurantID, "tableID":i,"numberOfSeats": numberOfSeats})
+        instance.post('/createTable', {"restaurantID":restaurantID, "tableID":i,"numberOfSeats": numberOfSeats})
             .then(function (response) {
                 let status = response.data.statusCode;
                 let resultComp = response.data.result;
