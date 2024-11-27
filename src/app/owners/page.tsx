@@ -5,30 +5,11 @@ import Link from "next/link";
 import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} from "@/components/ui/card";
 import {Label} from "@/components/ui/label";
 import {Input} from "@/components/ui/input";
-import axios from "axios";
 
-const instance = axios.create({
-    baseURL: 'https://8ng83lxa6k.execute-api.us-east-1.amazonaws.com/owners'
-});
-
-<<<<<<< HEAD
-export default function Owner(){
-    const [passcode, setPasscode] = React.useState("");
-=======
 export default function owner(){
     const [password, setPassword] = React.useState("");
->>>>>>> dev-branch
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setPassword(e.target.value);
-        instance.post('/loginRestaurant', {"password":e.target.value})
-            .then(function (response) {
-                let status = response.data.statusCode
-                let resultComp = response.data.body
-            })
-            .catch(function (error) {
-                // this is a 500-type error, where there is no such API on the server side
-                return error
-            })
     };
     return(
         <>
@@ -36,6 +17,13 @@ export default function owner(){
                 <div>
                     <Link href="/owners/createRestaurant">
                         <Button>Create Restaurant</Button>
+                    </Link>
+                </div>
+            </div>
+            <div className="flex justify-end items-center m-5">
+                <div>
+                    <Link href="/owners/deleteRestaurant">
+                        <Button>Delete Restaurant</Button>
                     </Link>
                 </div>
             </div>
