@@ -20,22 +20,30 @@ export default function owner(){
         setPassword(newPassword);
         password = newPassword;
     };
-    function handleLogin(){
-        instance.post('/loginRestaurant', {"password":password})
-            .then(function (response) {
-                console.log("Success");
-                console.log(response.data);
-                let status = response.data.statusCode;
-                const result = response.data.result.restaurant[0];
-                router.push(
-                    `/owners/editRestaurant?restaurantID=${encodeURIComponent(result.restaurantID)}&Name=${encodeURIComponent(result.name)}&Address=${encodeURIComponent(result.address)}&numberOfTables=${result.numberOfTables}`
-                );
+    const handleLogin = () => {
+        instance.post('/loginAdministrator', { adminPass: password }) 
+            .then((response) => {
+                if (response.data.statusCode === 200) {
+                    router.push("/admin");
+                } else {
+                    instance.post('/loginRestaurant', { password })
+                        .then(function (response) {
+                            console.log("Success");
+                            console.log(response.data);
+                            let status = response.data.statusCode;
+                            const result = response.data.result.restaurant[0];
+                            router.push(
+                                `/owners/editRestaurant?restaurantID=${encodeURIComponent(result.restaurantID)}&Name=${encodeURIComponent(result.name)}&Address=${encodeURIComponent(result.address)}&numberOfTables=${result.numberOfTables}`
+                            );
+                        })
+                        .catch(function (error) {
+                            console.error("Error logging in:", error);
+                            alert("Invalid access key. Please try again.");
+                        });
+                }
             })
-            .catch(function (error) {
-                // this is a 500-type error, where there is no such API on the server side
-                return error
-            })
-    }
+    };
+    
     return(
         <>
             <div className="flex justify-end items-center m-5">

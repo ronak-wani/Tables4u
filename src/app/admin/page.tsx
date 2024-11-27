@@ -1,7 +1,6 @@
 'use client';
 
 import React from "react";
-import Header from "@/app/(components)/Header";
 import {
   Command,
   CommandInput,
@@ -23,11 +22,9 @@ export default function Home() {
   };
 
   return (
-    <>
-      <Header />
+    <> 
       <div className="flex flex-col items-center justify-center gap-5">
         <div className="flex items-center gap-4 w-full max-w-4xl">
-          <Date />
           <Command className="w-full">
             <CommandInput placeholder="Find restaurants ..." />
           </Command>
