@@ -15,7 +15,7 @@ export default function owner(){
         <>
             <div className="flex justify-end items-center m-5">
                 <div>
-                    <Link href="/owners/NewRestaurant">
+                    <Link href="/owners/createRestaurant">
                         <Button>Create Restaurant</Button>
                     </Link>
                 </div>
@@ -42,7 +42,7 @@ export default function owner(){
                             </Link>
 
                                 <Button disabled={password === ""}>
-                                    <Link href="/owners/EditRestaurant">
+                                    <Link href="/owners/editRestaurant">
                                         Login
                                     </Link>
                                     </Button>
