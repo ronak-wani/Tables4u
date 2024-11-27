@@ -27,12 +27,14 @@ instance.get('/listActiveRestaurants', {})
             })
 
 const restaurants = [
+
   { id: 1, name: "Thai Time", address: "107 Highland St, Worcester, MA" },
   { id: 2, name: "The Boynton", address: "117 Highland St, Worcester, MA" },
   { id: 3, name: "Dragon Dynasty", address: "104 Highland St, Worcester, MA" },
   { id: 4, name: "Momo Palace", address: "160 Green St, Worcester, MA" },
   { id: 5, name: "Tech Pizza", address: "137 Highland St, Worcester, MA" },
   { id: 6, name: "Dunkin", address: "100 Institute Rd, Worcester, MA" },
+
 ];
 
 export default function Home() {
