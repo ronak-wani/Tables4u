@@ -16,12 +16,14 @@ import axios from "axios";
 import { useSearchParams } from 'next/navigation';
 import {Button} from "@/components/ui/Button";
 import {Trash} from "lucide-react";
+import { useRouter } from 'next/navigation';
 
 const instance = axios.create({
     baseURL: 'https://8ng83lxa6k.execute-api.us-east-1.amazonaws.com/G2Iteration1'
 });
 
 export default function EditRestaurantPage() {
+    const router = useRouter();
     const searchParams = useSearchParams();
     const restaurantID = searchParams.get('restaurantID');
     const Name = searchParams.get('Name');
@@ -116,6 +118,7 @@ export default function EditRestaurantPage() {
                 // this is a 500-type error, where there is no such API on the server side
                 return error
             })
+            router.push(`/`);
         }
         else{
             setDialogOpen(false);
@@ -193,7 +196,7 @@ export default function EditRestaurantPage() {
                                                 <button
                                                     className="px-4 py-2 bg-blue-600 text-white rounded"
                                                     onClick={() => {
-                                                        // handleDelete(true); // Confirm the activation
+                                                        handleDelete(true); // Confirm the activation
                                                         setDeleteDialogOpen(false);
                                                     }}
                                                 >
