@@ -33,7 +33,7 @@ export default function owner(){
                             let status = response.data.statusCode;
                             const result = response.data.result.restaurant[0];
                             router.push(
-                                `/owners/editRestaurant?restaurantID=${encodeURIComponent(result.restaurantID)}&Name=${encodeURIComponent(result.name)}&Address=${encodeURIComponent(result.address)}&numberOfTables=${result.numberOfTables}&isActive=${encodeURIComponent(result.isActive)}&openHour=${result.openHour}&closeHour=${result.closeHour}`
+                                `/owners/editRestaurant?restaurantID=${encodeURIComponent(result.restaurantID)}&Name=${encodeURIComponent(result.name)}&Address=${encodeURIComponent(result.address)}&isActive=${encodeURIComponent(result.isActive)}&openHour=${result.openHour}&closeHour=${result.closeHour}`
                             );
                         })
                         .catch(function (error) {
