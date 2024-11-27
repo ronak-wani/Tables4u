@@ -5,12 +5,37 @@ import Link from "next/link";
 import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} from "@/components/ui/card";
 import {Label} from "@/components/ui/label";
 import {Input} from "@/components/ui/input";
+import axios from "axios";
+import { useRouter } from 'next/navigation';
+
+const instance = axios.create({
+    baseURL: 'https://8ng83lxa6k.execute-api.us-east-1.amazonaws.com/ownerLogin'
+});
 
 export default function owner(){
-    const [password, setPassword] = React.useState("");
+    let [password, setPassword] = React.useState("");
+    const router = useRouter();
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setPassword(e.target.value);
+        const newPassword = e.target.value;
+        setPassword(newPassword);
+        password = newPassword;
     };
+    function handleLogin(){
+        instance.post('/loginRestaurant', {"password":password})
+            .then(function (response) {
+                console.log("Success");
+                console.log(response.data);
+                let status = response.data.statusCode;
+                const result = response.data.result.restaurant[0];
+                router.push(
+                    `/owners/editRestaurant?restaurantID=${encodeURIComponent(result.restaurantID)}&Name=${encodeURIComponent(result.name)}&Address=${encodeURIComponent(result.address)}&numberOfTables=${result.numberOfTables}`
+                );
+            })
+            .catch(function (error) {
+                // this is a 500-type error, where there is no such API on the server side
+                return error
+            })
+    }
     return(
         <>
             <div className="flex justify-end items-center m-5">
@@ -48,10 +73,8 @@ export default function owner(){
                                 <Button variant="outline">Back</Button>
                             </Link>
 
-                                <Button disabled={password === ""}>
-                                    <Link href="/owners/editRestaurant">
+                                <Button disabled={password === ""} onClick={() => handleLogin()}>
                                         Login
-                                    </Link>
                                     </Button>
                         </CardFooter>
                     </Card>
