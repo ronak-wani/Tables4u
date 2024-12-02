@@ -34,7 +34,7 @@ export default function CreateRestaurantPage() {
         setPassword(newPassword);
         console.log(newPassword);
         setNotInvisible(false);
-        instance.post('/createRestaurant', {"name":Name, "address":Address, "numberOfTables": numberOfTables, "password":newPassword})
+        instance.post('/createRestaurant', {"name":Name, "address":Address, "password":newPassword})
             .then(function (response) {
                 let status = response.data.statusCode
                 let resultComp = response.data.body
