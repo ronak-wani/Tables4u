@@ -15,11 +15,10 @@ const instance = axios.create({
 export default function CreateRestaurantPage() {
     const [Name, setName] = React.useState("");
     const [Address, setAddress] = React.useState("");
-    const [numberOfTables, setNumberOfTables] = React.useState(0);
     const [isNotInvisible, setNotInvisible] = React.useState(true);
     const [password, setPassword] = React.useState("");
 
-    const isFormValid:boolean = Name.trim() !== "" && Address.trim() !== "" && numberOfTables !== 0;
+    const isFormValid:boolean = Name.trim() !== "" && Address.trim() !== "";
 
 
     const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
