@@ -11,7 +11,7 @@ export const handler = async (event) => {
 
     let CreateTable = (restaurantID, tableID, numberOfSeats) => {
         return new Promise((resolve, reject) => {
-            pool.query("INSERT INTO Tables (restaurantID, tableID, numberOfSeats) VALUES (?, ?, ?);", [restaurantID, tableID, numberOfSeats], (error, rows) => {
+            pool.query("INSERT INTO Tables (restaurantID, tableID, numberOfSeats) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE numberOfSeats=?;", [restaurantID, tableID, numberOfSeats, numberOfSeats], (error, rows) => {
                 if (error) { return reject(error); }
                 return resolve(rows);
             })
