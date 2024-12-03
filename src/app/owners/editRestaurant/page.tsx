@@ -25,19 +25,20 @@ const instance = axios.create({
 export default function EditRestaurantPage() {
     
     const router = useRouter();
-    const searchParams = useSearchParams();
-    const restaurantID = searchParams.get('restaurantID');
-    const Name = searchParams.get('Name');
-    const Address = searchParams.get('Address');
-    const openingHour = Number(searchParams.get('openHour') || 0);
-    const closingHour = Number(searchParams.get('closeHour') || 0);
-    const [isActivated, setIsActivated] = React.useState(searchParams.get('isActive'));
+    // const Restaurant = localStorage.getItem("Restaurant");
+    // const searchParams = useSearchParams();
+    const restaurantID =  localStorage.getItem("restaurantID");
+    const Name =  localStorage.getItem("name");
+    const Address = localStorage.getItem("address");
+    const [numberOfTables, setNumberOfTables] = React.useState(Number(localStorage.getItem("numberOfTables")) || 1);
+    const openingHour = Number( localStorage.getItem("openHour") || 0);
+    const closingHour = Number( localStorage.getItem("closeHour") || 0);
+    const [isActivated, setIsActivated] = React.useState( localStorage.getItem("isActive"));
     const [password, setPassword] = React.useState("");
     const [openHour, setOpenHour] = React.useState(openingHour ? Number(openingHour) : 0);
     const [closeHour, setCloseHour] = React.useState(closingHour ? Number(closingHour) : 0);
     const [numberOfSeats, setNumberOfSeats] = React.useState(0);
     const [disabledTables, setDisabledTables] = useState<{ [key: number]: boolean }>({});
-    const [numberOfTables, setNumberOfTables] = React.useState(Number(searchParams.get('numberOfTables')) || 0);
 
     const handleOpenHour = (e: React.ChangeEvent<HTMLInputElement>) => {
         setOpenHour(Number(e.target.value));
