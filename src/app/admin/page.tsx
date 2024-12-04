@@ -164,16 +164,28 @@ export default function Home() {
         <div className="mt-4 w-full max-w-4xl h-80 overflow-y-auto border border-gray-200 rounded-lg shadow">
           {loading && <p className="text-center">Loading...</p>}
           {error && <p className="text-center text-red-500">{error}</p>}
-          {!loading && !error && restaurants.map((restaurant) => (
-            <div
-              key={restaurant.restaurantID} 
-              className="flex flex-col p-4 border-b last:border-none hover:bg-red-100 cursor-pointer"
-              onClick={() => handleRestaurantClick(restaurant)} 
-            >
-              <h3 className="text-lg font-semibold">{restaurant.name}</h3>
-              <p className="text-sm text-gray-600">{restaurant.address}</p>
-            </div>
-          ))}
+          {!loading &&
+            !error &&
+            restaurants.map((restaurant) => (
+              <div
+                key={restaurant.restaurantID}
+                className="flex justify-between items-center p-4 border-b last:border-none hover:bg-red-100 cursor-pointer"
+                onClick={() => handleRestaurantClick(restaurant)}
+              >
+                <div>
+                  <h3 className="text-lg font-semibold">{restaurant.name}</h3>
+                  <p className="text-sm text-gray-600">{restaurant.address}</p>
+                </div>
+                <span
+                  className={`text-sm font-medium ${
+                    restaurant.isActive === "Y" ? "text-green-500" : "text-red-500"
+                  }`}
+                >
+                  {restaurant.isActive === "Y" ? "Active" : "Inactive"}
+                </span>
+              </div>
+            ))
+          }
         </div>
       </div>
     </>
