@@ -34,6 +34,7 @@ export default function owner(){
                             let status = response.data.statusCode;
                             const result = response.data.result.restaurant[0];
                             // localStorage.setItem("Restaurant", response.data.result.restaurant[0]);
+                            localStorage.clear();
                             localStorage.setItem("restaurantID", response.data.result.restaurant[0].restaurantID);
                             localStorage.setItem("name", response.data.result.restaurant[0].name);
                             localStorage.setItem("address", response.data.result.restaurant[0].address);
