@@ -141,7 +141,7 @@ export default function EditRestaurantPage() {
         if(checked){
             setDialogOpen(true);
             setIsActivated('Y');
-            instance.post('/activateRestaurant', {"name":Name, "address":Address, "password":password, "openHour":openHour, "closeHour":closeHour})
+            instance.post('/activateRestaurant', {"name":Name, "address":Address, "password":password, "numberOfTables":numberOfTables, "openHour":openHour, "closeHour":closeHour})
                 .then(function (response) {
                     let status = response.data.statusCode;
                     let resultComp = response.data.result;
@@ -269,7 +269,7 @@ export default function EditRestaurantPage() {
                                                         className="px-4 py-2 bg-gray-200 rounded"
                                                         onClick={() => {
                                                             handleChange(false); // Reset the switch if the user cancels
-                                                            setDeleteDialogOpen(false);
+                                                            setDialogOpen(false);
                                                         }}
                                                     >
                                                         Cancel
@@ -278,7 +278,7 @@ export default function EditRestaurantPage() {
                                                         className="px-4 py-2 bg-blue-600 text-white rounded"
                                                         onClick={() => {
                                                             handleChange(true); // Confirm the activation
-                                                            setDeleteDialogOpen(false);
+                                                            setDialogOpen(false);
                                                         }}
                                                     >
                                                         Confirm
