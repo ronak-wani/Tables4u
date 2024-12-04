@@ -1,10 +1,17 @@
 'use client';
-import React, { useState, useEffect } from 'react';
-import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Switch } from "@/components/ui/switch";
+import React, {useEffect, useState} from 'react';
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+   // DialogHeader,
+    DialogTitle,
+   // DialogTrigger,
+} from "@/components/ui/dialog"
+import {Label} from "@/components/ui/label";
+import { Input } from "@/components/ui/input"
+import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
+import { Switch } from "@/components/ui/switch"
 import axios from "axios";
 import { Button } from "@/components/ui/Button";
 import { Trash } from "lucide-react";
@@ -16,8 +23,6 @@ const instance = axios.create({
 
 export default function EditRestaurantPage() {
     const router = useRouter();
-    // const Restaurant = localStorage.getItem("Restaurant");
-    // const searchParams = useSearchParams();
     const restaurantID =  localStorage.getItem("restaurantID");
     const Name =  localStorage.getItem("name");
     const Address = localStorage.getItem("address");
@@ -30,12 +35,29 @@ export default function EditRestaurantPage() {
     const [closeHour, setCloseHour] = React.useState(closingHour ? Number(closingHour) : 0);
     const [numberOfSeats, setNumberOfSeats] = React.useState(0);
     const [disabledTables, setDisabledTables] = useState<{ [key: number]: boolean }>({});
+    const [numberOfSeatsArray, setNumberOfSeatsArray] = useState<Record<number, string | null>>({}); // Store table-specific placeholders
 
     const handleOpenHour = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setOpenHour(Number(e.target.value));
+        const newOpenHour = Number(e.target.value);
+        if(newOpenHour > 23 || newOpenHour < 0){
+            alert("Invalid Time. Enter a time valid in 24 hour format");
+            e.target.value = "";
+            setOpenHour(Number(0));
+        }
+        else{
+            setOpenHour(Number(newOpenHour));
+        }
     };
     const handleCloseHour = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setCloseHour(Number(e.target.value));
+        const newCloseHour = Number(e.target.value);
+        if(newCloseHour > 23 || newCloseHour < 0){
+            alert("Invalid Time. Enter a time valid in 24 hour format");
+            e.target.value = "";
+            setCloseHour(Number(23));
+        }
+        else{
+            setCloseHour(Number(newCloseHour));
+        }
     };
     const handleAccessKey = (e: React.ChangeEvent<HTMLInputElement>) => {
         setPassword(e.target.value);
@@ -44,8 +66,17 @@ export default function EditRestaurantPage() {
         const newNumberOfSeats = Number(e.target.value);
         if (newNumberOfSeats > 8) {
             alert("Maximum number of seats allowed is 8. If a value above 8 is entered then it will default to 8");
+            e.target.value = "";
             setNumberOfSeats(Number(8));
-        } else {
+        }
+        else if(newNumberOfSeats < 1)
+        {
+            alert("Minimum number of seats allowed is 1. If a value below 1 is entered then it will default to 1");
+            e.target.value = "";
+            setNumberOfSeats(Number(1));
+        }
+        else
+        {
             setNumberOfSeats(Number(newNumberOfSeats));
         }
     }, [restaurantID, Name, Address, numberOfTables]);
@@ -66,6 +97,13 @@ export default function EditRestaurantPage() {
         }));
     }
 
+    useEffect(() => {
+        const storedNumberOfSeats: Record<number, string | null> = {};
+        for (let i = 1; i <= numberOfTables; i++) {
+            storedNumberOfSeats[i] = localStorage.getItem(`tableID_${i}`); // Adjust key if needed
+        }
+        setNumberOfSeatsArray(storedNumberOfSeats);
+    }, [numberOfTables]);
     const tables = [];
     for (let i = 1; i <= numberOfTables; i++) {
         tables.push(
@@ -75,7 +113,7 @@ export default function EditRestaurantPage() {
                     type="number"
                     id={`Table${i}Seats`}
                     className="w-1/2"
-                    placeholder={`Enter number of seats for Table ${i}`}
+                    placeholder={numberOfSeatsArray[i] || `Enter number of seats for Table ${i}`}
                     min={1}
                     max={8}
                     disabled={disabledTables[i] || isActivated === 'Y'}
@@ -131,7 +169,15 @@ export default function EditRestaurantPage() {
         }
     }
     const handleNumberOfTablesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setNumberOfTables(Number(e.target.value));
+        const newNumberOfTables = Number(e.target.value);
+        if (newNumberOfTables < 1) {
+            alert("Minimum number of tables allowed is 1. If a value below 1 is entered then it will default to 1");
+            e.target.value = "";
+            setNumberOfTables(Number(1));
+        }
+        else{
+            setNumberOfTables(Number(newNumberOfTables));
+        }
     };
     const handleSave = (checked: boolean, i?: number) => {
         setSaveDialogOpen(true);

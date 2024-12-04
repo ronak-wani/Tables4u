@@ -11,8 +11,7 @@ export const handler = async (event) => {
 
     let saveRestaurant = (numberOfTables, password, openHour, closeHour) => {
         return new Promise((resolve, reject) => {
-            pool.query("UPDATE Restaurants SET numberOfTables = ?, openHour = ?, closeHour = ? " +
-                "WHERE password = ?;", [numberOfTables, openHour, closeHour, password], (error, rows) => {
+            pool.query("UPDATE Restaurants SET numberOfTables = ?, openHour = ?, closeHour = ? WHERE password = ?;", [numberOfTables, openHour, closeHour, password], (error, rows) => {
                 if (error) {
                     return reject(error);
                 }
@@ -22,8 +21,7 @@ export const handler = async (event) => {
     }
     let saveTable = (restaurantID, tableID, numberOfSeats) => {
         return new Promise((resolve, reject) => {
-            pool.query("UPDATE Tables SET numberOfSeats = ? " +
-                "WHERE restaurantID = ? AND tableID = ?;", [numberOfSeats, restaurantID, tableID], (error, rows) => {
+            pool.query("UPDATE Tables SET numberOfSeats = ? WHERE restaurantID = ? AND tableID = ?;", [numberOfSeats, restaurantID, tableID], (error, rows) => {
                 if (error) { return reject(error); }
                 return resolve(rows);
             })
