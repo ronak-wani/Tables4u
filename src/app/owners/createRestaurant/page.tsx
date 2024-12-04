@@ -15,11 +15,10 @@ const instance = axios.create({
 export default function CreateRestaurantPage() {
     const [Name, setName] = React.useState("");
     const [Address, setAddress] = React.useState("");
-    const [numberOfTables, setNumberOfTables] = React.useState(0);
     const [isNotInvisible, setNotInvisible] = React.useState(true);
     const [password, setPassword] = React.useState("");
 
-    const isFormValid:boolean = Name.trim() !== "" && Address.trim() !== "" && numberOfTables !== 0;
+    const isFormValid:boolean = Name.trim() !== "" && Address.trim() !== "";
 
 
     const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -30,16 +29,12 @@ export default function CreateRestaurantPage() {
         setAddress(e.target.value);
     };
 
-    const handleNumberOfTablesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setNumberOfTables(Number(e.target.value));
-    };
-
     function handleCreate(){
         const newPassword = (Math.random() * 999999).toString(36).slice(0);
         setPassword(newPassword);
         console.log(newPassword);
         setNotInvisible(false);
-        instance.post('/createRestaurant', {"name":Name, "address":Address, "numberOfTables": numberOfTables, "password":newPassword})
+        instance.post('/createRestaurant', {"name":Name, "address":Address, "password":newPassword})
             .then(function (response) {
                 let status = response.data.statusCode
                 let resultComp = response.data.body
@@ -78,8 +73,6 @@ export default function CreateRestaurantPage() {
                                     <Input id="name" placeholder="Restaurant Name" onChange={handleNameChange} required={true}/>
                                     <Label htmlFor="address">Address <span style={{color: 'red'}}>*</span></Label>
                                     <Input id="address" placeholder="Restaurant Address" onChange={handleAddressChange} required={true}/>
-                                    <Label htmlFor="numberOfTables">Number of Tables <span style={{color: 'red'}}>*</span></Label>
-                                    <Input type="number" id="numberOfTables" placeholder="Number of Tables" onChange={handleNumberOfTablesChange} required={true}/>
                                 </div>
                             </div>
                         </form>

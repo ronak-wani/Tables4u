@@ -16,41 +16,37 @@ const instance = axios.create({
 
 export default function EditRestaurantPage() {
     const router = useRouter();
-
-    // Initialize state variables
-    const [restaurantID, setRestaurantID] = useState<string | null>(null);
-    const [Name, setName] = useState<string>('');
-    const [Address, setAddress] = useState<string>('');
-    const [numberOfTables, setNumberOfTables] = useState<number>(0);
-
-    const [password, setPassword] = useState("");
-    const [openHour, setOpenHour] = useState(-1);
-    const [closeHour, setCloseHour] = useState(-1);
-    const [numberOfSeats, setNumberOfSeats] = useState(0);
+    // const Restaurant = localStorage.getItem("Restaurant");
+    // const searchParams = useSearchParams();
+    const restaurantID =  localStorage.getItem("restaurantID");
+    const Name =  localStorage.getItem("name");
+    const Address = localStorage.getItem("address");
+    const [numberOfTables, setNumberOfTables] = React.useState(Number(localStorage.getItem("numberOfTables")) || 1);
+    const openingHour = Number( localStorage.getItem("openHour") || 0);
+    const closingHour = Number( localStorage.getItem("closeHour") || 0);
+    const [isActivated, setIsActivated] = React.useState( localStorage.getItem("isActive"));
+    const [password, setPassword] = React.useState("");
+    const [openHour, setOpenHour] = React.useState(openingHour ? Number(openingHour) : 0);
+    const [closeHour, setCloseHour] = React.useState(closingHour ? Number(closingHour) : 0);
+    const [numberOfSeats, setNumberOfSeats] = React.useState(0);
     const [disabledTables, setDisabledTables] = useState<{ [key: number]: boolean }>({});
 
-    useEffect(() => {
-        if (typeof window !== 'undefined') {
-            // Only run this code in the browser (client-side)
-            const storedRestaurantID = localStorage.getItem('restaurantID');
-            const storedName = localStorage.getItem('Name');
-            const storedAddress = localStorage.getItem('Address');
-            const storedNumberOfTables = localStorage.getItem('numberOfTables');
-
-            if (storedRestaurantID) setRestaurantID(storedRestaurantID);
-            if (storedName) setName(storedName);
-            if (storedAddress) setAddress(storedAddress);
-            if (storedNumberOfTables) setNumberOfTables(Number(storedNumberOfTables));
-        }
-    }, []);
-
-    useEffect(() => {
-        if (typeof window !== 'undefined') {
-            // Save data to localStorage whenever the state changes
-            localStorage.setItem('restaurantID', restaurantID || '');
-            localStorage.setItem('Name', Name);
-            localStorage.setItem('Address', Address);
-            localStorage.setItem('numberOfTables', String(numberOfTables));
+    const handleOpenHour = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setOpenHour(Number(e.target.value));
+    };
+    const handleCloseHour = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setCloseHour(Number(e.target.value));
+    };
+    const handleAccessKey = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setPassword(e.target.value);
+    };
+    const handleNumberOfSeatsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const newNumberOfSeats = Number(e.target.value);
+        if (newNumberOfSeats > 8) {
+            alert("Maximum number of seats allowed is 8. If a value above 8 is entered then it will default to 8");
+            setNumberOfSeats(Number(8));
+        } else {
+            setNumberOfSeats(Number(newNumberOfSeats));
         }
     }, [restaurantID, Name, Address, numberOfTables]);
 
@@ -82,25 +78,28 @@ export default function EditRestaurantPage() {
                     placeholder={`Enter number of seats for Table ${i}`}
                     min={1}
                     max={8}
-                    disabled={disabledTables[i]}
-                    onChange={(e) => setNumberOfSeats(Number(e.target.value))}
+                    disabled={disabledTables[i] || isActivated === 'Y'}
+                    onChange={handleNumberOfSeatsChange}
                 />
-                <Button type="button" disabled={disabledTables[i]} onClick={(e) => createTable(i)}> Confirm </Button>
+                <Button type="button" disabled={disabledTables[i]  || isActivated === 'Y'} onClick={(e) =>
+                {
+                    createTable(i);
+                }}> Confirm </Button>
             </div>
         );
     }
-
-    const [isActive, setActive] = useState(false);
+    const [on, setOn] = useState(false);
     const [dialogOpen, setDialogOpen] = useState(false);
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
     const handleChange = (checked: boolean) => {
-        if (!isActive && dialogOpen) {
-            setActive(checked);
+        if (!on && dialogOpen) {
+            setOn(checked);
         }
         if (checked) {
             setDialogOpen(true);
-            instance.post('/activateRestaurant', { "name": Name, "address": Address, "password": password, "openHour": openHour, "closeHour": closeHour })
+            setIsActivated('Y');
+            instance.post('/activateRestaurant', {"name":Name, "address":Address, "password":password, "openHour":openHour, "closeHour":closeHour})
                 .then(function (response) {
                     let status = response.data.statusCode;
                     let resultComp = response.data.result;
@@ -115,8 +114,29 @@ export default function EditRestaurantPage() {
 
     const handleDelete = (checked: boolean) => {
         setDeleteDialogOpen(true);
-        if (checked) {
-            instance.post('/deleteRestaurant', { "name": Name, "address": Address, "password": password })
+        if(checked){
+            instance.post('/deleteRestaurant', {"name":Name, "address":Address, "password":password})
+            .then(function (response) {
+                let status = response.data.statusCode
+                let resultComp = response.data.body
+            })
+            .catch(function (error) {
+                // this is a 500-type error, where there is no such API on the server side
+                return error
+            })
+            router.push(`/`);
+        }
+        else{
+            setDeleteDialogOpen(false);
+        }
+    }
+    const handleNumberOfTablesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setNumberOfTables(Number(e.target.value));
+    };
+    const handleSave = (checked: boolean, i?: number) => {
+        setSaveDialogOpen(true);
+        if(checked){
+            instance.post('/editRestaurant', {"password":password, "openHour":openHour, "closeHour":closeHour})
                 .then(function (response) {
                     let status = response.data.statusCode;
                     let resultComp = response.data.body;
@@ -144,17 +164,34 @@ export default function EditRestaurantPage() {
                                     <Label>RestaurantID: {restaurantID}</Label>
                                     <Label>Name: {Name}</Label>
                                     <Label>Address: {Address}</Label>
-                                    <Label>Number of Tables: {numberOfTables}</Label>
-                                    <Label htmlFor="openHour">Open Hour <span style={{ color: 'red' }}>*</span></Label>
-                                    <Input type="number" className={`w-1/2`} id="openHour" placeholder="Open Hour" onChange={(e) => setOpenHour(Number(e.target.value))} required={true} />
-                                    <Label htmlFor="closeHour">Close Hour <span style={{ color: 'red' }}>*</span></Label>
-                                    <Input type="number" className={`w-1/2`} id="closeHour" placeholder="Close Hour" onChange={(e) => setCloseHour(Number(e.target.value))} required={true} />
+                                    <Label htmlFor="numberOfTables">Number of Tables <span style={{color: 'red'}}>*</span></Label>
+                                    <Input disabled={isActivated === 'Y'} type="number" className={`w-1/2`} id="numberOfTables" placeholder={numberOfTables.toString()} onChange={handleNumberOfTablesChange} required={true}/>
+                                    <Label htmlFor="openHour">Open Hour <span style={{color: 'red'}}>*</span></Label>
+                                    <Input
+                                        type="number"
+                                        className={`w-1/2`}
+                                        id="openHour"
+                                        placeholder={openingHour?.toString()}
+                                        onChange={handleOpenHour}
+                                        required={true}
+                                        disabled={isActivated === 'Y'}
+                                    />
+                                    <Label htmlFor="closeHour">Close Hour <span style={{color: 'red'}}>*</span></Label>
+                                    <Input
+                                        type="number"
+                                        className={`w-1/2`}
+                                        id="closeHour"
+                                        placeholder={closingHour?.toString()}
+                                        onChange={handleCloseHour}
+                                        required={true}
+                                        disabled={isActivated === 'Y'}
+                                    />
                                     {tables}
                                 </div>
                                 <div className={`flex flex-row`}>
                                     <div className="flex items-center space-x-2">
                                         <Label htmlFor="activate">Activate</Label>
-                                        <Switch id="activate" checked={isActive} onCheckedChange={handleChange} />
+                                        <Switch id="activate" checked={isActivated === 'Y' || on} onCheckedChange={isActivated === 'Y' ? undefined : handleChange}/>
                                         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
                                             <DialogContent>
                                                 <DialogTitle>Are you absolutely sure?</DialogTitle>
@@ -183,8 +220,8 @@ export default function EditRestaurantPage() {
                                         </Dialog>
                                     </div>
                                     <div className="flex ml-auto space-x-2">
-                                        <Button type="button" className={`bg-red-600 hover:bg-red-400`} onClick={() => setDeleteDialogOpen(true)}><Trash />Delete</Button>
-                                        <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+                                        <Button disabled={isActivated === 'Y'} type="button" onClick={() => setSaveDialogOpen(true)}>Save</Button>
+                                        <Dialog open={saveDialogOpen} onOpenChange={setSaveDialogOpen}>
                                             <DialogContent>
                                                 <DialogTitle>Are you absolutely sure?</DialogTitle>
                                                 <div className="flex justify-end space-x-2">

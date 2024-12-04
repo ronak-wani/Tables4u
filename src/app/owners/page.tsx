@@ -32,9 +32,18 @@ export default function Owner(){
                             console.log(response.data);
                             let status = response.data.statusCode;
                             const result = response.data.result.restaurant[0];
-                            router.push(
-                                `/owners/editRestaurant?restaurantID=${encodeURIComponent(result.restaurantID)}&Name=${encodeURIComponent(result.name)}&Address=${encodeURIComponent(result.address)}&numberOfTables=${result.numberOfTables}&openHour=${result.openHour}&closeHour=${result.closeHour}`
-                            );
+                            // localStorage.setItem("Restaurant", response.data.result.restaurant[0]);
+                            localStorage.setItem("restaurantID", response.data.result.restaurant[0].restaurantID);
+                            localStorage.setItem("name", response.data.result.restaurant[0].name);
+                            localStorage.setItem("address", response.data.result.restaurant[0].address);
+                            localStorage.setItem("numberOfTables", response.data.result.restaurant[0].numberOfTables);
+                            localStorage.setItem("isActive", response.data.result.restaurant[0].isActive);
+                            localStorage.setItem("openHour", response.data.result.restaurant[0].openHour);
+                            localStorage.setItem("closeHour", response.data.result.restaurant[0].closeHour);
+                            // router.push(
+                            //     `/owners/editRestaurant?restaurantID=${encodeURIComponent(result.restaurantID)}&Name=${encodeURIComponent(result.name)}&Address=${encodeURIComponent(result.address)}&numberOfTables=${result.numberOfTables}&isActive=${encodeURIComponent(result.isActive)}&openHour=${result.openHour}&closeHour=${result.closeHour}`
+                            // );
+                            router.push( `/owners/editRestaurant`);
                         })
                         .catch(function (error) {
                             console.error("Error logging in:", error);
