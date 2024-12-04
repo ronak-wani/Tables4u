@@ -25,8 +25,6 @@ const instance = axios.create({
 export default function EditRestaurantPage() {
     
     const router = useRouter();
-    // const Restaurant = localStorage.getItem("Restaurant");
-    // const searchParams = useSearchParams();
     const restaurantID =  localStorage.getItem("restaurantID");
     const Name =  localStorage.getItem("name");
     const Address = localStorage.getItem("address");
@@ -53,8 +51,17 @@ export default function EditRestaurantPage() {
         const newNumberOfSeats = Number(e.target.value);
         if (newNumberOfSeats > 8) {
             alert("Maximum number of seats allowed is 8. If a value above 8 is entered then it will default to 8");
+            e.target.value = "";
             setNumberOfSeats(Number(8));
-        } else {
+        }
+        else if(newNumberOfSeats < 1)
+        {
+            alert("Minimum number of seats allowed is 1. If a value below 1 is entered then it will default to 1");
+            e.target.value = "";
+            setNumberOfSeats(Number(1));
+        }
+        else
+        {
             setNumberOfSeats(Number(newNumberOfSeats));
         }
     };
@@ -142,7 +149,15 @@ export default function EditRestaurantPage() {
         }
     }
     const handleNumberOfTablesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setNumberOfTables(Number(e.target.value));
+        const newNumberOfTables = Number(e.target.value);
+        if (newNumberOfTables < 1) {
+            alert("Minimum number of tables allowed is 1. If a value below 1 is entered then it will default to 1");
+            e.target.value = "";
+            setNumberOfTables(Number(1));
+        }
+        else{
+            setNumberOfTables(Number(newNumberOfTables));
+        }
     };
     const handleSave = (checked: boolean, i?: number) => {
         setSaveDialogOpen(true);
