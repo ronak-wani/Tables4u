@@ -102,10 +102,11 @@ export default function EditRestaurantPage() {
     useEffect(() => {
         const storedNumberOfSeats: Record<number, string | null> = {};
         for (let i = 1; i <= numberOfTables; i++) {
-            storedNumberOfSeats[i] = localStorage.getItem(`tableID_${i}`); // Adjust key if needed
+            storedNumberOfSeats[i] = localStorage.getItem(`numberOfSeats_${i}`);
         }
         setNumberOfSeatsArray(storedNumberOfSeats);
     }, [numberOfTables]);
+
     const tables = [];
 
     for (let i = 1; i <= numberOfTables; i++) {
@@ -140,7 +141,7 @@ export default function EditRestaurantPage() {
         if(checked){
             setDialogOpen(true);
             setIsActivated('Y');
-            instance.post('/activateRestaurant', {"name":Name, "address":Address, "password":password, "openHour":openHour, "closeHour":closeHour, "numberOfTables":numberOfTables})
+            instance.post('/activateRestaurant', {"name":Name, "address":Address, "password":password, "openHour":openHour, "closeHour":closeHour})
                 .then(function (response) {
                     let status = response.data.statusCode;
                     let resultComp = response.data.result;
@@ -187,7 +188,7 @@ export default function EditRestaurantPage() {
     const handleSave = (checked: boolean, i?: number) => {
         setSaveDialogOpen(true);
         if(checked){
-            instance.post('/editRestaurant', {"password":password, "openHour":openHour, "closeHour":closeHour, "numberOfTables":numberOfTables})
+            instance.post('/editRestaurant', {"password":password, "numberOfTables": numberOfTables, "openHour":openHour, "closeHour":closeHour})
                 .then(function (response) {
                     let status = response.data.statusCode
                     let resultComp = response.data.body
