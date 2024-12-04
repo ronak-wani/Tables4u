@@ -3,26 +3,30 @@
 import React, { useState } from "react";
 import Header from "@/app/(components)/Header";
 import axios from "axios";
-
+import { Restaurant } from "@/app/page";  
 const instance = axios.create({
   baseURL: "https://8ng83lxa6k.execute-api.us-east-1.amazonaws.com/G2Iteration1",
 });
 
+
+
+
 export default function Home() {
-  const [restaurants, setRestaurants] = useState([]);
+  const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [adminPassword, setAdminPassword] = useState(""); 
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false); 
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false); 
-  const [restaurantToDelete, setRestaurantToDelete] = useState(null); // Store restaurant to delete
+  const [restaurantToDelete, setRestaurantToDelete] = useState<Restaurant | null>(null);
+  
 
-  const handleRestaurantClick = (restaurant) => {
-    setRestaurantToDelete(restaurant); // Set the clicked restaurant
-    setIsDeleteModalOpen(true); // Open delete modal
+  const handleRestaurantClick = (restaurant: Restaurant) => {
+    setRestaurantToDelete(restaurant); 
+    setIsDeleteModalOpen(true); 
   };
 
-  const handlePasswordChange = (event) => {
+  const handlePasswordChange = (event: { target: { value: React.SetStateAction<string>; }; }) => {
     setAdminPassword(event.target.value);
   };
 
@@ -57,35 +61,44 @@ export default function Home() {
   };
 
   const handleDeleteRestaurant = () => {
+    if (!restaurantToDelete) return; 
+  
+    
+    const restaurant = restaurantToDelete as Restaurant;
+  
     setLoading(true);
     setError("");
-
+  
     instance
       .post("/adminDeleteRestaurant", {
-        name: restaurantToDelete.name,
-        address: restaurantToDelete.address,
+        name: restaurant.name,
+        address: restaurant.address,
         adminPass: adminPassword,
       })
       .then((response) => {
         if (response.status === 200) {
           console.log("Request was successful with status 200!");
-          console.log(response.data); 
+          console.log(response.data);
         }
-      
-        setRestaurants(restaurants.filter((restaurant) => restaurant.restaurantID !== restaurantToDelete.restaurantID));
-        setIsDeleteModalOpen(false); 
-        setAdminPassword(""); 
+  
+        
+        setRestaurants(
+          restaurants.filter((restaurant) => restaurant.restaurantID !== restaurantToDelete.restaurantID)
+        );
+        setIsDeleteModalOpen(false);
+        setAdminPassword("");
       })
       .catch((err) => {
         console.error("Error deleting restaurant:", err);
         setError("An error occurred while deleting the restaurant.");
-        setIsDeleteModalOpen(false);// Close modal on error
+        setIsDeleteModalOpen(false); 
       })
       .finally(() => {
         setLoading(false);
       });
   };
-
+  
+  
   return (
     <>
       <div className="flex flex-col items-center justify-center gap-5">
@@ -131,34 +144,37 @@ export default function Home() {
 
         {/* Delete Restaurant Modal */}
         {isDeleteModalOpen && restaurantToDelete && (
-          <div className="fixed inset-0 bg-gray-500 bg-opacity-50 flex items-center justify-center">
-            <div className="bg-white p-6 rounded shadow-lg max-w-sm w-full">
-              <h3 className="text-lg font-semibold">Enter Admin Access Key to Delete</h3>
-              <p>Are you sure you want to delete {restaurantToDelete.name}?</p>
-              <input
-                type="password"
-                placeholder="Enter admin access key"
-                value={adminPassword}
-                onChange={handlePasswordChange}
-                className="mt-2 p-2 border rounded w-full"
-              />
-              <div className="mt-4 flex justify-between">
-                <button
-                  onClick={() => setIsDeleteModalOpen(false)}
-                  className="px-4 py-2 bg-gray-300 text-gray-700 rounded"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={handleDeleteRestaurant} 
-                  className="px-4 py-2 bg-red-500 text-white rounded"
-                >
-                  Delete
-                </button>
-              </div>
+        <div className="fixed inset-0 bg-gray-500 bg-opacity-50 flex items-center justify-center">
+          <div className="bg-white p-6 rounded shadow-lg max-w-sm w-full">
+            <h3 className="text-lg font-semibold">Enter Admin Access Key to Delete</h3>
+            {/* Type guard to ensure restaurantToDelete is not null */}
+            <p>Are you sure you want to delete {restaurantToDelete?.name}?</p>
+            <input
+              type="password"
+              placeholder="Enter admin access key"
+              value={adminPassword}
+              onChange={handlePasswordChange}
+              className="mt-2 p-2 border rounded w-full"
+            />
+            <div className="mt-4 flex justify-between">
+              <button
+                onClick={() => setIsDeleteModalOpen(false)}
+                className="px-4 py-2 bg-gray-300 text-gray-700 rounded"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleDeleteRestaurant}
+                className="px-4 py-2 bg-red-500 text-white rounded"
+              >
+                Delete
+              </button>
             </div>
           </div>
-        )}
+        </div>
+      )}
+
+
 
         {/* Scrollable List of Restaurants */}
         <div className="mt-4 w-full max-w-4xl h-80 overflow-y-auto border border-gray-200 rounded-lg shadow">
@@ -167,7 +183,7 @@ export default function Home() {
           {!loading && !error && restaurants.map((restaurant) => (
             <div
               key={restaurant.restaurantID} 
-              className="flex flex-col p-4 border-b last:border-none hover:bg-gray-100 cursor-pointer"
+              className="flex flex-col p-4 border-b last:border-none hover:bg-red-100 cursor-pointer"
               onClick={() => handleRestaurantClick(restaurant)} 
             >
               <h3 className="text-lg font-semibold">{restaurant.name}</h3>
