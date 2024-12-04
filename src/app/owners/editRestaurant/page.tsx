@@ -39,10 +39,26 @@ export default function EditRestaurantPage() {
     const [disabledTables, setDisabledTables] = useState<{ [key: number]: boolean }>({});
 
     const handleOpenHour = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setOpenHour(Number(e.target.value));
+        const newOpenHour = Number(e.target.value);
+        if(newOpenHour > 23 || newOpenHour < 0){
+            alert("Invalid Time. Enter a time valid in 24 hour format");
+            e.target.value = "";
+            setOpenHour(Number(0));
+        }
+        else{
+            setOpenHour(Number(newOpenHour));
+        }
     };
     const handleCloseHour = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setCloseHour(Number(e.target.value));
+        const newCloseHour = Number(e.target.value);
+        if(newCloseHour > 23 || newCloseHour < 0){
+            alert("Invalid Time. Enter a time valid in 24 hour format");
+            e.target.value = "";
+            setCloseHour(Number(23));
+        }
+        else{
+            setCloseHour(Number(newCloseHour));
+        }
     };
     const handleAccessKey = (e: React.ChangeEvent<HTMLInputElement>) => {
         setPassword(e.target.value);
