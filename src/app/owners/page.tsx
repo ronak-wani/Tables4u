@@ -41,7 +41,7 @@ export default function owner(){
                             localStorage.setItem("isActive", response.data.result.restaurant[0].isActive);
                             localStorage.setItem("openHour", response.data.result.restaurant[0].openHour);
                             localStorage.setItem("closeHour", response.data.result.restaurant[0].closeHour);
-                            for (let i=0;i<response.data.result.restaurant[0].tables;i++){
+                            for (let i=0;i<response.data.result.restaurant[0].numberOfTables;i++){
                                 localStorage.setItem(`tableID_${i}`, response.data.result.restaurant[i].tableID);
                                 localStorage.setItem(`numberOfSeats_${i}`, response.data.result.restaurant[i].numberOfSeats);
                             }
