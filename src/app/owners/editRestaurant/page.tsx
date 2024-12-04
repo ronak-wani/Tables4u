@@ -1,5 +1,5 @@
 'use client';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
     Dialog,
     DialogContent,
@@ -37,6 +37,7 @@ export default function EditRestaurantPage() {
     const [closeHour, setCloseHour] = React.useState(closingHour ? Number(closingHour) : 0);
     const [numberOfSeats, setNumberOfSeats] = React.useState(0);
     const [disabledTables, setDisabledTables] = useState<{ [key: number]: boolean }>({});
+    const [numberOfSeatsArray, setNumberOfSeatsArray] = useState<Record<number, string | null>>({}); // Store table-specific placeholders
 
     const handleOpenHour = (e: React.ChangeEvent<HTMLInputElement>) => {
         const newOpenHour = Number(e.target.value);
@@ -97,6 +98,14 @@ export default function EditRestaurantPage() {
             [i]: true, // Disable this specific table
         }));
     }
+
+    useEffect(() => {
+        const storedNumberOfSeats: Record<number, string | null> = {};
+        for (let i = 1; i <= numberOfTables; i++) {
+            storedNumberOfSeats[i] = localStorage.getItem(`tableID_${i}`); // Adjust key if needed
+        }
+        setNumberOfSeatsArray(storedNumberOfSeats);
+    }, [numberOfTables]);
     const tables = [];
 
     for (let i = 1; i <= numberOfTables; i++) {
@@ -107,7 +116,7 @@ export default function EditRestaurantPage() {
                     type="number"
                     id={`Table${i}Seats`}
                     className="w-1/2"
-                    placeholder={`Enter number of seats for Table ${i}`}
+                    placeholder={numberOfSeatsArray[i] || `Enter number of seats for Table ${i}`}
                     min={1}
                     max={8}
                     disabled={disabledTables[i] || isActivated === 'Y'}
