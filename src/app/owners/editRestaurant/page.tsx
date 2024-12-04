@@ -101,7 +101,7 @@ export default function EditRestaurantPage() {
 
     useEffect(() => {
         const storedNumberOfSeats: Record<number, string | null> = {};
-        for (let i = 1; i <= numberOfTables; i++) {
+        for (let i = 0; i < numberOfTables; i++) {
             storedNumberOfSeats[i] = localStorage.getItem(`numberOfSeats_${i}`);
         }
         setNumberOfSeatsArray(storedNumberOfSeats);
@@ -117,7 +117,7 @@ export default function EditRestaurantPage() {
                     type="number"
                     id={`Table${i}Seats`}
                     className="w-1/2"
-                    placeholder={numberOfSeatsArray[i] || `Enter number of seats for Table ${i}`}
+                    placeholder={numberOfSeatsArray[i-1] || `Enter number of seats for Table ${i}`}
                     min={1}
                     max={8}
                     disabled={disabledTables[i] || isActivated === 'Y'}
