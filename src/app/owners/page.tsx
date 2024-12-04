@@ -7,6 +7,7 @@ import {Label} from "@/components/ui/label";
 import {Input} from "@/components/ui/input";
 import axios from "axios";
 import { useRouter } from 'next/navigation';
+import {number} from "prop-types";
 
 const instance = axios.create({
     baseURL: 'https://8ng83lxa6k.execute-api.us-east-1.amazonaws.com/G2Iteration1'
@@ -32,9 +33,22 @@ export default function owner(){
                             console.log(response.data);
                             let status = response.data.statusCode;
                             const result = response.data.result.restaurant[0];
-                            router.push(
-                                `/owners/editRestaurant?restaurantID=${encodeURIComponent(result.restaurantID)}&Name=${encodeURIComponent(result.name)}&Address=${encodeURIComponent(result.address)}&numberOfTables=${result.numberOfTables}&isActive=${encodeURIComponent(result.isActive)}&openHour=${result.openHour}&closeHour=${result.closeHour}`
-                            );
+                            // localStorage.setItem("Restaurant", response.data.result.restaurant[0]);
+                            localStorage.setItem("restaurantID", response.data.result.restaurant[0].restaurantID);
+                            localStorage.setItem("name", response.data.result.restaurant[0].name);
+                            localStorage.setItem("address", response.data.result.restaurant[0].address);
+                            localStorage.setItem("numberOfTables", response.data.result.restaurant[0].numberOfTables);
+                            localStorage.setItem("isActive", response.data.result.restaurant[0].isActive);
+                            localStorage.setItem("openHour", response.data.result.restaurant[0].openHour);
+                            localStorage.setItem("closeHour", response.data.result.restaurant[0].closeHour);
+                            for (let i=0;i<response.data.result.restaurant[0].numberOfTables;i++){
+                                localStorage.setItem(`tableID_${i}`, response.data.result.restaurant[i].tableID);
+                                localStorage.setItem(`numberOfSeats_${i}`, response.data.result.restaurant[i].numberOfSeats);
+                            }
+                            // router.push(
+                            //     `/owners/editRestaurant?restaurantID=${encodeURIComponent(result.restaurantID)}&Name=${encodeURIComponent(result.name)}&Address=${encodeURIComponent(result.address)}&numberOfTables=${result.numberOfTables}&isActive=${encodeURIComponent(result.isActive)}&openHour=${result.openHour}&closeHour=${result.closeHour}`
+                            // );
+                            router.push( `/owners/editRestaurant`);
                         })
                         .catch(function (error) {
                             console.error("Error logging in:", error);
