@@ -11,7 +11,7 @@ export const handler = async (event) => {
 
     let LoginRestauraunt = (password) => {
         return new Promise((resolve, reject) => {
-            pool.query("SELECT * FROM Restaurants WHERE password = ?;", [password], (error, rows) => {
+            pool.query("SELECT * FROM Restaurants R JOIN Tables T ON R.restaurantID = T.restaurantID WHERE password = ?", [password], (error, rows) => {
                 if (error) { return reject(error); }
                 return resolve(rows);
             })
