@@ -7,15 +7,14 @@ import {Label} from "@/components/ui/label";
 import {Input} from "@/components/ui/input";
 import axios from "axios";
 import { useRouter } from 'next/navigation';
-import {number} from "prop-types";
+// import {number} from "prop-types";
 
 const instance = axios.create({
     baseURL: 'https://8ng83lxa6k.execute-api.us-east-1.amazonaws.com/G2Iteration1'
 });
-
+const router = useRouter();
 export default function owner(){
     let [password, setPassword] = React.useState("");
-    const router = useRouter();
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const newPassword = e.target.value;
         setPassword(newPassword);
@@ -31,8 +30,8 @@ export default function owner(){
                         .then(function (response) {
                             console.log("Success");
                             console.log(response.data);
-                            let status = response.data.statusCode;
-                            const result = response.data.result.restaurant[0];
+                            // let status = response.data.statusCode;
+                            // const result = response.data.result.restaurant[0];
                             // localStorage.setItem("Restaurant", response.data.result.restaurant[0]);
                             localStorage.clear();
                             localStorage.setItem("restaurantID", response.data.result.restaurant[0].restaurantID);

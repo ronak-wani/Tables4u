@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState } from "react";
-import Header from "@/app/(components)/Header";
 import axios from "axios";
 
 const instance = axios.create({
@@ -17,12 +16,12 @@ export default function Home() {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false); 
   const [restaurantToDelete, setRestaurantToDelete] = useState(null); // Store restaurant to delete
 
-  const handleRestaurantClick = (restaurant) => {
-    setRestaurantToDelete(restaurant); // Set the clicked restaurant
-    setIsDeleteModalOpen(true); // Open delete modal
-  };
+//   const handleRestaurantClick = (restaurant) => {
+//     setRestaurantToDelete(restaurant); // Set the clicked restaurant
+// // Open delete modal
+//   };
 
-  const handlePasswordChange = (event) => {
+  const handlePasswordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setAdminPassword(event.target.value);
   };
 
@@ -168,7 +167,7 @@ export default function Home() {
             <div
               key={restaurant.restaurantID} 
               className="flex flex-col p-4 border-b last:border-none hover:bg-gray-100 cursor-pointer"
-              onClick={() => handleRestaurantClick(restaurant)} 
+              onClick={() => {setRestaurantToDelete(restaurant); setIsDeleteModalOpen(true);}}
             >
               <h3 className="text-lg font-semibold">{restaurant.name}</h3>
               <p className="text-sm text-gray-600">{restaurant.address}</p>

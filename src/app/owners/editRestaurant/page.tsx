@@ -13,7 +13,6 @@ import { Input } from "@/components/ui/input"
 import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch"
 import axios from "axios";
-import { useSearchParams } from 'next/navigation';
 import {Button} from "@/components/ui/Button";
 import {Trash} from "lucide-react";
 import { useRouter } from 'next/navigation';
@@ -86,8 +85,8 @@ export default function EditRestaurantPage() {
     function createTable(i:number){
         instance.post('/createTable', {"restaurantID":restaurantID, "tableID":i,"numberOfSeats": numberOfSeats})
             .then(function (response) {
-                let status = response.data.statusCode;
-                let resultComp = response.data.result;
+                // let status = response.data.statusCode;
+                // let resultComp = response.data.result;
             })
             .catch(function (error) {
                 // this is a 500-type error, where there is no such API on the server side
@@ -123,7 +122,7 @@ export default function EditRestaurantPage() {
                     disabled={disabledTables[i] || isActivated === 'Y'}
                     onChange={handleNumberOfSeatsChange}
                 />
-                <Button type="button" disabled={disabledTables[i]  || isActivated === 'Y'} onClick={(e) =>
+                <Button type="button" disabled={disabledTables[i]  || isActivated === 'Y'} onClick={() =>
                 {
                     createTable(i);
                 }}> Confirm </Button>
@@ -143,8 +142,8 @@ export default function EditRestaurantPage() {
             setIsActivated('Y');
             instance.post('/activateRestaurant', {"name":Name, "address":Address, "password":password, "numberOfTables":numberOfTables, "openHour":openHour, "closeHour":closeHour})
                 .then(function (response) {
-                    let status = response.data.statusCode;
-                    let resultComp = response.data.result;
+                    // let status = response.data.statusCode;
+                    // let resultComp = response.data.result;
                 })
                 .catch(function (error) {
                     // this is a 500-type error, where there is no such API on the server side
@@ -161,8 +160,8 @@ export default function EditRestaurantPage() {
         if(checked){
             instance.post('/deleteRestaurant', {"name":Name, "address":Address, "password":password})
             .then(function (response) {
-                let status = response.data.statusCode
-                let resultComp = response.data.body
+                // let status = response.data.statusCode
+                // let resultComp = response.data.body
             })
             .catch(function (error) {
                 // this is a 500-type error, where there is no such API on the server side
@@ -190,8 +189,8 @@ export default function EditRestaurantPage() {
         if(checked){
             instance.post('/editRestaurant', {"password":password, "numberOfTables": numberOfTables, "openHour":openHour, "closeHour":closeHour})
                 .then(function (response) {
-                    let status = response.data.statusCode
-                    let resultComp = response.data.body
+                    // let status = response.data.statusCode
+                    // let resultComp = response.data.body
                 })
                 .catch(function (error) {
                     // this is a 500-type error, where there is no such API on the server side
@@ -199,8 +198,8 @@ export default function EditRestaurantPage() {
                 })
             instance.post('/editRestaurant', {"restaurantID":restaurantID, "tableID":i, "numberOfSeats":numberOfSeats})
                 .then(function (response) {
-                    let status = response.data.statusCode
-                    let resultComp = response.data.body
+                    // let status = response.data.statusCode
+                    // let resultComp = response.data.body
                 })
                 .catch(function (error) {
                     // this is a 500-type error, where there is no such API on the server side
