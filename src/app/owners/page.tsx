@@ -12,8 +12,9 @@ import { useRouter } from 'next/navigation';
 const instance = axios.create({
     baseURL: 'https://8ng83lxa6k.execute-api.us-east-1.amazonaws.com/G2Iteration1'
 });
-const router = useRouter();
+
 export default function owner(){
+    const router = useRouter();
     let [password, setPassword] = React.useState("");
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const newPassword = e.target.value;

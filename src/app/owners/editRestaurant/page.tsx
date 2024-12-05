@@ -24,19 +24,31 @@ const instance = axios.create({
 export default function EditRestaurantPage() {
     
     const router = useRouter();
-    const restaurantID =  localStorage.getItem("restaurantID");
-    const Name =  localStorage.getItem("name");
-    const Address = localStorage.getItem("address");
-    const [numberOfTables, setNumberOfTables] = React.useState(Number(localStorage.getItem("numberOfTables")) || 1);
-    const openingHour = Number( localStorage.getItem("openHour") || 0);
-    const closingHour = Number( localStorage.getItem("closeHour") || 0);
-    const [isActivated, setIsActivated] = React.useState( localStorage.getItem("isActive"));
+    const [restaurantID, setRestaurantID] = useState<string | null>(null);
+    const [Name, setName] = useState<string | null>(null);
+    const [Address, setAddress] = useState<string | null>(null);
+    const [numberOfTables, setNumberOfTables] = useState<number>(1);
+    const [openingHour, setOpeningHour] = useState<number>(0);
+    const [closingHour, setClosingHour] = useState<number>(0);
+    const [isActivated, setIsActivated] =  useState<string | null>(null);
     const [password, setPassword] = React.useState("");
     const [openHour, setOpenHour] = React.useState(openingHour ? Number(openingHour) : 0);
     const [closeHour, setCloseHour] = React.useState(closingHour ? Number(closingHour) : 0);
     const [numberOfSeats, setNumberOfSeats] = React.useState(0);
     const [disabledTables, setDisabledTables] = useState<{ [key: number]: boolean }>({});
     const [numberOfSeatsArray, setNumberOfSeatsArray] = useState<Record<number, string | null>>({}); // Store table-specific placeholders
+
+    useEffect(() => {
+        if (typeof window !== 'undefined') {
+            setRestaurantID(localStorage.getItem("restaurantID"));
+            setName(localStorage.getItem("name"));
+            setAddress(localStorage.getItem("address"));
+            setNumberOfTables(Number(localStorage.getItem("numberOfTables") || 1));
+            setOpeningHour(Number(localStorage.getItem("openHour") || 0));
+            setClosingHour(Number(localStorage.getItem("closeHour") || 0));
+            setIsActivated(localStorage.getItem("isActive"));
+        }
+    }, []);
 
     const handleOpenHour = (e: React.ChangeEvent<HTMLInputElement>) => {
         const newOpenHour = Number(e.target.value);
@@ -99,11 +111,13 @@ export default function EditRestaurantPage() {
     }
 
     useEffect(() => {
-        const storedNumberOfSeats: Record<number, string | null> = {};
-        for (let i = 0; i < numberOfTables; i++) {
-            storedNumberOfSeats[i] = localStorage.getItem(`numberOfSeats_${i}`);
+        if (typeof window !== 'undefined') {
+            const storedNumberOfSeats: Record<number, string | null> = {};
+            for (let i = 0; i < numberOfTables; i++) {
+                storedNumberOfSeats[i] = localStorage.getItem(`numberOfSeats_${i}`);
+            }
+            setNumberOfSeatsArray(storedNumberOfSeats);
         }
-        setNumberOfSeatsArray(storedNumberOfSeats);
     }, [numberOfTables]);
 
     const tables = [];

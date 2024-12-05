@@ -10,8 +10,14 @@ const instance = axios.create({
   baseURL: "https://8ng83lxa6k.execute-api.us-east-1.amazonaws.com/G2Iteration1",
 });
 
+interface Restaurant {
+    restaurantID: string;
+    name: string;
+    address: string;
+}
+
 export default function Home() {
-  const [restaurants, setRestaurants] = useState([]);
+  const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
