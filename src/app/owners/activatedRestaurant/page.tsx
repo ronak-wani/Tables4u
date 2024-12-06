@@ -68,43 +68,42 @@ export default function activateRestaurantPage() {
                         </div>
                         <Label htmlFor="openDay" className={`mr-5`}>Open Future Date</Label>
                         <div className={`mr-5`}>
-                                <DateCalendar selectedDate={openDay} onDateChange={handleOpenDay}
-                                              label="Select Open Date"/>
+                                <DateCalendar selectedDate={openDay} onDateChange={handleOpenDay} label="Select Open Date"/>
                         </div>
-                        <div className="flex justify-center space-x-2">
-                                <Button type="button" onClick={() => setSaveDialogOpen(true)}>Save</Button>
-                                <Dialog open={saveDialogOpen} onOpenChange={setSaveDialogOpen}>
-                                        <DialogContent>
-                                                <DialogTitle>Are you absolutely sure?</DialogTitle>
-                                                <DialogDescription>
-                                                        Customers will not be able to book reservations for the closed days
-                                                </DialogDescription>
-                                                <div className="flex justify-end space-x-2">
-                                                        <Input type="password" className={`w-1/2`} id="password"
-                                                               placeholder="Access key" onChange={handleAccessKey}
-                                                               required={true}/>
-                                                        <button
-                                                            className="px-4 py-2 bg-gray-200 rounded"
-                                                            onClick={() => {
-                                                                    handleSave(false); // Reset the switch if the user cancels
-                                                                    setSaveDialogOpen(false);
-                                                            }}
-                                                        >
-                                                                Cancel
-                                                        </button>
-                                                        <button
-                                                            className="px-4 py-2 bg-blue-600 text-white rounded"
-                                                            onClick={() => {
-                                                                    handleSave(true); // Confirm the activation
-                                                                    setSaveDialogOpen(false);
-                                                            }}
-                                                        >
-                                                                Confirm
-                                                        </button>
-                                                </div>
-                                        </DialogContent>
-                                </Dialog>
-                        </div>
+                    <div className="fixed bottom-96">
+                        <Button type="button" onClick={() => setSaveDialogOpen(true)}>Save</Button>
+                        <Dialog open={saveDialogOpen} onOpenChange={setSaveDialogOpen}>
+                            <DialogContent>
+                                <DialogTitle>Are you absolutely sure?</DialogTitle>
+                                <DialogDescription>
+                                    Customers will not be able to book reservations for the closed days
+                                </DialogDescription>
+                                <div className="flex justify-end space-x-2">
+                                    <Input type="password" className={`w-1/2`} id="password"
+                                           placeholder="Access key" onChange={handleAccessKey}
+                                           required={true}/>
+                                    <button
+                                        className="px-4 py-2 bg-gray-200 rounded"
+                                        onClick={() => {
+                                            handleSave(false); // Reset the switch if the user cancels
+                                            setSaveDialogOpen(false);
+                                        }}
+                                    >
+                                        Cancel
+                                    </button>
+                                    <button
+                                        className="px-4 py-2 bg-blue-600 text-white rounded"
+                                        onClick={() => {
+                                            handleSave(true); // Confirm the activation
+                                            setSaveDialogOpen(false);
+                                        }}
+                                    >
+                                        Confirm
+                                    </button>
+                                </div>
+                            </DialogContent>
+                        </Dialog>
+                    </div>
                 </div>
         </>
     )
