@@ -32,9 +32,6 @@ export default function Owner(){
                         .then(function (response) {
                             console.log("Success");
                             console.log(response.data);
-                            // let status = response.data.statusCode;
-                            // const result = response.data.result.restaurant[0];
-                            // localStorage.setItem("Restaurant", response.data.result.restaurant[0]);
                             localStorage.clear();
                             localStorage.setItem("restaurantID", response.data.result.restaurant[0].restaurantID);
                             localStorage.setItem("name", response.data.result.restaurant[0].name);
@@ -47,9 +44,6 @@ export default function Owner(){
                                 localStorage.setItem(`tableID_${i}`, response.data.result.restaurant[i].tableID);
                                 localStorage.setItem(`numberOfSeats_${i}`, response.data.result.restaurant[i].numberOfSeats);
                             }
-                            // router.push(
-                            //     `/owners/editRestaurant?restaurantID=${encodeURIComponent(result.restaurantID)}&Name=${encodeURIComponent(result.name)}&Address=${encodeURIComponent(result.address)}&numberOfTables=${result.numberOfTables}&isActive=${encodeURIComponent(result.isActive)}&openHour=${result.openHour}&closeHour=${result.closeHour}`
-                            // );
                             if(response.data.result.restaurant[0].isActive==='Y')
                                 router.push( `/owners/activatedRestaurant`);
                             else
