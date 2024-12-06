@@ -13,7 +13,7 @@ const instance = axios.create({
     baseURL: 'https://8ng83lxa6k.execute-api.us-east-1.amazonaws.com/G2Iteration1'
 });
 
-export default function owner(){
+export default function Owner(){
     const router = useRouter();
     let [password, setPassword] = React.useState("");
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -49,7 +49,10 @@ export default function owner(){
                             // router.push(
                             //     `/owners/editRestaurant?restaurantID=${encodeURIComponent(result.restaurantID)}&Name=${encodeURIComponent(result.name)}&Address=${encodeURIComponent(result.address)}&numberOfTables=${result.numberOfTables}&isActive=${encodeURIComponent(result.isActive)}&openHour=${result.openHour}&closeHour=${result.closeHour}`
                             // );
-                            router.push( `/owners/editRestaurant`);
+                            if(response.data.result.restaurant[0].isActive==='Y')
+                                router.push( `/owners/activatedRestaurant`);
+                            else
+                                router.push( `/owners/editRestaurant`);
                         })
                         .catch(function (error) {
                             console.error("Error logging in:", error);
