@@ -49,7 +49,7 @@ export default function Home() {
 
   return (
       <>
-        <Header />
+        <Header hidden={true}/>
         <div className="flex flex-col items-center justify-center gap-5">
           <div className="flex items-center gap-4 w-full max-w-4xl">
             <Date />
