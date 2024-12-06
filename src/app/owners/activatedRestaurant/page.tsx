@@ -1,56 +1,107 @@
 'use client'
 import {Label} from "@/components/ui/label";
 import {Input} from "@/components/ui/input";
-import React from "react";
-import Date from "@/app/(components)/Date";
+import React, {useState} from "react";
+import DateCalendar from "@/app/(components)/Date";
 import Header from "@/app/(components)/Header";
+import {Button} from "react-day-picker";
+import {Dialog, DialogContent, DialogDescription, DialogTitle} from "@/components/ui/dialog";
+import axios from "axios";
 
-export default function EditRestaurantPage() {
-    let today:Date = new Date();
-    const handleOpenDay = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const newOpenDay = e.target.value;
-        if (newOpenDay < today) {
+const instance = axios.create({
+        baseURL: 'https://8ng83lxa6k.execute-api.us-east-1.amazonaws.com/G2Iteration1'
+});
+
+export default function activateRestaurantPage() {
+    const [openDay, setOpenDay] = useState<Date | undefined>(undefined);
+    const [closeDay, setCloseDay] = useState<Date | undefined>(undefined);
+    const today = new Date();
+    const [password, setPassword] = React.useState("");
+    const [saveDialogOpen, setSaveDialogOpen] = useState(false);
+
+    const handleOpenDay = (date: Date | undefined) => {
+        if (date && date < today) {
             alert("Invalid Open Date. Cannot enter a date in past.");
-            e.target.value = "";
-            setOpenHour(Number(0));
+            setOpenDay(undefined);
         } else {
-            setOpenHour(Number(newOpenHour));
+            setOpenDay(date ? date.toISOString().slice(0, 10) : undefined);
         }
     };
-    const handleCloseDay = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const newCloseHour = e.target.value;
-        if (newCloseDay < today) {
-            alert("Invalid Close Date. Cannot enter a date in past.");
-            e.target.value = "";
-            setCloseHour(Number(23));
+    const handleAccessKey = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setPassword(e.target.value);
+    };
+    const handleCloseDay = (date: Date | undefined) => {
+        if (date && date < today) {
+            alert("Invalid Close Date. Cannot enter a date in the past.");
+            setCloseDay(undefined);
         } else {
-            setCloseHour(Number(newCloseHour));
+            setCloseDay(date ? date.toISOString().slice(0, 10) : undefined);
         }
     };
+    const handleSave = (checked: boolean, i?: number) => {
+        setSaveDialogOpen(true);
+        if (checked) {
+            instance.post('/ownerCloseFutureDay', {
+                "password": password,
+                "closedDay": closeDay,
+            })
+                .then(function (response) {
+                    // let status = response.data.statusCode
+                    // let resultComp = response.data.body
+                })
+                .catch(function (error) {
+                    // this is a 500-type error, where there is no such API on the server side
+                    return error
+                })
+        } else {
+            setSaveDialogOpen(false);
+        }
+    }
     return (
         <>
-                <Header hidden={false}/>
+            <Header hidden={false}/>
             <div className={`flex justify-center items-center h-full mt-44`}>
                 <Label htmlFor="closeDay" className={`mr-5`}>Close Future Date</Label>
-                <Date onChange={handleCloseDay}/>
-                {/*<Input*/}
-                {/*    type="number"*/}
-                {/*    className={`w-1/2`}*/}
-                {/*    id="closeDay"*/}
-                {/*    placeholder={closingHour?.toString()}*/}
-                {/*    onChange={handleCloseDay}*/}
-                {/*    required={true}*/}
-                {/*/>*/}
+                <div className={`mr-5`}>
+                    <DateCalendar selectedDate={closeDay} onDateChange={handleCloseDay}
+                                  label="Select Close Date"/>
+                </div>
                 <Label htmlFor="openDay" className={`mr-5`}>Open Future Date</Label>
-                <Date onChange={handleOpenDay}/>
-                {/*<Input*/}
-                {/*    type="number"*/}
-                {/*    className={`w-1/2`}*/}
-                {/*    id="openDay"*/}
-                {/*    placeholder={closingHour?.toString()}*/}
-                {/*    onChange={handleOpenDay}*/}
-                {/*    required={true}*/}
-                {/*/>*/}
+                <div className={`mr-5`}>
+                    <DateCalendar selectedDate={openDay} onDateChange={handleOpenDay}
+                                  label="Select Open Date"/>
+                </div>
+                <Dialog open={saveDialogOpen} onOpenChange={setSaveDialogOpen}>
+                    <DialogContent>
+                        <DialogTitle>Are you absolutely sure?</DialogTitle>
+                        <DialogDescription>
+                            Customers will not be able to book reservations for the closed days
+                        </DialogDescription>
+                        <div className="flex justify-end space-x-2">
+                            <Input type="password" className={`w-1/2`} id="password"
+                                   placeholder="Access key" onChange={handleAccessKey}
+                                   required={true}/>
+                            <button
+                                className="px-4 py-2 bg-gray-200 rounded"
+                                onClick={() => {
+                                    handleSave(false); // Reset the switch if the user cancels
+                                    setSaveDialogOpen(false);
+                                }}
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                className="px-4 py-2 bg-blue-600 text-white rounded"
+                                onClick={() => {
+                                    handleSave(true); // Confirm the activation
+                                    setSaveDialogOpen(false);
+                                }}
+                            >
+                                Confirm
+                            </button>
+                        </div>
+                    </DialogContent>
+                </Dialog>
             </div>
         </>
     )
