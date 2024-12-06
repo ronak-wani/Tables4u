@@ -141,7 +141,7 @@ export default function EditRestaurantPage() {
         if(checked){
             setDialogOpen(true);
             setIsActivated('Y');
-            instance.post('/activateRestaurant', {"name":Name, "address":Address, "password":password, "numberOfTables":numberOfTables, "openHour":openHour, "closeHour":closeHour})
+            instance.post('/activateRestaurant', {"name":Name, "address":Address, "password":password, "openHour":openHour, "closeHour":closeHour, "numberOfTables":numberOfTables})
                 .then(function (response) {
                     let status = response.data.statusCode;
                     let resultComp = response.data.result;
@@ -188,7 +188,7 @@ export default function EditRestaurantPage() {
     const handleSave = (checked: boolean, i?: number) => {
         setSaveDialogOpen(true);
         if(checked){
-            instance.post('/editRestaurant', {"password":password, "numberOfTables": numberOfTables, "openHour":openHour, "closeHour":closeHour})
+            instance.post('/editRestaurant', {"password":password, "openHour":openHour, "closeHour":closeHour, "numberOfTables":numberOfTables})
                 .then(function (response) {
                     let status = response.data.statusCode
                     let resultComp = response.data.body
