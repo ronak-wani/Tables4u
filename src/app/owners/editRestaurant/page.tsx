@@ -16,6 +16,7 @@ import axios from "axios";
 import {Button} from "@/components/ui/Button";
 import {Trash} from "lucide-react";
 import { useRouter } from 'next/navigation';
+import Header from "@/app/(components)/Header";
 
 const instance = axios.create({
     baseURL: 'https://8ng83lxa6k.execute-api.us-east-1.amazonaws.com/G2Iteration1'
@@ -226,7 +227,8 @@ export default function EditRestaurantPage() {
     }
     return (
         <>
-            <div className={`flex justify-center items-center h-full mt-44`}>
+            <Header hidden={false}/>
+            <div className={`flex justify-center items-center h-full mt-16`}>
                 <Card className="w-[800px]">
                     <CardHeader>
                         <CardTitle>Restaurant</CardTitle>

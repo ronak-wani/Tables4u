@@ -7,6 +7,7 @@ import {Button} from "@/components/ui/Button";
 import Link from "next/link";
 import { Copy } from 'lucide-react';
 import axios from 'axios';
+import Header from "@/app/(components)/Header";
 
 const instance = axios.create({
     baseURL: 'https://8ng83lxa6k.execute-api.us-east-1.amazonaws.com/G2Iteration1'
@@ -59,8 +60,9 @@ export default function CreateRestaurantPage() {
     }
     return (
         <>
+            <Header hidden={false}/>
             {isNotInvisible && (
-            <div className={`flex justify-center items-center h-full mt-44`}>
+            <div className={`flex justify-center items-center h-full mt-36`}>
                 <Card className="w-[800px]">
                     <CardHeader>
                         <CardTitle>Restaurant</CardTitle>

@@ -7,6 +7,7 @@ import {Label} from "@/components/ui/label";
 import {Input} from "@/components/ui/input";
 import axios from "axios";
 import { useRouter } from 'next/navigation';
+import Header from "@/app/(components)/Header";
 // import {number} from "prop-types";
 
 const instance = axios.create({
@@ -64,14 +65,15 @@ export default function Owner(){
     
     return(
         <>
-            <div className="flex justify-end items-center m-5">
+            <div className="flex justify-between items-center mr-5">
+                <Header hidden={false}/>
                 <div>
                     <Link href="/owners/createRestaurant">
                         <Button>Create Restaurant</Button>
                     </Link>
                 </div>
             </div>
-            <div className={`flex justify-center items-center h-full mt-60`}>
+            <div className={`flex justify-center items-center h-full mt-56`}>
                     <Card className="w-[600px]">
                         <CardHeader>
                             <CardTitle>Login</CardTitle>
