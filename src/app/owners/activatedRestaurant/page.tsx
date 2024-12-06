@@ -24,7 +24,7 @@ export default function activateRestaurantPage() {
             alert("Invalid Open Date. Cannot enter a date in past.");
             setOpenDay(undefined);
         } else {
-            setOpenDay(date ? date.toISOString().slice(0, 10) : undefined);
+            setOpenDay(date);
         }
     };
     const handleAccessKey = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -35,7 +35,7 @@ export default function activateRestaurantPage() {
             alert("Invalid Close Date. Cannot enter a date in the past.");
             setCloseDay(undefined);
         } else {
-            setCloseDay(date ? date.toISOString().slice(0, 10) : undefined);
+            setCloseDay(date);
         }
     };
     const handleSave = (checked: boolean, i?: number) => {
@@ -43,7 +43,7 @@ export default function activateRestaurantPage() {
         if (checked) {
             instance.post('/ownerCloseFutureDay', {
                 "password": password,
-                "closedDay": closeDay,
+                "closedDay": closeDay? closeDay.toISOString().slice(0, 10) : null,
             })
                 .then(function (response) {
                     // let status = response.data.statusCode
