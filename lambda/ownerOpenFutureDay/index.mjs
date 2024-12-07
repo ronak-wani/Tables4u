@@ -21,7 +21,7 @@ export const handler = async (event) => {
     const unsaveCloseDay = (restaurantID, day) => {
         return new Promise((resolve, reject) => {
             pool.query(
-                "UPDATE ClosedDays SET day = null WHERE restaurantID = ? AND day = ?;", [restaurantID, day], (error, results) => {
+                "DELETE FROM ClosedDays WHERE restaurantID = ? AND day = ?;", [restaurantID, day], (error, results) => {
                     if (error) return reject(error);
                     return resolve(results.insertId);
                 });

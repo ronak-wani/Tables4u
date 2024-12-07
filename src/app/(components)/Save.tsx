@@ -29,7 +29,8 @@ const SaveButton: React.FC<SaveButtonProps> = ({ route, message, closeDay, openD
     };
 
     const handleSave = (confirm: boolean) => {
-        if (confirm && closeDay !== null) {
+        if (confirm && closeDay !== null && closeDay !== undefined) {
+            console.log("Close Day:", closeDay);
             instance.post(`${route}`, {
                     password,
                     day: closeDay ? closeDay.toISOString().slice(0, 10) : null,
@@ -41,7 +42,8 @@ const SaveButton: React.FC<SaveButtonProps> = ({ route, message, closeDay, openD
                     console.error("Error saving data:", error);
                 });
         }
-        else if (confirm && openDay !==null){
+        else if (confirm && openDay !==null && openDay !== undefined){
+            console.log("Open Day:", openDay);
             instance.post(`${route}`, {
                 password,
                 day: openDay ? openDay.toISOString().slice(0, 10) : null,
