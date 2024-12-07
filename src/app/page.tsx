@@ -24,6 +24,7 @@ export default function Home() {
     const [error, setError] = useState("");
     const today = new Date();
     const [day, setDay] = useState<Date | undefined>(undefined);
+    const [specificRestaurant, setSpecificRestaurant] = useState("");
     const [time, setTime] = React.useState(-1);
 
     useEffect(() => {
@@ -72,6 +73,26 @@ export default function Home() {
         }
     };
 
+    const handleSpecificRestaurant = (e: React.ChangeEvent<HTMLInputElement>) => {
+        useEffect(() => {
+            instance.post('/consumerSearchSpecificRestaurant', {"restaurantName":e.target.value, "day":day, "time":time})
+                .then(function (response) {
+                    // let status = response.data.statusCode;
+                    // let resultComp = response.data.result;
+                })
+                .catch(function (error) {
+                    // this is a 500-type error, where there is no such API on the server side
+                    return error
+                })
+        }, []);
+        if(){
+            setSpecificRestaurant(e.target.value);
+        }
+        else{
+            setSpecificRestaurant("");
+        }
+    }
+
     return (
         <>
             <Header hidden={true}/>
@@ -89,20 +110,22 @@ export default function Home() {
                     <div className="relative w-full max-w-md">
                         <Input
                             type="text"
+                            id="restaurantName"
                             placeholder="Find restaurants ..."
                             className={`pl-10 bg-white`}
+                            onChange={handleSpecificRestaurant}
                         />
                         <div className="absolute top-1/2 left-3 transform -translate-y-1/2">
                             <Search className="text-gray-500" size={20}/>
                         </div>
                     </div>
                 </div>
-                
+
                 <div className="mt-4 w-full max-w-4xl h-80 overflow-y-auto border border-gray-200 rounded-lg shadow">
                     {loading && <p className="text-center">Loading...</p>}
                     {error && <p className="text-center text-red-500">{error}</p>}
                     {!loading &&
-                        !error &&
+                        !error && specificRestaurant!=="" &&
                         restaurants.map((restaurant) => (
                             <div
                                 key={restaurant.restaurantID} // Ensure to use a unique key
