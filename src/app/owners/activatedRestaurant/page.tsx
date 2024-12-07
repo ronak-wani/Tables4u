@@ -4,6 +4,7 @@ import React, {useState} from "react";
 import DateCalendar from "@/app/(components)/Date";
 import Header from "@/app/(components)/Header";
 import Save from "@/app/(components)/Save";
+import {Button} from "@/components/ui/Button";
 
 
 export default function ActivateRestaurantPage() {
@@ -31,7 +32,7 @@ export default function ActivateRestaurantPage() {
     return (
         <>
             <Header hidden={false}/>
-            <div className={`flex justify-center items-center h-full mt-44`}>
+            <div className={`flex justify-center items-center h-full mt-32`}>
                 <Label htmlFor="closeDay" className={`mr-5`}>Close Future Date</Label>
                 <div className={`mr-5`}>
                     <DateCalendar selectedDate={closeDay} onDateChange={handleCloseDay} label="Select Close Date"/>
@@ -42,6 +43,9 @@ export default function ActivateRestaurantPage() {
                     <DateCalendar selectedDate={openDay} onDateChange={handleOpenDay} label="Select Open Date"/>
                 </div>
                 <Save route="ownerOpenFutureDay" message="Customer will be able to book reservations for the open day"/>
+            </div>
+            <div className={`flex justify-center m-10`}>
+                <Button> Generate Current Date Availability Report</Button>
             </div>
         </>
     )
