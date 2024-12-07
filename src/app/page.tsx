@@ -6,6 +6,7 @@ import {Command, CommandInput} from "@/components/ui/command";
 import axios from "axios";
 import {Input} from "@/components/ui/input";
 import DateCalendar from "@/app/(components)/Date";
+import {Search} from "lucide-react";
 
 const instance = axios.create({
     baseURL: "https://8ng83lxa6k.execute-api.us-east-1.amazonaws.com/G2Iteration1",
@@ -85,12 +86,18 @@ export default function Home() {
                         onChange={handleTime}
                         required={true}
                     />
-                    <Command className="w-full">
-                        <CommandInput placeholder="Find restaurants ..."/>
-                    </Command>
+                    <div className="relative w-full max-w-md">
+                        <Input
+                            type="text"
+                            placeholder="Find restaurants ..."
+                            className={`pl-10 bg-white`}
+                        />
+                        <div className="absolute top-1/2 left-3 transform -translate-y-1/2">
+                            <Search className="text-gray-500" size={20}/>
+                        </div>
+                    </div>
                 </div>
-
-                {/* Scrollable List */}
+                
                 <div className="mt-4 w-full max-w-4xl h-80 overflow-y-auto border border-gray-200 rounded-lg shadow">
                     {loading && <p className="text-center">Loading...</p>}
                     {error && <p className="text-center text-red-500">{error}</p>}
