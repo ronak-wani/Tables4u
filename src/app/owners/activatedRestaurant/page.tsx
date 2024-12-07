@@ -12,7 +12,7 @@ const instance = axios.create({
         baseURL: 'https://8ng83lxa6k.execute-api.us-east-1.amazonaws.com/G2Iteration1'
 });
 
-export default function activateRestaurantPage() {
+export default function ActivateRestaurantPage() {
     const [openDay, setOpenDay] = useState<Date | undefined>(undefined);
     const [closeDay, setCloseDay] = useState<Date | undefined>(undefined);
     const today = new Date();
@@ -20,8 +20,8 @@ export default function activateRestaurantPage() {
     const [saveDialogOpen, setSaveDialogOpen] = useState(false);
 
     const handleOpenDay = (date: Date | undefined) => {
-        if (date && date < today) {
-            alert("Invalid Open Date. Cannot enter a date in past.");
+        if (date && date <= today) {
+            alert("Invalid Open Date. Enter a date in the future.");
             setOpenDay(undefined);
         } else {
             setOpenDay(date);
@@ -31,8 +31,8 @@ export default function activateRestaurantPage() {
         setPassword(e.target.value);
     };
     const handleCloseDay = (date: Date | undefined) => {
-        if (date && date < today) {
-            alert("Invalid Close Date. Cannot enter a date in the past.");
+        if (date && date <= today) {
+            alert("Invalid Close Date. Enter a date in the future.");
             setCloseDay(undefined);
         } else {
             setCloseDay(date);
