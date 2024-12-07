@@ -1,5 +1,5 @@
 'use client';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
     Dialog,
     DialogContent,
@@ -13,10 +13,10 @@ import { Input } from "@/components/ui/input"
 import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch"
 import axios from "axios";
-import { useSearchParams } from 'next/navigation';
 import {Button} from "@/components/ui/Button";
 import {Trash} from "lucide-react";
 import { useRouter } from 'next/navigation';
+import Header from "@/app/(components)/Header";
 
 const instance = axios.create({
     baseURL: 'https://8ng83lxa6k.execute-api.us-east-1.amazonaws.com/G2Iteration1'
@@ -25,26 +25,53 @@ const instance = axios.create({
 export default function EditRestaurantPage() {
     
     const router = useRouter();
-    // const Restaurant = localStorage.getItem("Restaurant");
-    // const searchParams = useSearchParams();
-    const restaurantID =  localStorage.getItem("restaurantID");
-    const Name =  localStorage.getItem("name");
-    const Address = localStorage.getItem("address");
-    const [numberOfTables, setNumberOfTables] = React.useState(Number(localStorage.getItem("numberOfTables")) || 1);
-    const openingHour = Number( localStorage.getItem("openHour") || 0);
-    const closingHour = Number( localStorage.getItem("closeHour") || 0);
-    const [isActivated, setIsActivated] = React.useState( localStorage.getItem("isActive"));
+    const [restaurantID, setRestaurantID] = useState<string | null>(null);
+    const [Name, setName] = useState<string | null>(null);
+    const [Address, setAddress] = useState<string | null>(null);
+    const [numberOfTables, setNumberOfTables] = useState<number>(1);
+    const [openingHour, setOpeningHour] = useState<number>(0);
+    const [closingHour, setClosingHour] = useState<number>(0);
+    const [isActivated, setIsActivated] =  useState<string | null>(null);
     const [password, setPassword] = React.useState("");
     const [openHour, setOpenHour] = React.useState(openingHour ? Number(openingHour) : 0);
     const [closeHour, setCloseHour] = React.useState(closingHour ? Number(closingHour) : 0);
     const [numberOfSeats, setNumberOfSeats] = React.useState(0);
     const [disabledTables, setDisabledTables] = useState<{ [key: number]: boolean }>({});
+    const [numberOfSeatsArray, setNumberOfSeatsArray] = useState<Record<number, string | null>>({}); // Store table-specific placeholders
+  
+    useEffect(() => {
+        if (typeof window !== 'undefined') {
+            setRestaurantID(localStorage.getItem("restaurantID"));
+            setName(localStorage.getItem("name"));
+            setAddress(localStorage.getItem("address"));
+            setNumberOfTables(Number(localStorage.getItem("numberOfTables") || 1));
+            setOpeningHour(Number(localStorage.getItem("openHour") || 0));
+            setClosingHour(Number(localStorage.getItem("closeHour") || 0));
+            setIsActivated(localStorage.getItem("isActive"));
+        }
+    }, []);
 
     const handleOpenHour = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setOpenHour(Number(e.target.value));
+        const newOpenHour = Number(e.target.value);
+        if(newOpenHour > 23 || newOpenHour < 0){
+            alert("Invalid Time. Enter a time valid in 24 hour format");
+            e.target.value = "";
+            setOpenHour(Number(0));
+        }
+        else{
+            setOpenHour(Number(newOpenHour));
+        }
     };
     const handleCloseHour = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setCloseHour(Number(e.target.value));
+        const newCloseHour = Number(e.target.value);
+        if(newCloseHour > 23 || newCloseHour < 0){
+            alert("Invalid Time. Enter a time valid in 24 hour format");
+            e.target.value = "";
+            setCloseHour(Number(23));
+        }
+        else{
+            setCloseHour(Number(newCloseHour));
+        }
     };
     const handleAccessKey = (e: React.ChangeEvent<HTMLInputElement>) => {
         setPassword(e.target.value);
@@ -53,8 +80,17 @@ export default function EditRestaurantPage() {
         const newNumberOfSeats = Number(e.target.value);
         if (newNumberOfSeats > 8) {
             alert("Maximum number of seats allowed is 8. If a value above 8 is entered then it will default to 8");
+            e.target.value = "";
             setNumberOfSeats(Number(8));
-        } else {
+        }
+        else if(newNumberOfSeats < 1)
+        {
+            alert("Minimum number of seats allowed is 1. If a value below 1 is entered then it will default to 1");
+            e.target.value = "";
+            setNumberOfSeats(Number(1));
+        }
+        else
+        {
             setNumberOfSeats(Number(newNumberOfSeats));
         }
     };
@@ -62,8 +98,8 @@ export default function EditRestaurantPage() {
     function createTable(i:number){
         instance.post('/createTable', {"restaurantID":restaurantID, "tableID":i,"numberOfSeats": numberOfSeats})
             .then(function (response) {
-                let status = response.data.statusCode;
-                let resultComp = response.data.result;
+                // let status = response.data.statusCode;
+                // let resultComp = response.data.result;
             })
             .catch(function (error) {
                 // this is a 500-type error, where there is no such API on the server side
@@ -74,6 +110,22 @@ export default function EditRestaurantPage() {
             [i]: true, // Disable this specific table
         }));
     }
+
+    useEffect(() => {
+        const storedNumberOfSeats: Record<number, string | null> = {};
+        for (let i = 0; i < numberOfTables; i++) {
+            storedNumberOfSeats[i] = localStorage.getItem(`numberOfSeats_${i}`);
+        }
+        setNumberOfSeatsArray(storedNumberOfSeats);
+        if (typeof window !== 'undefined') {
+            const storedNumberOfSeats: Record<number, string | null> = {};
+            for (let i = 0; i < numberOfTables; i++) {
+                storedNumberOfSeats[i] = localStorage.getItem(`numberOfSeats_${i}`);
+            }
+            setNumberOfSeatsArray(storedNumberOfSeats);
+        }
+    }, [numberOfTables]);
+
     const tables = [];
 
     for (let i = 1; i <= numberOfTables; i++) {
@@ -84,13 +136,13 @@ export default function EditRestaurantPage() {
                     type="number"
                     id={`Table${i}Seats`}
                     className="w-1/2"
-                    placeholder={`Enter number of seats for Table ${i}`}
+                    placeholder={numberOfSeatsArray[i-1] || `Enter number of seats for Table ${i}`}
                     min={1}
                     max={8}
                     disabled={disabledTables[i] || isActivated === 'Y'}
                     onChange={handleNumberOfSeatsChange}
                 />
-                <Button type="button" disabled={disabledTables[i]  || isActivated === 'Y'} onClick={(e) =>
+                <Button type="button" disabled={disabledTables[i]  || isActivated === 'Y'} onClick={() =>
                 {
                     createTable(i);
                 }}> Confirm </Button>
@@ -108,10 +160,10 @@ export default function EditRestaurantPage() {
         if(checked){
             setDialogOpen(true);
             setIsActivated('Y');
-            instance.post('/activateRestaurant', {"name":Name, "address":Address, "password":password, "openHour":openHour, "closeHour":closeHour})
+            instance.post('/activateRestaurant', {"name":Name, "address":Address, "password":password, "numberOfTables":numberOfTables, "openHour":openHour, "closeHour":closeHour})
                 .then(function (response) {
-                    let status = response.data.statusCode;
-                    let resultComp = response.data.result;
+                    // let status = response.data.statusCode;
+                    // let resultComp = response.data.result;
                 })
                 .catch(function (error) {
                     // this is a 500-type error, where there is no such API on the server side
@@ -128,8 +180,8 @@ export default function EditRestaurantPage() {
         if(checked){
             instance.post('/deleteRestaurant', {"name":Name, "address":Address, "password":password})
             .then(function (response) {
-                let status = response.data.statusCode
-                let resultComp = response.data.body
+                // let status = response.data.statusCode
+                // let resultComp = response.data.body
             })
             .catch(function (error) {
                 // this is a 500-type error, where there is no such API on the server side
@@ -142,15 +194,23 @@ export default function EditRestaurantPage() {
         }
     }
     const handleNumberOfTablesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setNumberOfTables(Number(e.target.value));
+        const newNumberOfTables = Number(e.target.value);
+        if (newNumberOfTables < 1) {
+            alert("Minimum number of tables allowed is 1. If a value below 1 is entered then it will default to 1");
+            e.target.value = "";
+            setNumberOfTables(Number(1));
+        }
+        else{
+            setNumberOfTables(Number(newNumberOfTables));
+        }
     };
     const handleSave = (checked: boolean, i?: number) => {
         setSaveDialogOpen(true);
         if(checked){
-            instance.post('/editRestaurant', {"password":password, "openHour":openHour, "closeHour":closeHour})
+            instance.post('/editRestaurant', {"password":password, "numberOfTables": numberOfTables, "openHour":openHour, "closeHour":closeHour})
                 .then(function (response) {
-                    let status = response.data.statusCode
-                    let resultComp = response.data.body
+                    // let status = response.data.statusCode
+                    // let resultComp = response.data.body
                 })
                 .catch(function (error) {
                     // this is a 500-type error, where there is no such API on the server side
@@ -158,8 +218,8 @@ export default function EditRestaurantPage() {
                 })
             instance.post('/editRestaurant', {"restaurantID":restaurantID, "tableID":i, "numberOfSeats":numberOfSeats})
                 .then(function (response) {
-                    let status = response.data.statusCode
-                    let resultComp = response.data.body
+                    // let status = response.data.statusCode
+                    // let resultComp = response.data.body
                 })
                 .catch(function (error) {
                     // this is a 500-type error, where there is no such API on the server side
@@ -172,7 +232,8 @@ export default function EditRestaurantPage() {
     }
     return (
         <>
-            <div className={`flex justify-center items-center h-full mt-44`}>
+            <Header hidden={false}/>
+            <div className={`flex justify-center items-center h-full mt-16`}>
                 <Card className="w-[800px]">
                     <CardHeader>
                         <CardTitle>Restaurant</CardTitle>
@@ -228,7 +289,7 @@ export default function EditRestaurantPage() {
                                                         className="px-4 py-2 bg-gray-200 rounded"
                                                         onClick={() => {
                                                             handleChange(false); // Reset the switch if the user cancels
-                                                            setDeleteDialogOpen(false);
+                                                            setDialogOpen(false);
                                                         }}
                                                     >
                                                         Cancel
@@ -237,7 +298,7 @@ export default function EditRestaurantPage() {
                                                         className="px-4 py-2 bg-blue-600 text-white rounded"
                                                         onClick={() => {
                                                             handleChange(true); // Confirm the activation
-                                                            setDeleteDialogOpen(false);
+                                                            setDialogOpen(false);
                                                         }}
                                                     >
                                                         Confirm
