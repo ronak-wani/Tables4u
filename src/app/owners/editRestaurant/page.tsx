@@ -38,7 +38,7 @@ export default function EditRestaurantPage() {
     const [numberOfSeats, setNumberOfSeats] = React.useState(0);
     const [disabledTables, setDisabledTables] = useState<{ [key: number]: boolean }>({});
     const [numberOfSeatsArray, setNumberOfSeatsArray] = useState<Record<number, string | null>>({}); // Store table-specific placeholders
-
+  
     useEffect(() => {
         if (typeof window !== 'undefined') {
             setRestaurantID(localStorage.getItem("restaurantID"));
@@ -112,6 +112,11 @@ export default function EditRestaurantPage() {
     }
 
     useEffect(() => {
+        const storedNumberOfSeats: Record<number, string | null> = {};
+        for (let i = 0; i < numberOfTables; i++) {
+            storedNumberOfSeats[i] = localStorage.getItem(`numberOfSeats_${i}`);
+        }
+        setNumberOfSeatsArray(storedNumberOfSeats);
         if (typeof window !== 'undefined') {
             const storedNumberOfSeats: Record<number, string | null> = {};
             for (let i = 0; i < numberOfTables; i++) {
