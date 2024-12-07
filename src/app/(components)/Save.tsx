@@ -28,10 +28,12 @@ const SaveButton: React.FC<SaveButtonProps> = ({ route, message, closeDay}) => {
     };
 
     const handleSave = (confirm: boolean) => {
+        console.log(closeDay ? closeDay.toISOString().slice(0, 10) : null);
         if (confirm) {
-            instance.post(`/${route}`, {
+            console.log("Route: " + route);
+            instance.post(`/ownerCloseFutureDay`, {
                     password,
-                    closedDay: closeDay ? closeDay.toISOString().slice(0, 10) : null,
+                    day: closeDay ? closeDay.toISOString().slice(0, 10) : null,
                 })
                 .then((response) => {
                     console.log("Save successful:", response.data);
