@@ -13,13 +13,14 @@ interface SaveButtonProps {
     route: string;
     message: string;
     closeDay?: Date | null;
+    openDay?: Date | null;
 }
 
 const instance = axios.create({
     baseURL: 'https://8ng83lxa6k.execute-api.us-east-1.amazonaws.com/G2Iteration1'
 });
 
-const SaveButton: React.FC<SaveButtonProps> = ({ route, message, closeDay}) => {
+const SaveButton: React.FC<SaveButtonProps> = ({ route, message, closeDay, openDay}) => {
     const [password, setPassword] = useState("");
     const [saveDialogOpen, setSaveDialogOpen] = useState(false);
 
@@ -28,13 +29,23 @@ const SaveButton: React.FC<SaveButtonProps> = ({ route, message, closeDay}) => {
     };
 
     const handleSave = (confirm: boolean) => {
-        console.log(closeDay ? closeDay.toISOString().slice(0, 10) : null);
-        if (confirm) {
-            console.log("Route: " + route);
-            instance.post(`/ownerCloseFutureDay`, {
+        if (confirm && closeDay !== null) {
+            instance.post(`${route}`, {
                     password,
                     day: closeDay ? closeDay.toISOString().slice(0, 10) : null,
                 })
+                .then((response) => {
+                    console.log("Save successful:", response.data);
+                })
+                .catch((error) => {
+                    console.error("Error saving data:", error);
+                });
+        }
+        else if (confirm && openDay !==null){
+            instance.post(`${route}`, {
+                password,
+                day: openDay ? openDay.toISOString().slice(0, 10) : null,
+            })
                 .then((response) => {
                     console.log("Save successful:", response.data);
                 })

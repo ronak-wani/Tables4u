@@ -42,7 +42,7 @@ export default function ActivateRestaurantPage() {
                 <div className={`mr-5`}>
                     <DateCalendar selectedDate={openDay} onDateChange={handleOpenDay} label="Select Open Date"/>
                 </div>
-                <Save route={`/ownerOpenFutureDay`} message="Customer will be able to book reservations for the open day"/>
+                <Save route={`/ownerOpenFutureDay`} openDay={openDay} message="Customer will be able to book reservations for the open day"/>
             </div>
             <div className={`flex justify-center m-10`}>
                 <Button> Generate Current Date Availability Report</Button>
