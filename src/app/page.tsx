@@ -7,6 +7,7 @@ import axios from "axios";
 import {Input} from "@/components/ui/input";
 import DateCalendar from "@/app/(components)/Date";
 import {Search} from "lucide-react";
+import {useRouter} from "next/navigation";
 
 const instance = axios.create({
     baseURL: "https://8ng83lxa6k.execute-api.us-east-1.amazonaws.com/G2Iteration1",
@@ -19,6 +20,7 @@ interface Restaurant {
 }
 
 export default function Home() {
+    const router = useRouter();
     const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
@@ -49,8 +51,8 @@ export default function Home() {
     }, []);
 
     const handleRestaurantClick = (restaurantName: string) => {
-        alert(`You selected: ${restaurantName}`);
-        // Add navigation logic here
+        router.push(`/consumers/${restaurantName}`);
+        // alert(`You selected: ${restaurantName}`);
     };
     const handleDay = (date: Date | undefined) => {
         if (date && date <= today) {
