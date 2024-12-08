@@ -124,8 +124,8 @@ export default function Home() {
                 <div className="mt-4 w-full max-w-4xl h-80 overflow-y-auto border border-gray-200 rounded-lg shadow">
                     {loading && <p className="text-center">Loading...</p>}
                     {error && <p className="text-center text-red-500">{error}</p>}
-                    {!loading &&
-                        !error && specificRestaurant!=="" &&
+                    {!loading && !error &&
+                        // !error && specificRestaurant!=="" &&
                         restaurants.map((restaurant) => (
                             <div
                                 key={restaurant.restaurantID} // Ensure to use a unique key
