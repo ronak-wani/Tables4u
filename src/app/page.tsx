@@ -28,7 +28,7 @@ export default function Home() {
     const [day, setDay] = useState<Date | undefined>(undefined);
     const [specificRestaurant, setSpecificRestaurant] = useState("");
     const [time, setTime] = React.useState(-1);
-    const isFormValid:boolean = day !== undefined && time !== -1;
+    const isFormValid: boolean = day !== undefined && time !== -1;
 
     useEffect(() => {
         const fetchRestaurants = async () => {
@@ -50,7 +50,7 @@ export default function Home() {
                     const response = await instance.post("/checkClosedDay", {
                         day: day.toISOString().slice(0, 10),
                     });
-                    const { statusCode } = response.data;
+                    const {statusCode} = response.data;
 
                     if (statusCode === 200) {
                         setRestaurants(response.data.result || []);
@@ -73,42 +73,33 @@ export default function Home() {
         fetchRestaurants();
     }, [day]);
 
-    const handleRestaurantClick = (restaurant:Restaurant) => {
-        // instance.post('/checkClosedDay', {"restaurantID":restaurant.restaurantID, "day":day})
-        //     .then(function (response) {
-        //         const statusCode = response.data.statusCode;
-        //         if(statusCode === 200 && response.data.result.canBook === true) {
-                    instance.post('/findVacantTable', {"name":restaurant.name, "address":restaurant.address})
-                        .then(function (response) {
-                            // let status = response.data.statusCode
-                            setTableID(response.data.result.tableID);
-                            instance.post('/consumerFetchRestaurantDetails', {"name":restaurant.name, "address":restaurant.address, "tableID":tableID})
-                                .then(function (response) {
-                                    localStorage.clear();
-                                    localStorage.setItem("name", response.data.result.restaurant[0].name);
-                                    localStorage.setItem("address", response.data.result.restaurant[0].address);
-                                    localStorage.setItem("tableID", response.data.result.restaurant[0].tableID);
-                                    localStorage.setItem("tableSize", response.data.result.restaurant[0].numberOfSeats);
-                                    localStorage.setItem("time", time.toString());
-                                    localStorage.setItem("day", day? day.toISOString().slice(0, 10) : "");
-                                    router.push(`/consumers/${restaurant.name}`);
-                                })
-                                .catch(function (error) {
-                                    return error
-                                })
-                        })
-                        .catch(function (error) {
-                            return error
-                        })
-                // }
-                // else{
-                //     alert("The restaurant is closed for the given day.")
-                // }
-            // })
-            // .catch(function (error) {
-            //     return error
-            // })
-        // alert(`You selected: ${restaurantName}`);
+    const handleRestaurantClick = (restaurant: Restaurant) => {
+        instance.post('/findVacantTable', {"name": restaurant.name, "address": restaurant.address})
+            .then(function (response) {
+                // let status = response.data.statusCode
+                setTableID(response.data.result.tableID);
+                instance.post('/consumerFetchRestaurantDetails', {
+                    "name": restaurant.name,
+                    "address": restaurant.address,
+                    "tableID": tableID
+                })
+                    .then(function (response) {
+                        localStorage.clear();
+                        localStorage.setItem("name", response.data.result.restaurant[0].name);
+                        localStorage.setItem("address", response.data.result.restaurant[0].address);
+                        localStorage.setItem("tableID", response.data.result.restaurant[0].tableID);
+                        localStorage.setItem("tableSize", response.data.result.restaurant[0].numberOfSeats);
+                        localStorage.setItem("time", time.toString());
+                        localStorage.setItem("day", day ? day.toISOString().slice(0, 10) : "");
+                        router.push(`/consumers/${restaurant.name}`);
+                    })
+                    .catch(function (error) {
+                        return error
+                    })
+            })
+            .catch(function (error) {
+                return error
+            })
     };
     const handleDay = (date: Date | undefined) => {
         if (date && date <= today) {
@@ -121,34 +112,33 @@ export default function Home() {
 
     const handleTime = (e: React.ChangeEvent<HTMLInputElement>) => {
         const newTime = Number(e.target.value);
-        if(newTime > 23 || newTime < 0){
+        if (newTime > 23 || newTime < 0) {
             alert("Invalid Time. Enter a time valid in 24 hour format");
             e.target.value = "";
             setTime(Number(-1));
-        }
-        else{
+        } else {
             setTime(Number(newTime));
         }
     };
 
     const handleSpecificRestaurant = (e: React.ChangeEvent<HTMLInputElement>) => {
-        // useEffect(() => {
-        //     instance.post('/consumerSearchSpecificRestaurant', {"restaurantName":e.target.value, "day":day, "time":time})
-        //         .then(function (response) {
-        //             // let status = response.data.statusCode;
-        //             // let resultComp = response.data.result;
-        //         })
-        //         .catch(function (error) {
-        //             // this is a 500-type error, where there is no such API on the server side
-        //             return error
-        //         })
-        // }, []);
-        // if(){
-        //     setSpecificRestaurant(e.target.value);
-        // }
-        // else{
-        //     setSpecificRestaurant("");
-        // }
+    // useEffect(() => {
+    //     instance.post('/consumerSearchSpecificRestaurant', {"restaurantName":e.target.value, "day":day, "time":time})
+    //         .then(function (response) {
+    //             // let status = response.data.statusCode;
+    //             // let resultComp = response.data.result;
+    //         })
+    //         .catch(function (error) {
+    //             // this is a 500-type error, where there is no such API on the server side
+    //             return error
+    //         })
+    // }, []);
+    // if(){
+    //     setSpecificRestaurant(e.target.value);
+    // }
+    // else{
+    //     setSpecificRestaurant("");
+    // }
     }
 
     return (
@@ -193,8 +183,8 @@ export default function Home() {
                                 onClick={() => {
                                     if (isFormValid) handleRestaurantClick(restaurant);
                                     else alert("Please enter date and time");
-                                }} >
-                                    
+                                }}>
+
                                 <h3 className="text-lg font-semibold">{restaurant.name}</h3>
                                 <p className="text-sm text-gray-600">{restaurant.address}</p>
                             </div>
