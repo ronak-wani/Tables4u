@@ -167,6 +167,7 @@ export default function Home() {
                                 }`}
                                 onClick={() => {
                                     if (isFormValid) handleRestaurantClick(restaurant);
+                                    else alert("Please enter date and time");
                                 }} >
                                     
                                 <h3 className="text-lg font-semibold">{restaurant.name}</h3>
