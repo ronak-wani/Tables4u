@@ -7,12 +7,14 @@ import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} f
 import {Label} from "@/components/ui/label";
 import {Input} from "@/components/ui/input";
 import axios from "axios";
+import {useRouter} from "next/navigation";
 
 const instance = axios.create({
     baseURL: 'https://8ng83lxa6k.execute-api.us-east-1.amazonaws.com/G2Iteration1'
 });
 
 export default function Consumer(){
+    const router = useRouter();
     const [confirmation, setConfirmation] = React.useState("");
     const [email, setEmail] = React.useState("");
 
@@ -24,9 +26,11 @@ export default function Consumer(){
         setConfirmation(e.target.value);
     };
 
-    const handleLogin = () => {
-        instance.post('/manageReservation', { email, confirmation })
-            .then(function (response) {})
+    const handleDelete = () => {
+        instance.post('/consumerCancelReservation', { email, confirmation })
+            .then(function (response) {
+                router.push("/");
+            })
             .catch(function (error) {
                 console.error("Error logging in:", error);
                 alert("Invalid access key. Please try again.");
@@ -66,7 +70,7 @@ export default function Consumer(){
                         <Link href="/">
                             <Button variant="outline">Back</Button>
                         </Link>
-                        <Button disabled={confirmation === "" || email === ""}> {/*onClick={() => handleLogin()}*/}
+                        <Button disabled={confirmation === "" || email === "" } onClick={() => handleDelete()}>
                             Confirm
                         </Button>
                     </CardFooter>
