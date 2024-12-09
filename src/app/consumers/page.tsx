@@ -1,3 +1,4 @@
+'use client'
 import React from 'react'
 import {Button} from "@/components/ui/Button";
 import Link from "next/link";
@@ -6,7 +7,18 @@ import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} f
 import {Label} from "@/components/ui/label";
 import {Input} from "@/components/ui/input";
 
-export default function consumer(){
+export default function Consumer(){
+    const [confirmation, setConfirmation] = React.useState("");
+    const [email, setEmail] = React.useState("");
+
+    const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setEmail(e.target.value);
+    };
+
+    const handleConfirmationChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setConfirmation(e.target.value);
+    };
+
     return(
         <>
             <Header hidden={false}></Header>
@@ -20,8 +32,8 @@ export default function consumer(){
                         <form>
                             <div className="grid w-full items-center gap-4">
                                 <div className="flex flex-col space-y-1.5">
-                                    <Label htmlFor="name">Email</Label>
-                                    <Input id="name" placeholder="Email" />
+                                    <Label htmlFor="name">Email <span style={{color: 'red'}}>*</span></Label>
+                                    <Input id="name" type="email" placeholder="abc@gmail.com" onChange={handleEmailChange} required={true}/>
                                 </div>
                             </div>
                         </form>
@@ -30,8 +42,8 @@ export default function consumer(){
                         <form>
                             <div className="grid w-full items-center gap-4">
                                 <div className="flex flex-col space-y-1.5">
-                                    <Label htmlFor="name">Confirmation Code</Label>
-                                    <Input id="name" placeholder="Confirmation Code" />
+                                    <Label htmlFor="name">Confirmation Code <span style={{color: 'red'}}>*</span></Label>
+                                    <Input id="name" type="number" placeholder="1234" onChange={handleConfirmationChange} required={true}/>
                                 </div>
                             </div>
                         </form>
@@ -40,7 +52,9 @@ export default function consumer(){
                         <Link href="/">
                             <Button variant="outline">Back</Button>
                         </Link>
-                        <Button>Login</Button>
+                        <Button disabled={confirmation === "" || email === ""}> {/*onClick={() => handleLogin()}*/}
+                            Login
+                        </Button>
                     </CardFooter>
                 </Card>
             </div>
