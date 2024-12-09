@@ -6,6 +6,11 @@ import Header from "@/app/(components)/Header";
 import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} from "@/components/ui/card";
 import {Label} from "@/components/ui/label";
 import {Input} from "@/components/ui/input";
+import axios from "axios";
+
+const instance = axios.create({
+    baseURL: 'https://8ng83lxa6k.execute-api.us-east-1.amazonaws.com/G2Iteration1'
+});
 
 export default function Consumer(){
     const [confirmation, setConfirmation] = React.useState("");
@@ -19,13 +24,22 @@ export default function Consumer(){
         setConfirmation(e.target.value);
     };
 
+    const handleLogin = () => {
+        instance.post('/manageReservation', { email, confirmation })
+            .then(function (response) {})
+            .catch(function (error) {
+                console.error("Error logging in:", error);
+                alert("Invalid access key. Please try again.");
+            });
+    }
+
     return(
         <>
             <Header hidden={false}></Header>
             <div className={`flex justify-center items-center h-full mt-64`}>
                 <Card className="w-[600px]">
                     <CardHeader>
-                        <CardTitle>Manage Reservation</CardTitle>
+                        <CardTitle>Cancel Reservation</CardTitle>
                         <CardDescription>Enter your Email and Confirmation Code</CardDescription>
                     </CardHeader>
                     <CardContent>
@@ -53,7 +67,7 @@ export default function Consumer(){
                             <Button variant="outline">Back</Button>
                         </Link>
                         <Button disabled={confirmation === "" || email === ""}> {/*onClick={() => handleLogin()}*/}
-                            Login
+                            Confirm
                         </Button>
                     </CardFooter>
                 </Card>
