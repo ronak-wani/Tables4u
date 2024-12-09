@@ -53,27 +53,30 @@ export default function Home() {
     }, []);
 
     const handleRestaurantClick = (restaurant:Restaurant) => {
-        // instance.post('/checkClosedDay', {"day":day, "time": time})
-        //     .then(function (response) {
-        //         let status = response.data.statusCode;
-        //
-        //     })
-        //     .catch(function (error) {
-        //         return error
-        //     })
-
-        instance.post('/findVacantTable', {"name":restaurant.name, "address":restaurant.address})
+        instance.post('/checkClosedDay', {"restaurantID":restaurant.restaurantID, "day":day})
             .then(function (response) {
-                let status = response.data.statusCode
-                setTableID(response.data.result.tableID);
-                instance.post('/consumerFetchRestaurantDetails', {"name":restaurant.name, "address":restaurant.address, "tableID":tableID})
-                    .then(function (response) {
-                        // let status = response.data.statusCode
-                        // let resultComp = response.data.body
-                    })
-                    .catch(function (error) {
-                        return error
-                    })
+                const statusCode = response.data.statusCode;
+                if(statusCode === 200 && response.data.result.canBook === true) {
+                    instance.post('/findVacantTable', {"name":restaurant.name, "address":restaurant.address})
+                        .then(function (response) {
+                            // let status = response.data.statusCode
+                            setTableID(response.data.result.tableID);
+                            instance.post('/consumerFetchRestaurantDetails', {"name":restaurant.name, "address":restaurant.address, "tableID":tableID})
+                                .then(function (response) {
+                                    // let status = response.data.statusCode
+                                    // let resultComp = response.data.body
+                                })
+                                .catch(function (error) {
+                                    return error
+                                })
+                        })
+                        .catch(function (error) {
+                            return error
+                        })
+                }
+                else{
+                    alert("The restaurant is closed for the given day.")
+                }
             })
             .catch(function (error) {
                 return error
