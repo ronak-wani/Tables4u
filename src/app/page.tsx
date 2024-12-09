@@ -24,10 +24,12 @@ export default function Home() {
     const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
+    const [tableID, setTableID] = useState(-1);
     const today = new Date();
     const [day, setDay] = useState<Date | undefined>(undefined);
     const [specificRestaurant, setSpecificRestaurant] = useState("");
     const [time, setTime] = React.useState(-1);
+    const isFormValid:boolean = day !== undefined && time !== -1;
 
     useEffect(() => {
         instance
@@ -51,25 +53,32 @@ export default function Home() {
     }, []);
 
     const handleRestaurantClick = (restaurant:Restaurant) => {
+        // instance.post('/checkClosedDay', {"day":day, "time": time})
+        //     .then(function (response) {
+        //         let status = response.data.statusCode;
+        //
+        //     })
+        //     .catch(function (error) {
+        //         return error
+        //     })
+
         instance.post('/findVacantTable', {"name":restaurant.name, "address":restaurant.address})
             .then(function (response) {
-                // let status = response.data.statusCode
-                // let resultComp = response.data.body
+                let status = response.data.statusCode
+                setTableID(response.data.result.tableID);
+                instance.post('/consumerFetchRestaurantDetails', {"name":restaurant.name, "address":restaurant.address, "tableID":tableID})
+                    .then(function (response) {
+                        // let status = response.data.statusCode
+                        // let resultComp = response.data.body
+                    })
+                    .catch(function (error) {
+                        return error
+                    })
             })
             .catch(function (error) {
-                // this is a 500-type error, where there is no such API on the server side
                 return error
             })
 
-        instance.post('/consumerFetchRestaurantDetails', {"name":restaurant.name, "address":restaurant.address, "tableID":tableID})
-            .then(function (response) {
-                // let status = response.data.statusCode
-                // let resultComp = response.data.body
-            })
-            .catch(function (error) {
-                // this is a 500-type error, where there is no such API on the server side
-                return error
-            })
         router.push(`/consumers/${restaurant.name}`);
         // alert(`You selected: ${restaurantName}`);
     };
@@ -150,9 +159,13 @@ export default function Home() {
                         restaurants.map((restaurant) => (
                             <div
                                 key={restaurant.restaurantID} // Ensure to use a unique key
-                                className="flex flex-col p-4 border-b last:border-none hover:bg-gray-100 cursor-pointer"
-                                onClick={() => handleRestaurantClick(restaurant)}
-                            >
+                                className={`flex flex-col p-4 border-b last:border-none ${
+                                    !isFormValid ? "cursor-not-allowed" : "hover:bg-gray-200 cursor-pointer"
+                                }`}
+                                onClick={() => {
+                                    if (isFormValid) handleRestaurantClick(restaurant);
+                                }} >
+                                    
                                 <h3 className="text-lg font-semibold">{restaurant.name}</h3>
                                 <p className="text-sm text-gray-600">{restaurant.address}</p>
                             </div>
