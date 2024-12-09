@@ -14,10 +14,11 @@ const instance = axios.create({
 });
 
 export default function MakeReservation() {
+    const today = new Date();
     const [email, setEmail] = useState("");
     const [partySize, setPartySize] = useState(0);
     const [tableSize, setTableSize] = useState(0);
-    const [date, setDate] = useState<Date | null>(null);
+    const [date, setDate] = useState<string | null>(null);
     const [time, setTime] = useState(0);
     const [tableID, setTableID] = useState(0);
     const [Name, setName] = useState<string | null>(null);
@@ -31,8 +32,7 @@ export default function MakeReservation() {
             setAddress(localStorage.getItem("address"));
             setTableID(Number(localStorage.getItem("tableID")));
             setTableSize(Number(localStorage.getItem("tableSize") || 1));
-            const storedDate = localStorage.getItem("date");
-            setDate(storedDate ? new Date(storedDate) : null);
+            setDate(localStorage.getItem("day"));
             setTime(Number(localStorage.getItem("time") || "NaN"));
         }
     }, []);
@@ -91,13 +91,8 @@ export default function MakeReservation() {
                                     <Label>Name: {Name}</Label>
                                     <Label>Address: {Address}</Label>
                                     <Label>Table ID: {tableID}</Label>
-                                    <Label htmlFor="day">Date <span style={{color: 'red'}}>*</span></Label>
-                                    <Input id="day" type="date" placeholder={date? date.toString() : "Pick a date"} onChange={handleEmailChange}
-                                           required={true}/>
-                                    <Label htmlFor="time">Time <span style={{color: 'red'}}>*</span></Label>
-                                    <Input id="time" type="number" placeholder={time? time.toString() : "Pick a time"} onChange={handleEmailChange}
-                                           required={true}/>
-
+                                    <Label htmlFor="day">Date: {date? date.toString() : ""}</Label>
+                                    <Label htmlFor="time">Time: {time}</Label>
                                     <Label htmlFor="name">Email <span style={{color: 'red'}}>*</span></Label>
                                     <Input id="name" type="email" placeholder="abc@gmail.com" onChange={handleEmailChange}
                                            required={true}/>

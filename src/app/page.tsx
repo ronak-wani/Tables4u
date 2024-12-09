@@ -69,7 +69,7 @@ export default function Home() {
                                     localStorage.setItem("tableID", response.data.result.restaurant[0].tableID);
                                     localStorage.setItem("tableSize", response.data.result.restaurant[0].numberOfSeats);
                                     localStorage.setItem("time", time.toString());
-                                    localStorage.setItem("day", day? day.toString() : "");
+                                    localStorage.setItem("day", day? day.toISOString().slice(0, 10) : "");
                                     router.push(`/consumers/${restaurant.name}`);
                                 })
                                 .catch(function (error) {
