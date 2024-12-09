@@ -8,13 +8,14 @@ import Link from "next/link";
 import {Button} from "@/components/ui/Button";
 import {useState} from "react";
 import axios from "axios";
+import {Copy} from "lucide-react";
 
 const instance = axios.create({
     baseURL: 'https://8ng83lxa6k.execute-api.us-east-1.amazonaws.com/G2Iteration1'
 });
 
 export default function MakeReservation() {
-    const today = new Date();
+    const [isNotInvisible, setNotInvisible] = React.useState(true);
     const [email, setEmail] = useState("");
     const [partySize, setPartySize] = useState(0);
     const [tableSize, setTableSize] = useState(0);
@@ -59,10 +60,22 @@ export default function MakeReservation() {
             setPartySize(Number(newPartySize));
         }
     };
-
+    async function handleCopyClick() {
+        try {
+            await window.navigator.clipboard.writeText(confirmationNumber.toString());
+            alert("Copied to clipboard!");
+        } catch (err) {
+            console.error(
+                "Unable to copy to clipboard.",
+                err
+            );
+            alert("Copy to clipboard failed.");
+        }
+    }
     function handleCreate(){
-        const newConfirmationNumber = (Math.random() * 10000) + 1;
+        const newConfirmationNumber = Math.floor((Math.random() * 1000)) + 1;
         setConfirmationNumber(newConfirmationNumber);
+        setNotInvisible(false);
         console.log(newConfirmationNumber);
         // instance.post('/createRestaurant', {"name":Name, "address":Address, "password":newPassword})
         //     .then(function (response) {
@@ -79,6 +92,7 @@ export default function MakeReservation() {
     return (
         <>
             <Header hidden={false}/>
+            {isNotInvisible && (
             <div className={`flex justify-center items-center h-full mt-36`}>
                 <Card className="w-[800px]">
                     <CardHeader>
@@ -110,7 +124,31 @@ export default function MakeReservation() {
                         <Button disabled={!isFormValid} onClick={() => handleCreate()}>Submit</Button>
                     </CardFooter>
                 </Card>
-            </div>
+            </div>)}
+            {!isNotInvisible && (
+                <div className={`flex justify-center items-center h-full mt-44`}>
+                    <Card className="w-[800px]">
+                        <CardHeader>
+                            <CardTitle>Reservation Confirmation</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <form>
+                                <div className="grid w-full items-center gap-4">
+                                    <div className="flex flex-col space-y-5">
+                                        <Label htmlFor="confirmation">Confirmation Number: {confirmationNumber} </Label>
+                                    </div>
+                                </div>
+                            </form>
+                        </CardContent>
+                        <CardFooter className="text-gray-500 flex justify-between">
+                            <Label htmlFor="confirmation">Remember to save the confirmation code </Label>
+                            <Button onClick={() => handleCopyClick()}><Copy />Copy</Button>
+                            <Link href="/owners">
+                                <Button>Back</Button>
+                            </Link>
+                        </CardFooter>
+                    </Card>
+                </div>)}
         </>
     );
 
