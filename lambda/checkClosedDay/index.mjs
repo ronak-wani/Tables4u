@@ -9,31 +9,48 @@ export const handler = async (event) => {
     })
     let response = {}
 
-    let checkClosedDay = (restaurantID, day) => {
+    let checkClosedDay = (day) => {
         return new Promise((resolve, reject) => {
-            pool.query("SELECT * FROM ClosedDays WHERE restaurantID = ? AND day = ?", [restaurantID, day], (error, rows) => {
+            pool.query("SELECT * FROM ClosedDays WHERE day = ?;", [day], (error, rows) => {
                 if (error) { return reject(error); }
                 return resolve(rows);
             })
         })
     }
+
+    let listRestaurants = () => {
+        return new Promise((resolve, reject) => {
+            pool.query("SELECT * FROM Restaurants WHERE isActive = 'Y';", (error, rows) => {
+                if (error) { return reject(error); }
+                return resolve(rows);
+            })
+        })
+    }
+
+    let skipRestaurants = (restaurantID) => {
+        return new Promise((resolve, reject) => {
+            pool.query("SELECT * FROM Restaurants WHERE isActive = 'Y' AND restaurantID != ?;", [restaurantID], (error, rows) => {
+                if (error) { return reject(error); }
+                return resolve(rows);
+            })
+        })
+    }
+
     try{
-        const rows = await checkClosedDay(event.restaurantID, event.day)
+        const rows = await checkClosedDay(event.day)
         if (rows.length === 0) {
+            const restaurants = await listRestaurants()
             response = {
                 statusCode: 200,
-                result:{
-                    "canBook": true,
-                    "message": "The restaurant is open on the given day"
-                }
+                result:restaurants
             }
         }
         else{
-            response = {
-                statusCode: 301,
-                result:{
-                    "canBook": false,
-                    "message": "The restaurant is closed on the given day"
+            for (let i = 0; i < rows.length; i++) {
+                const restaurants = await skipRestaurants(rows[i].restaurantID)
+                response = {
+                    statusCode: 200,
+                    result: restaurants
                 }
             }
         }

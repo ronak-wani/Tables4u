@@ -2,7 +2,6 @@
 
 import React, {useState, useEffect} from "react";
 import Header from "@/app/(components)/Header";
-import {Command, CommandInput} from "@/components/ui/command";
 import axios from "axios";
 import {Input} from "@/components/ui/input";
 import DateCalendar from "@/app/(components)/Date";
@@ -23,7 +22,7 @@ export default function Home() {
     const router = useRouter();
     const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState("");
+    const [error, setError] = useState<string | null>(null);
     const [tableID, setTableID] = useState(-1);
     const today = new Date();
     const [day, setDay] = useState<Date | undefined>(undefined);
@@ -32,31 +31,53 @@ export default function Home() {
     const isFormValid:boolean = day !== undefined && time !== -1;
 
     useEffect(() => {
-        instance
-            .get("/listActiveRestaurants")
-            .then((response) => {
-                const status = response.data.statusCode;
-                if (status === 200) {
-                    setRestaurants(response.data.restaurants || []);
+        const fetchRestaurants = async () => {
+            try {
+                setLoading(true);
+                if (!day) {
+                    const response = await instance.get("/listActiveRestaurants");
+                    const status = response.data.statusCode;
+
+                    if (status === 200) {
+                        setRestaurants(response.data.restaurants || []);
+                        setError(null);
+                    } else {
+                        console.error("Failed to fetch restaurants. Status:", status);
+                        setError("Failed to load restaurants.");
+                    }
                 } else {
-                    console.error("Failed to fetch restaurants. Status:", status);
-                    setError("Failed to load restaurants.");
+                    // Check if restaurants are closed for the selected day
+                    const response = await instance.post("/checkClosedDay", {
+                        day: day.toISOString().slice(0, 10),
+                    });
+                    const { statusCode } = response.data;
+
+                    if (statusCode === 200) {
+                        setRestaurants(response.data.result || []);
+                        setError(null);
+                    } else {
+                        console.error("Failed to fetch closed day restaurants. Status:", statusCode);
+                        setError("Failed to load restaurants for the selected day.");
+                        setRestaurants([]);
+                    }
                 }
-            })
-            .catch((err) => {
-                console.error("Error fetching restaurants:", err);
+            } catch (err) {
+                console.error("Error fetching data:", err);
                 setError("An error occurred while fetching data.");
-            })
-            .finally(() => {
+                setRestaurants([]);
+            } finally {
                 setLoading(false);
-            });
-    }, []);
+            }
+        };
+
+        fetchRestaurants();
+    }, [day]);
 
     const handleRestaurantClick = (restaurant:Restaurant) => {
-        instance.post('/checkClosedDay', {"restaurantID":restaurant.restaurantID, "day":day})
-            .then(function (response) {
-                const statusCode = response.data.statusCode;
-                if(statusCode === 200 && response.data.result.canBook === true) {
+        // instance.post('/checkClosedDay', {"restaurantID":restaurant.restaurantID, "day":day})
+        //     .then(function (response) {
+        //         const statusCode = response.data.statusCode;
+        //         if(statusCode === 200 && response.data.result.canBook === true) {
                     instance.post('/findVacantTable', {"name":restaurant.name, "address":restaurant.address})
                         .then(function (response) {
                             // let status = response.data.statusCode
@@ -79,14 +100,14 @@ export default function Home() {
                         .catch(function (error) {
                             return error
                         })
-                }
-                else{
-                    alert("The restaurant is closed for the given day.")
-                }
-            })
-            .catch(function (error) {
-                return error
-            })
+                // }
+                // else{
+                //     alert("The restaurant is closed for the given day.")
+                // }
+            // })
+            // .catch(function (error) {
+            //     return error
+            // })
         // alert(`You selected: ${restaurantName}`);
     };
     const handleDay = (date: Date | undefined) => {
@@ -158,7 +179,7 @@ export default function Home() {
                     </div>
                 </div>
 
-                <div className="mt-4 w-full max-w-4xl h-80 overflow-y-auto border border-gray-200 rounded-lg shadow">
+                <div className="mt-4 w-full max-w-4xl overflow-y-auto border border-gray-200 rounded-lg shadow">
                     {loading && <p className="text-center">Loading...</p>}
                     {error && <p className="text-center text-red-500">{error}</p>}
                     {!loading && !error &&
