@@ -17,6 +17,8 @@ export default function MakeReservation() {
     const [email, setEmail] = useState("");
     const [partySize, setPartySize] = useState(0);
     const [tableSize, setTableSize] = useState(0);
+    const [date, setDate] = useState<Date | null>(null);
+    const [time, setTime] = useState(0);
     const [tableID, setTableID] = useState(0);
     const [Name, setName] = useState<string | null>(null);
     const [Address, setAddress] = useState<string | null>(null);
@@ -27,8 +29,11 @@ export default function MakeReservation() {
         if (typeof window !== 'undefined') {
             setName(localStorage.getItem("name"));
             setAddress(localStorage.getItem("address"));
-            setTableID(Number(localStorage.getItem("numberOfSeats") || 1));
-            setTableSize(Number(localStorage.getItem("numberOfTables") || 1));
+            setTableID(Number(localStorage.getItem("tableID")));
+            setTableSize(Number(localStorage.getItem("tableSize") || 1));
+            const storedDate = localStorage.getItem("date");
+            setDate(storedDate ? new Date(storedDate) : null);
+            setTime(Number(localStorage.getItem("time") || "NaN"));
         }
     }, []);
 
@@ -87,10 +92,10 @@ export default function MakeReservation() {
                                     <Label>Address: {Address}</Label>
                                     <Label>Table ID: {tableID}</Label>
                                     <Label htmlFor="day">Date <span style={{color: 'red'}}>*</span></Label>
-                                    <Input id="day" type="date" placeholder="" onChange={handleEmailChange}
+                                    <Input id="day" type="date" placeholder={date? date.toString() : "Pick a date"} onChange={handleEmailChange}
                                            required={true}/>
                                     <Label htmlFor="time">Time <span style={{color: 'red'}}>*</span></Label>
-                                    <Input id="time" type="number" placeholder="" onChange={handleEmailChange}
+                                    <Input id="time" type="number" placeholder={time? time.toString() : "Pick a time"} onChange={handleEmailChange}
                                            required={true}/>
 
                                     <Label htmlFor="name">Email <span style={{color: 'red'}}>*</span></Label>

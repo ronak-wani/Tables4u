@@ -63,8 +63,14 @@ export default function Home() {
                             setTableID(response.data.result.tableID);
                             instance.post('/consumerFetchRestaurantDetails', {"name":restaurant.name, "address":restaurant.address, "tableID":tableID})
                                 .then(function (response) {
-                                    // let status = response.data.statusCode
-                                    // let resultComp = response.data.body
+                                    localStorage.clear();
+                                    localStorage.setItem("name", response.data.result.restaurant[0].name);
+                                    localStorage.setItem("address", response.data.result.restaurant[0].address);
+                                    localStorage.setItem("tableID", response.data.result.restaurant[0].tableID);
+                                    localStorage.setItem("tableSize", response.data.result.restaurant[0].numberOfSeats);
+                                    localStorage.setItem("time", time.toString());
+                                    localStorage.setItem("day", day? day.toString() : "");
+                                    router.push(`/consumers/${restaurant.name}`);
                                 })
                                 .catch(function (error) {
                                     return error
@@ -81,8 +87,6 @@ export default function Home() {
             .catch(function (error) {
                 return error
             })
-
-        router.push(`/consumers/${restaurant.name}`);
         // alert(`You selected: ${restaurantName}`);
     };
     const handleDay = (date: Date | undefined) => {
