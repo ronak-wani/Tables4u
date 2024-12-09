@@ -73,7 +73,7 @@ export default function MakeReservation() {
         }
     }
     function handleCreate(){
-        const newConfirmationNumber = Math.floor((Math.random() * 1000)) + 1;
+        const newConfirmationNumber = Math.floor((Math.random() * 10000)) + 1;
         setConfirmationNumber(newConfirmationNumber);
         setNotInvisible(false);
         console.log(newConfirmationNumber);
@@ -141,9 +141,9 @@ export default function MakeReservation() {
                             </form>
                         </CardContent>
                         <CardFooter className="text-gray-500 flex justify-between">
-                            <Label htmlFor="confirmation">Remember to save the confirmation code </Label>
+                            <Label htmlFor="confirmation">Remember to save the confirmation code and show it at the restaurant</Label>
                             <Button onClick={() => handleCopyClick()}><Copy />Copy</Button>
-                            <Link href="/owners">
+                            <Link href="/">
                                 <Button>Back</Button>
                             </Link>
                         </CardFooter>
