@@ -22,8 +22,8 @@ export default function MakeReservation() {
     const [date, setDate] = useState<string | null>(null);
     const [time, setTime] = useState(0);
     const [tableID, setTableID] = useState(0);
-    const [Name, setName] = useState<string | null>(null);
-    const [Address, setAddress] = useState<string | null>(null);
+    const [name, setName] = useState<string | null>(null);
+    const [address, setAddress] = useState<string | null>(null);
     const isFormValid:boolean = email.trim() !== "" && partySize !== 0;
     const [confirmationNumber, setConfirmationNumber] = React.useState(-1);
 
@@ -77,15 +77,15 @@ export default function MakeReservation() {
         setConfirmationNumber(newConfirmationNumber);
         setNotInvisible(false);
         console.log(newConfirmationNumber);
-        // instance.post('/createRestaurant', {"name":Name, "address":Address, "password":newPassword})
-        //     .then(function (response) {
-        //         // let status = response.data.statusCode
-        //         // let resultComp = response.data.body
-        //     })
-        //     .catch(function (error) {
-        //         // this is a 500-type error, where there is no such API on the server side
-        //         return error
-        //     })
+        instance.post('/consumerMakeReservation', {"name":name, "address":address, "tableID":tableID, "partySize": partySize, "confirmation": newConfirmationNumber, "day": date, "time":time, "email": email})
+            .then(function (response) {
+                // let status = response.data.statusCode
+                // let resultComp = response.data.body
+            })
+            .catch(function (error) {
+                // this is a 500-type error, where there is no such API on the server side
+                return error
+            })
     }
 
 
@@ -102,8 +102,8 @@ export default function MakeReservation() {
                         <form>
                             <div className="grid w-full items-center gap-4">
                                 <div className="flex flex-col space-y-5">
-                                    <Label>Name: {Name}</Label>
-                                    <Label>Address: {Address}</Label>
+                                    <Label>Name: {name}</Label>
+                                    <Label>Address: {address}</Label>
                                     <Label>Table ID: {tableID}</Label>
                                     <Label htmlFor="day">Date: {date? date.toString() : ""}</Label>
                                     <Label htmlFor="time">Time: {time}</Label>
