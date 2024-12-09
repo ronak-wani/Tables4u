@@ -50,8 +50,27 @@ export default function Home() {
             });
     }, []);
 
-    const handleRestaurantClick = (restaurantName: string) => {
-        router.push(`/consumers/${restaurantName}`);
+    const handleRestaurantClick = (restaurant:Restaurant) => {
+        instance.post('/findVacantTable', {"name":restaurant.name, "address":restaurant.address})
+            .then(function (response) {
+                // let status = response.data.statusCode
+                // let resultComp = response.data.body
+            })
+            .catch(function (error) {
+                // this is a 500-type error, where there is no such API on the server side
+                return error
+            })
+
+        instance.post('/consumerFetchRestaurantDetails', {"name":restaurant.name, "address":restaurant.address, "tableID":tableID})
+            .then(function (response) {
+                // let status = response.data.statusCode
+                // let resultComp = response.data.body
+            })
+            .catch(function (error) {
+                // this is a 500-type error, where there is no such API on the server side
+                return error
+            })
+        router.push(`/consumers/${restaurant.name}`);
         // alert(`You selected: ${restaurantName}`);
     };
     const handleDay = (date: Date | undefined) => {
@@ -132,7 +151,7 @@ export default function Home() {
                             <div
                                 key={restaurant.restaurantID} // Ensure to use a unique key
                                 className="flex flex-col p-4 border-b last:border-none hover:bg-gray-100 cursor-pointer"
-                                onClick={() => handleRestaurantClick(restaurant.name)}
+                                onClick={() => handleRestaurantClick(restaurant)}
                             >
                                 <h3 className="text-lg font-semibold">{restaurant.name}</h3>
                                 <p className="text-sm text-gray-600">{restaurant.address}</p>

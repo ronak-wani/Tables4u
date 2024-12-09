@@ -17,6 +17,7 @@ export default function MakeReservation() {
     const [email, setEmail] = useState("");
     const [partySize, setPartySize] = useState(0);
     const [tableSize, setTableSize] = useState(0);
+    const [tableID, setTableID] = useState(0);
     const [Name, setName] = useState<string | null>(null);
     const [Address, setAddress] = useState<string | null>(null);
     const isFormValid:boolean = email.trim() !== "" && partySize !== 0;
@@ -26,6 +27,7 @@ export default function MakeReservation() {
         if (typeof window !== 'undefined') {
             setName(localStorage.getItem("name"));
             setAddress(localStorage.getItem("address"));
+            setTableID(Number(localStorage.getItem("numberOfSeats") || 1));
             setTableSize(Number(localStorage.getItem("numberOfTables") || 1));
         }
     }, []);
@@ -83,7 +85,7 @@ export default function MakeReservation() {
                                 <div className="flex flex-col space-y-5">
                                     <Label>Name: {Name}</Label>
                                     <Label>Address: {Address}</Label>
-
+                                    <Label>Table ID: {tableID}</Label>
                                     <Label htmlFor="day">Date <span style={{color: 'red'}}>*</span></Label>
                                     <Input id="day" type="date" placeholder="" onChange={handleEmailChange}
                                            required={true}/>
