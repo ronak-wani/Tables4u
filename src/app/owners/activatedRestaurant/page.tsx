@@ -1,6 +1,6 @@
 'use client'
 import {Label} from "@/components/ui/label";
-import React, {useEffect, useState} from "react";
+import React, {ReactNode, useEffect, useState} from "react";
 import DateCalendar from "@/app/(components)/Date";
 import Header from "@/app/(components)/Header";
 import Save from "@/app/(components)/Save";
@@ -29,7 +29,7 @@ export default function ActivateRestaurantPage() {
     const [openingHour, setOpeningHour] = useState<number>(0);
     const [closingHour, setClosingHour] = useState<number>(0);
     const today = new Date();
-    const innerCells = [];
+    const [cells, setCells] = useState<ReactNode[]>([]);
 
     useEffect(() => {
         if (typeof window !== 'undefined') {
@@ -45,11 +45,32 @@ export default function ActivateRestaurantPage() {
             .then(function (response) {
                 // let status = response.data.statusCode
                 const result = response.data.result;
-                for(let j=1;j<=result.length;j++){
-                    innerCells.push(
-                        <TableCell id={j.toString()}>result.numberOfSeats</TableCell>
+                console.log("Result: " + result);
+                for (let i = openingHour; i <= closingHour; i++) {
+                    cells.push(
+                        <TableRow key={i}>
+                            <TableCell key={i}>{i}:00</TableCell>
+                            {result === "0"
+                                ? Array.from({ length: numberOfTables }, (_, j) => (
+                                    <TableCell key={j + 1} id={String(j + 1)}>N/A</TableCell>
+                                ))
+                                : Array.from({ length: numberOfTables }, (_, j) => {
+                                    const tableID = j + 1;
+                                    const tableData = result.find(
+                                        (item) => item.tableID === tableID && item.time === i
+                                    );
+
+                                    return (
+                                        <TableCell key={`${i}-${tableID}`} id={String(tableID)}>
+                                            {tableData ? tableData.numberOfSeats : 'N/A'}
+                                        </TableCell>
+                                    );
+                                })
+                            }
+                        </TableRow>
                     );
                 }
+                setCells([...cells]);
             })
             .catch(function (error) {
                 // this is a 500-type error, where there is no such API on the server side
@@ -78,21 +99,21 @@ export default function ActivateRestaurantPage() {
     const tables = [];
     for (let i = 1; i <=numberOfTables; i++) {
         tables.push(
-            <TableHead id={i.toString()}>Table #{i}</TableHead>
+            <TableHead key={i}>Table #{i}</TableHead>
         );
     }
 
-    const cells = [];
 
-    for(let i = openingHour; i <=closingHour; i++){
-        cells.push(
-            <TableRow>
-                <TableCell id={i.toString()}>{i}:00</TableCell>
-                {innerCells}
-            </TableRow>
 
-        );
-    }
+    // for(let i = openingHour; i <=closingHour; i++){
+    //     cells.push(
+    //         <TableRow key={i}>
+    //             <TableCell key={i}>{i}:00</TableCell>
+    //             {innerCells}
+    //         </TableRow>
+    //
+    //     );
+    // }
 
     return (
         <>
