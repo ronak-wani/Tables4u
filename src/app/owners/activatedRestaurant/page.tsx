@@ -4,6 +4,7 @@ import React, {useEffect, useState} from "react";
 import DateCalendar from "@/app/(components)/Date";
 import Header from "@/app/(components)/Header";
 import Save from "@/app/(components)/Save";
+import {Button} from "@/components/ui/Button";
 import {
     Table,
     TableBody,
@@ -13,24 +14,49 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table"
+import axios from "axios";
 
-
+const instance = axios.create({
+    baseURL: 'https://8ng83lxa6k.execute-api.us-east-1.amazonaws.com/G2Iteration1'
+});
 
 export default function ActivateRestaurantPage() {
+    const [isVisible, setVisible] = React.useState(false);
+    const [restaurantID, setRestaurantID] = useState(-1);
     const [openDay, setOpenDay] = useState<Date | undefined>(undefined);
     const [closeDay, setCloseDay] = useState<Date | undefined>(undefined);
     const [numberOfTables, setNumberOfTables] = useState<number>(0);
     const [openingHour, setOpeningHour] = useState<number>(0);
     const [closingHour, setClosingHour] = useState<number>(0);
     const today = new Date();
+    const innerCells = [];
 
     useEffect(() => {
         if (typeof window !== 'undefined') {
+            setRestaurantID(Number(localStorage.getItem("restaurantID")) || -1);
             setNumberOfTables(Number(localStorage.getItem("numberOfTables") || 1));
             setOpeningHour(Number(localStorage.getItem("openHour") || 0));
             setClosingHour(Number(localStorage.getItem("closeHour") || 0));
         }
     }, []);
+
+    const handleGenerateAvailability = (e: React.MouseEvent<HTMLButtonElement>) => {
+        instance.post('/ownerReviewDayAvailability', {"restaurantID":restaurantID, "day":today.toISOString().slice(0, 10)})
+            .then(function (response) {
+                // let status = response.data.statusCode
+                const result = response.data.result;
+                for(let j=1;j<=result.length;j++){
+                    innerCells.push(
+                        <TableCell id={j.toString()}>result.numberOfSeats</TableCell>
+                    );
+                }
+            })
+            .catch(function (error) {
+                // this is a 500-type error, where there is no such API on the server side
+                return error
+            })
+        setVisible(true);
+    }
 
     const handleOpenDay = (date: Date | undefined) => {
         if (date && date <= today) {
@@ -62,6 +88,7 @@ export default function ActivateRestaurantPage() {
         cells.push(
             <TableRow>
                 <TableCell id={i.toString()}>{i}:00</TableCell>
+                {innerCells}
             </TableRow>
 
         );
@@ -82,8 +109,11 @@ export default function ActivateRestaurantPage() {
                 </div>
                 <Save route={`/ownerOpenFutureDay`} openDay={openDay} message="Customer will be able to book reservations for the open day"/>
             </div>
-            <Label className={`flex justify-center mt-16`}>Review Current Date Availability</Label>
-            <div className={`flex justify-center m-24`}>
+            <div className={`flex justify-center mt-16`}>
+                <Button onClick={handleGenerateAvailability}>Review Current Date Availability</Button>
+            </div>
+
+            {isVisible && <div className={`flex justify-center m-24`}>
                 <Table>
                     <TableHeader>
                         <TableRow id="header">
@@ -95,7 +125,7 @@ export default function ActivateRestaurantPage() {
                         {cells}
                     </TableBody>
                 </Table>
-            </div>
+            </div> }
         </>
     )
 };
