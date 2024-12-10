@@ -74,7 +74,7 @@ export default function Home() {
     }, [day]);
 
     const handleRestaurantClick = (restaurant: Restaurant) => {
-        instance.post('/findVacantTable', {"name": restaurant.name, "address": restaurant.address})
+        instance.post('/findVacantTable', {"name": restaurant.name, "address": restaurant.address, "day":day? day.toISOString().slice(0, 10) : null, "time":time})
             .then(function (response) {
                 // let status = response.data.statusCode
                 setTableID(response.data.result.tableID);
