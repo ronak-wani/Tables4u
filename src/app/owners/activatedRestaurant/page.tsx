@@ -57,7 +57,7 @@ export default function ActivateRestaurantPage() {
                                 : Array.from({ length: numberOfTables }, (_, j) => {
                                     const tableID = j + 1;
                                     const tableData = result.find(
-                                        (item) => item.tableID === tableID && item.time === i
+                                        (item:{ tableID: number, time: number }) => item.tableID === tableID && item.time === i
                                     );
 
                                     return (
