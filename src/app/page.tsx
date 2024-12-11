@@ -23,10 +23,9 @@ export default function Home() {
     const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
-    const [tableID, setTableID] = useState(-1);
     const today = new Date();
     const [day, setDay] = useState<Date | undefined>(undefined);
-    const [specificRestaurant, setSpecificRestaurant] = useState("");
+    // const [specificRestaurant, setSpecificRestaurant] = useState("");
     const [time, setTime] = React.useState(-1);
     const isFormValid: boolean = day !== undefined && time !== -1;
 
@@ -76,8 +75,8 @@ export default function Home() {
     const handleRestaurantClick = (restaurant: Restaurant) => {
         instance.post('/findVacantTable', {"name": restaurant.name, "address": restaurant.address, "day":day? day.toISOString().slice(0, 10) : null, "time":time})
             .then(function (response) {
-                // let status = response.data.statusCode
-                setTableID(response.data.result.tableID);
+                const tableID = response.data.result.tableID;
+                // setTableID(response.data.result.tableID);
                 instance.post('/consumerFetchRestaurantDetails', {
                     "name": restaurant.name,
                     "address": restaurant.address,
@@ -92,6 +91,7 @@ export default function Home() {
                         localStorage.setItem("time", time.toString());
                         localStorage.setItem("day", day ? day.toISOString().slice(0, 10) : "");
                         router.push(`/consumers/${restaurant.name}`);
+
                     })
                     .catch(function (error) {
                         return error
