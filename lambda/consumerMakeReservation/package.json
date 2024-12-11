@@ -1,7 +1,7 @@
 {
-  "name": "create_restaurant",
+  "name": "consumer_make_reservation",
   "version": "1.0.0",
-  "description": "Create Restaurant",
+  "description": "Consumer makes a reservation",
   "main": "index.mjs",
   "author": "Tables4u",
   "license": "MIT",
