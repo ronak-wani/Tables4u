@@ -116,9 +116,9 @@ export default function Home() {
 
     instance
       .post("/adminCancelReservation", {
-        name: reservationToDelete.confirmation,
-        address: reservationToDelete.email,
         adminPass: adminPassword,
+        confirmation: reservationToDelete.confirmation,
+        email: reservationToDelete.email,
       })
       .then((response) => {
         if (response.status === 200) {
