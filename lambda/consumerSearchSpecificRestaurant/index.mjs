@@ -11,14 +11,16 @@ export const handler = async (event) => {
 
     let findRestaurant = (name, day, time) => {
         return new Promise((resolve, reject) => {
-            pool.query("SELECT name, address FROM Restaurants WHERE name = ? AND isActive = 'Y';", [name], (error, rows) => {
+            const query = `SELECT name, address FROM Restaurants WHERE name LIKE ? AND isActive = 'Y';`
+            const searchName = `%${name}%`; // Add wildcards around the name for partial matching
+            pool.query(query, [searchName], (error, rows) => {
                 if (error) {
                     return reject(error);
                 }
                 return resolve(rows);
-            })
-        })
-    }
+            });
+        });
+    };
     try {
         const restaurantDetails = await findRestaurant(event.name, event.day, event.time);
         if (restaurantDetails.length === 0) {
@@ -27,16 +29,15 @@ export const handler = async (event) => {
                 error: "Restaurant not found",
             };
         } else {
-            const { name, address } = restaurantDetails[0];
-
+            const results = restaurantDetails.map(({ name, address }) => ({
+                name,
+                address,
+                day: event.day,
+                time: event.time,
+            }));
             response = {
                 statusCode: 200,
-                result: {
-                    name: name,
-                    address: address,
-                    day: event.day,
-                    time: event.time,
-                },
+                results: results,
             };
         }
     } catch (err) {
