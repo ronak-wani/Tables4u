@@ -7,6 +7,7 @@ interface Restaurant {
   restaurantID: string;
   name: string;
   address: string;
+  isActive: string;
 }
 
 interface Reservation {
@@ -49,6 +50,15 @@ export default function Home() {
   const handleListRestaurants = () => {
     setIsPasswordModalOpen(true);
   };
+
+  const handleIsRestaurantActive = (bool: string) => {
+    if(bool) {
+      return "Restaurant is Active"
+    }
+    else{
+      return "Restaurant is Inactive"
+    }
+  }
 
   const handleSubmitPassword = () => {
     setLoading(true);
@@ -253,6 +263,9 @@ export default function Home() {
                   <div>
                     <h3>{restaurant.name}</h3>
                     <h3>{restaurant.address}</h3>
+                  </div>
+                  <div>
+                    <h3>{handleIsRestaurantActive(restaurant.isActive)}</h3>
                   </div>
                   <div style={{ display: 'flex', gap: '10px' }}>
                     <button
