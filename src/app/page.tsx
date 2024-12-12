@@ -23,7 +23,6 @@ export default function Home() {
     const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
-    const [tableID, setTableID] = useState(-1);
     const today = new Date();
     const [day, setDay] = useState<Date | undefined>(undefined);
     const [specificRestaurant, setSpecificRestaurant] = useState("");
@@ -34,7 +33,7 @@ export default function Home() {
         const fetchRestaurants = async () => {
             try {
                 setLoading(true);
-                if (!day) {
+                if (!day || !time ) {
                     const response = await instance.get("/listActiveRestaurants");
                     const status = response.data.statusCode;
 
@@ -45,15 +44,31 @@ export default function Home() {
                         console.error("Failed to fetch restaurants. Status:", status);
                         setError("Failed to load restaurants.");
                     }
-                } else {
+                } else if (day && time && specificRestaurant.length === 0) {
                     // Check if restaurants are closed for the selected day
                     const response = await instance.post("/checkClosedDay", {
                         day: day.toISOString().slice(0, 10),
                     });
                     const {statusCode} = response.data;
-
                     if (statusCode === 200) {
                         setRestaurants(response.data.result || []);
+                        setError(null);
+                    } else {
+                        console.error("Failed to fetch closed day restaurants. Status:", statusCode);
+                        setError("Failed to load restaurants for the selected day.");
+                        setRestaurants([]);
+                    }
+                }
+                else if (day && time && specificRestaurant.length > 0){
+                    console.log("specificRestaurant: ", specificRestaurant);
+                    const response = await instance.post("/consumerSearchSpecificRestaurant", {
+                        "name":specificRestaurant, "day":day.toISOString().slice(0, 10), "time":time
+                        });
+                    const {statusCode} = response.data;
+                    console.log("statusCode: ", statusCode);
+                    console.log("response.data.result: ", response.data.result);
+                    if (statusCode === 200) {
+                        setRestaurants(response.data.results || []);
                         setError(null);
                     } else {
                         console.error("Failed to fetch closed day restaurants. Status:", statusCode);
@@ -71,13 +86,13 @@ export default function Home() {
         };
 
         fetchRestaurants();
-    }, [day]);
+    }, [day, specificRestaurant, time]);
 
     const handleRestaurantClick = (restaurant: Restaurant) => {
         instance.post('/findVacantTable', {"name": restaurant.name, "address": restaurant.address, "day":day? day.toISOString().slice(0, 10) : null, "time":time})
             .then(function (response) {
-                // let status = response.data.statusCode
-                setTableID(response.data.result.tableID);
+                const tableID = response.data.result.tableID;
+                // setTableID(response.data.result.tableID);
                 instance.post('/consumerFetchRestaurantDetails', {
                     "name": restaurant.name,
                     "address": restaurant.address,
@@ -92,6 +107,7 @@ export default function Home() {
                         localStorage.setItem("time", time.toString());
                         localStorage.setItem("day", day ? day.toISOString().slice(0, 10) : "");
                         router.push(`/consumers/${restaurant.name}`);
+
                     })
                     .catch(function (error) {
                         return error
@@ -122,23 +138,7 @@ export default function Home() {
     };
 
     const handleSpecificRestaurant = (e: React.ChangeEvent<HTMLInputElement>) => {
-    // useEffect(() => {
-    //     instance.post('/consumerSearchSpecificRestaurant', {"restaurantName":e.target.value, "day":day, "time":time})
-    //         .then(function (response) {
-    //             // let status = response.data.statusCode;
-    //             // let resultComp = response.data.result;
-    //         })
-    //         .catch(function (error) {
-    //             // this is a 500-type error, where there is no such API on the server side
-    //             return error
-    //         })
-    // }, []);
-    // if(){
-    //     setSpecificRestaurant(e.target.value);
-    // }
-    // else{
-    //     setSpecificRestaurant("");
-    // }
+        setSpecificRestaurant(e.target.value);
     }
 
     return (
@@ -166,6 +166,9 @@ export default function Home() {
                         <div className="absolute top-1/2 left-3 transform -translate-y-1/2">
                             <Search className="text-gray-500" size={20}/>
                         </div>
+                        {/*<div className="absolute top-1/2 right-0 -translate-y-1/2">*/}
+                        {/*    <Button onClick={handleSpecificRestaurant}>Search</Button>*/}
+                        {/*</div>*/}
                     </div>
                 </div>
 
