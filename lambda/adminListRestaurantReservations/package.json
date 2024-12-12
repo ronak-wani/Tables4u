@@ -1,0 +1,18 @@
+{
+  "name": "list_restaurant_resrvations",
+  "version": "1.0.0",
+  "description": "lists a restaurant's reservations",
+  "main": "index.mjs",
+  "author": "Tables4u",
+  "license": "MIT",
+  "dependencies": {
+    "mysql": "^2.18.1"
+  },
+  "scripts": {
+
+  },
+  "devDependencies": {
+
+  }
+}
+
