@@ -8,7 +8,6 @@ import {Button} from "@/components/ui/Button";
 import {
     Table,
     TableBody,
-    TableCaption,
     TableCell,
     TableHead,
     TableHeader,
