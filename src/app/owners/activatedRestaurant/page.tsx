@@ -52,7 +52,7 @@ export default function ActivateRestaurantPage() {
                             <TableCell key={i}>{i}:00</TableCell>
                             {result === "0"
                                 ? Array.from({ length: numberOfTables }, (_, j) => (
-                                    <TableCell key={j + 1} id={String(j + 1)}>N/A</TableCell>
+                                    <TableCell className={`text-green-700`} key={j + 1} id={String(j + 1)}>Available</TableCell>
                                 ))
                                 : Array.from({ length: numberOfTables }, (_, j) => {
                                     const tableID = j + 1;
@@ -62,7 +62,7 @@ export default function ActivateRestaurantPage() {
 
                                     return (
                                         <TableCell key={`${i}-${tableID}`} id={String(tableID)}>
-                                            {tableData ? tableData.numberOfSeats : 'N/A'}
+                                            {tableData ? tableData.numberOfSeats : 'Available'}
                                         </TableCell>
                                     );
                                 })
@@ -99,7 +99,7 @@ export default function ActivateRestaurantPage() {
     const tables = [];
     for (let i = 1; i <=numberOfTables; i++) {
         tables.push(
-            <TableHead key={i}>Table #{i}</TableHead>
+            <TableHead className={`text-black font-black`} key={i}>Table #{i}</TableHead>
         );
     }
 
@@ -138,7 +138,7 @@ export default function ActivateRestaurantPage() {
                 <Table>
                     <TableHeader>
                         <TableRow id="header">
-                            <TableHead>Time</TableHead>
+                            <TableHead className={`text-black font-black`}>Time</TableHead>
                             {tables}
                         </TableRow>
                     </TableHeader>
