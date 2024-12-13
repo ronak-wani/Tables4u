@@ -7,13 +7,14 @@ import {Label} from "@/components/ui/label";
 import {Input} from "@/components/ui/input";
 import axios from "axios";
 import { useRouter } from 'next/navigation';
+import Header from "@/app/(components)/Header";
 // import {number} from "prop-types";
 
 const instance = axios.create({
     baseURL: 'https://8ng83lxa6k.execute-api.us-east-1.amazonaws.com/G2Iteration1'
 });
 
-export default function owner(){
+export default function Owner(){
     const router = useRouter();
     let [password, setPassword] = React.useState("");
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -31,9 +32,6 @@ export default function owner(){
                         .then(function (response) {
                             console.log("Success");
                             console.log(response.data);
-                            // let status = response.data.statusCode;
-                            // const result = response.data.result.restaurant[0];
-                            // localStorage.setItem("Restaurant", response.data.result.restaurant[0]);
                             localStorage.clear();
                             localStorage.setItem("restaurantID", response.data.result.restaurant[0].restaurantID);
                             localStorage.setItem("name", response.data.result.restaurant[0].name);
@@ -46,10 +44,10 @@ export default function owner(){
                                 localStorage.setItem(`tableID_${i}`, response.data.result.restaurant[i].tableID);
                                 localStorage.setItem(`numberOfSeats_${i}`, response.data.result.restaurant[i].numberOfSeats);
                             }
-                            // router.push(
-                            //     `/owners/editRestaurant?restaurantID=${encodeURIComponent(result.restaurantID)}&Name=${encodeURIComponent(result.name)}&Address=${encodeURIComponent(result.address)}&numberOfTables=${result.numberOfTables}&isActive=${encodeURIComponent(result.isActive)}&openHour=${result.openHour}&closeHour=${result.closeHour}`
-                            // );
-                            router.push( `/owners/editRestaurant`);
+                            if(response.data.result.restaurant[0].isActive==='Y')
+                                router.push( `/owners/activatedRestaurant`);
+                            else
+                                router.push( `/owners/editRestaurant`);
                         })
                         .catch(function (error) {
                             console.error("Error logging in:", error);
@@ -61,14 +59,15 @@ export default function owner(){
     
     return(
         <>
-            <div className="flex justify-end items-center m-5">
+            <div className="flex justify-between items-center mr-5">
+                <Header hidden={false}/>
                 <div>
                     <Link href="/owners/createRestaurant">
                         <Button>Create Restaurant</Button>
                     </Link>
                 </div>
             </div>
-            <div className={`flex justify-center items-center h-full mt-60`}>
+            <div className={`flex justify-center items-center h-full mt-56`}>
                     <Card className="w-[600px]">
                         <CardHeader>
                             <CardTitle>Login</CardTitle>

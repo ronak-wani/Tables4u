@@ -9,27 +9,20 @@ export const handler = async (event) => {
     })
     let response = {}
 
-    let fetchReservation = (restaurantID, day) => {
+    let FetchRestaurant = (name, address, tableID) => {
         return new Promise((resolve, reject) => {
-            pool.query("SELECT * FROM Reservations where restaurantID = ? AND day = ?;", [restaurantID, day], (error, rows) => {
+            pool.query("SELECT * FROM Restaurants R JOIN Tables T ON R.restaurantID = T.restaurantID WHERE name = ? AND address = ? AND tableID = ?;", [name, address, tableID], (error, rows) => {
                 if (error) { return reject(error); }
                 return resolve(rows);
             })
         })
     }
     try{
-        const all_reservations = await fetchReservation(event.restaurantID, event.day)
-        if(all_reservations.length === 0){
-            response = {
-                statusCode: 200,
-                result: "0"
-            }
-            return response;
-        }
-        else{
-            response = {
-                statusCode: 200,
-                result: all_reservations
+        const restaurant = await FetchRestaurant(event.name, event.address, event.tableID)
+        response = {
+            statusCode: 200,
+            result:{
+                "restaurant": restaurant
             }
         }
     }

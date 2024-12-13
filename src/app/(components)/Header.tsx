@@ -7,12 +7,14 @@ function Header({hidden}: {hidden: boolean}) {
         <>
             <div className={`flex flex-row justify-between items-center`}>
                 {/* Left Side */}
-                <div className={`flex items-center`}>
-                    <h1 className={`font-black text-xl text-blue-600 p-5`}>Tables4u</h1>
-                </div>
+                <Link href="/">
+                    <div className={`flex items-center`}>
+                        <h1 className={`font-black text-xl text-blue-600 p-5`}>Tables4u</h1>
+                    </div>
+                </Link>
                 {/* Right Side */}
                 {hidden && <div className={`flex items-center gap-4`}>
-                    <Link href="/consumers">
+                <Link href="/consumers">
                         <Button variant={"default"} className={`font-black m-2`}> CONSUMERS </Button>
                     </Link>
                     <Link href="/owners">
