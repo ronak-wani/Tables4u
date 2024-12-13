@@ -160,15 +160,54 @@ export default function EditRestaurantPage() {
         if(checked){
             setDialogOpen(true);
             setIsActivated('Y');
-            instance.post('/activateRestaurant', {"name":Name, "address":Address, "password":password, "numberOfTables":numberOfTables, "openHour":openHour, "closeHour":closeHour})
-                .then(function (response) {
-                    // let status = response.data.statusCode;
-                    // let resultComp = response.data.result;
-                })
-                .catch(function (error) {
-                    // this is a 500-type error, where there is no such API on the server side
-                    return error
-                })
+            if(openHour === 0 && closeHour === 0){
+                instance.post('/activateRestaurant', {"name":Name, "address":Address, "password":password, "numberOfTables":numberOfTables, "openHour":openingHour, "closeHour":closingHour})
+                    .then(function (response) {
+                        // let status = response.data.statusCode;
+                        // let resultComp = response.data.result;
+                    })
+                    .catch(function (error) {
+                        // this is a 500-type error, where there is no such API on the server side
+                        return error
+                    })
+            }
+            else if(openHour === 0 && closeHour !== 0){
+
+                instance.post('/activateRestaurant', {"name":Name, "address":Address, "password":password, "numberOfTables":numberOfTables, "openHour":openingHour, "closeHour":closeHour})
+                    .then(function (response) {
+                        // let status = response.data.statusCode;
+                        // let resultComp = response.data.result;
+                    })
+                    .catch(function (error) {
+                        // this is a 500-type error, where there is no such API on the server side
+                        return error
+                    })
+
+            }
+            else if(openHour !== 0 && closeHour === 0){
+
+                instance.post('/activateRestaurant', {"name":Name, "address":Address, "password":password, "numberOfTables":numberOfTables, "openHour":openHour, "closeHour":closingHour})
+                    .then(function (response) {
+                        // let status = response.data.statusCode;
+                        // let resultComp = response.data.result;
+                    })
+                    .catch(function (error) {
+                        // this is a 500-type error, where there is no such API on the server side
+                        return error
+                    })
+
+            }
+            else{
+                instance.post('/activateRestaurant', {"name":Name, "address":Address, "password":password, "numberOfTables":numberOfTables, "openHour":openHour, "closeHour":closeHour})
+                    .then(function (response) {
+                        // let status = response.data.statusCode;
+                        // let resultComp = response.data.result;
+                    })
+                    .catch(function (error) {
+                        // this is a 500-type error, where there is no such API on the server side
+                        return error
+                    })
+            }
         }
         else{
             setDialogOpen(false);
