@@ -9,56 +9,26 @@ export const handler = async (event) => {
     })
     let response = {}
 
-    let checkClosedDay = (day) => {
+    let checkRestaurants = (day, time, isActive) => {
         return new Promise((resolve, reject) => {
-            pool.query("SELECT * FROM ClosedDays WHERE day = ?;", [day], (error, rows) => {
+            pool.query("SELECT * FROM Restaurants WHERE openHour <= ? AND closeHour > ? AND isActive = ? AND restaurantID NOT IN (SELECT restaurantID FROM ClosedDays WHERE day = ?);", [time, time, isActive, day], (error, rows) => {
                 if (error) { return reject(error); }
                 return resolve(rows);
             })
         })
     }
 
-    let listRestaurants = () => {
-        return new Promise((resolve, reject) => {
-            pool.query("SELECT * FROM Restaurants WHERE isActive = 'Y';", (error, rows) => {
-                if (error) { return reject(error); }
-                return resolve(rows);
-            })
-        })
-    }
 
-    let skipRestaurants = (restaurantID) => {
-        return new Promise((resolve, reject) => {
-            pool.query("SELECT * FROM Restaurants WHERE isActive = 'Y' AND restaurantID != ?;", [restaurantID], (error, rows) => {
-                if (error) { return reject(error); }
-                return resolve(rows);
-            })
-        })
-    }
-
-    try{
-        const rows = await checkClosedDay(event.day)
-        if (rows.length === 0) {
-            const restaurants = await listRestaurants()
-            response = {
-                statusCode: 200,
-                result:restaurants
-            }
-        }
-        else{
-            for (let i = 0; i < rows.length; i++) {
-                const restaurants = await skipRestaurants(rows[i].restaurantID)
-                response = {
-                    statusCode: 200,
-                    result: restaurants
-                }
-            }
+    try {
+        const rows = await checkRestaurants(event.day, event.time, "Y")
+        response = {
+            statusCode: 200,
+            restaurants: rows
         }
     }
-    catch(err) {
-        response = {statusCode: 400, error: err}
+    catch (err) {
+        response = { statusCode: 400, error: err }
     }
-
-    pool.end()
+    pool.end();
     return response;
 }
