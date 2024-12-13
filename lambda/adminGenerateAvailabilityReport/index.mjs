@@ -42,15 +42,26 @@ export const handler = async (event) => {
             const restaurantInfo = await getRestaurantInfo()
             const tablesInfo = await getTablesInfo()
             const reservationsInfo = await getReservationsInfo()
+            if(reservationsInfo.length === 0){
+                response = {
+                    statusCode: 200,
+                    numberOfTables: restaurantInfo[0].numberOfTables,
+                    openHour: restaurantInfo[0].openHour,
+                    closeHour: restaurantInfo[0].closeHour,
+                    tableCapacity: tablesInfo,
+                    result: "0"
+                }
+                return response;
+            }
             response = {
                 statusCode: 200,
-                numberOfTables: restaurantInfo[0].numberOfTables,
-                openHour: restaurantInfo[0].openHour,
-                closeHour: restaurantInfo[0].closeHour,
-                tableCapacity: tablesInfo,
-                reservations: reservationsInfo
-
-
+                result: {
+                    numberOfTables: restaurantInfo[0].numberOfTables,
+                    openHour: restaurantInfo[0].openHour,
+                    closeHour: restaurantInfo[0].closeHour,
+                    tableCapacity: tablesInfo,
+                    reservations: reservationsInfo
+                }
             }
         }
         catch (err) {

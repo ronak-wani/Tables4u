@@ -150,6 +150,7 @@ export default function Home() {
         });
   };
 
+
   const handleDeleteRestaurant = () => {
     if (!restaurantToDelete) {
       setError("No restaurant selected for deletion.");
@@ -185,56 +186,71 @@ export default function Home() {
           setLoading(false);
         });
   };
-  const handleAvailabilityReport = (restaurantID: number) => {
-    instance.post('/adminGenerateAvailabilityReport', {
-        "adminPass": adminPassword,
-      "restaurantID": restaurantID,
-      "day": today.toISOString().slice(0, 10)
-    })
-        .then(function (response) {
-          // let status = response.data.statusCode
-          const result = response.data.result;
-          setOpeningHour(response.data.result.openingHour);
-          setClosingHour(response.data.result.closingHour);
-          setNumberOfTables(response.data.result.numberOfTables);
-          console.log("Result: " + result);
-          for (let i = openingHour; i <= closingHour; i++) {
-            cells.push(
-                <TableRow key={i}>
-                  <TableCell key={i}>{i}:00</TableCell>
-                  {result === "0"
-                      ? Array.from({length: numberOfTables}, (_, j) => (
-                          <TableCell className={`text-green-700`} key={j + 1}
-                                     id={String(j + 1)}>Available</TableCell>
-                      ))
-                      : Array.from({length: numberOfTables}, (_, j) => {
-                        const tableID = j + 1;
-                        const tableData = result.find(
-                            (item: {
-                              tableID: number,
-                              time: number
-                            }) => item.tableID === tableID && item.time === i
-                        );
+    const handleAvailabilityReport = (restaurantID: number) => {
+        instance
+            .post('/adminGenerateAvailabilityReport', {
+                adminPass: adminPassword,
+                restaurantID: restaurantID,
+                day: today.toISOString().slice(0, 10),
+            })
+            .then(function (response) {
+                const result = response.data.result;
+                setOpeningHour(response.data.openHour);
+                setClosingHour(response.data.closeHour);
+                setNumberOfTables(response.data.numberOfTables);
+                console.log('Result: ' + result);
 
-                        return (
-                            <TableCell key={`${i}-${tableID}`} id={String(tableID)}>
-                              {tableData ? tableData.numberOfSeats : 'Available'}
-                            </TableCell>
-                        );
-                      })
-                  }
-                </TableRow>
-            );
-          }
-          setCells([...cells]);
-          setIsDialogOpen(true);
-        })
-        .catch(function (error) {
-          // this is a 500-type error, where there is no such API on the server side
-          return error
-        })
-    // setVisible(true);
-  }
+                // // Instead of pushing to cells, create a new array
+                // const newCells = [];
+                for (let i = openingHour; i <= closingHour; i++) {
+                    cells.push(
+                        <TableRow key={`row-${i}`}>
+                            <TableCell key={`time-${i}`}>{i}:00</TableCell>
+                            {result === '0'
+                                ? Array.from({ length: numberOfTables }, (_, j) => (
+                                    <TableCell className="text-green-700" key={`cell-${i}-${j}`} id={String(j + 1)}>
+                                        Available
+                                    </TableCell>
+                                ))
+                                : Array.from({ length: numberOfTables }, (_, j) => {
+                                    const tableID = j + 1;
+                                    const tableCapacity = result.tableCapacity[j].numberOfSeats;
+                                    const tableData = result.reservations.find(
+                                        (reservation: Reservation) => reservation.tableID === tableID && reservation.time === i
+                                    );
+                                    console.log("tableData" + tableData);
+
+                                    return (
+                                        <TableCell key={`cell-${i}-${tableID}`} id={`table-${tableID}`}>
+                                            {tableData ? (
+                                                // If a reservation exists, show the number of seats for that reservation
+                                                tableData.numberOfSeats
+                                            ) : (
+                                                // Otherwise, show 'Available' with the table's capacity
+                                                <span className="text-green-700">Available ({tableCapacity})</span>
+                                            )}
+                                        </TableCell>
+                                    );
+                                })}
+                        </TableRow>
+                    );
+                }
+
+                // Use setCells to update the state with the new array
+                setCells([...cells]);
+
+                // Open the dialog after cells are updated
+                setIsDialogOpen(true);
+            })
+            .catch(function (error) {
+                console.error('Error generating availability report:', error);
+            });
+    };
+    const tables = Array.from({ length: numberOfTables }, (_, i) => (
+        <TableHead key={i} className="text-black font-black">
+            Table #{i + 1}
+        </TableHead>
+    ));
   return (
       <>
         <Header hidden={false}/>
@@ -370,17 +386,19 @@ export default function Home() {
                                       <AlertDialogTitle>Availability Report</AlertDialogTitle>
                                   </AlertDialogHeader>
                                   <div className="text-sm text-muted-foreground mt-4">
-                                      <Table>
-                                          <TableHeader>
-                                              <TableRow>
-                                                  <TableHead className="text-black font-black">Time</TableHead>
-                                                  {/* Add table headers dynamically */}
-                                              </TableRow>
-                                          </TableHeader>
-                                          <TableBody>
-                                              {/* Add table rows dynamically */}
-                                          </TableBody>
-                                      </Table>
+                                      {tables.length > 0 && cells.length > 0 ? (
+                                          <Table>
+                                              <TableHeader>
+                                                  <TableRow>
+                                                      <TableHead className="text-black font-black">Time</TableHead>
+                                                      {tables}
+                                                  </TableRow>
+                                              </TableHeader>
+                                              <TableBody>{cells}</TableBody>
+                                          </Table>
+                                      ) : (
+                                          <p>No availability data available.</p>
+                                      )}
                                   </div>
                                   <AlertDialogFooter>
                                       <AlertDialogCancel>Close</AlertDialogCancel>
