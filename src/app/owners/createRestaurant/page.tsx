@@ -36,8 +36,8 @@ export default function CreateRestaurantPage() {
         setNotInvisible(false);
         instance.post('/createRestaurant', {"name":Name, "address":Address, "password":newPassword})
             .then(function (response) {
-                let status = response.data.statusCode
-                let resultComp = response.data.body
+                // let status = response.data.statusCode
+                // let resultComp = response.data.body
             })
             .catch(function (error) {
                 // this is a 500-type error, where there is no such API on the server side

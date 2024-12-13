@@ -13,8 +13,8 @@ import { Input } from "@/components/ui/input"
 import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch"
 import axios from "axios";
-import { Button } from "@/components/ui/Button";
-import { Trash } from "lucide-react";
+import {Button} from "@/components/ui/Button";
+import {Trash} from "lucide-react";
 import { useRouter } from 'next/navigation';
 
 const instance = axios.create({
@@ -23,19 +23,31 @@ const instance = axios.create({
 
 export default function EditRestaurantPage() {
     const router = useRouter();
-    const restaurantID =  localStorage.getItem("restaurantID");
-    const Name =  localStorage.getItem("name");
-    const Address = localStorage.getItem("address");
-    const [numberOfTables, setNumberOfTables] = React.useState(Number(localStorage.getItem("numberOfTables")) || 1);
-    const openingHour = Number( localStorage.getItem("openHour") || 0);
-    const closingHour = Number( localStorage.getItem("closeHour") || 0);
-    const [isActivated, setIsActivated] = React.useState( localStorage.getItem("isActive"));
+    const [restaurantID, setRestaurantID] = useState<string | null>(null);
+    const [Name, setName] = useState<string | null>(null);
+    const [Address, setAddress] = useState<string | null>(null);
+    const [numberOfTables, setNumberOfTables] = useState<number>(1);
+    const [openingHour, setOpeningHour] = useState<number>(0);
+    const [closingHour, setClosingHour] = useState<number>(0);
+    const [isActivated, setIsActivated] =  useState<string | null>(null);
     const [password, setPassword] = React.useState("");
     const [openHour, setOpenHour] = React.useState(openingHour ? Number(openingHour) : 0);
     const [closeHour, setCloseHour] = React.useState(closingHour ? Number(closingHour) : 0);
     const [numberOfSeats, setNumberOfSeats] = React.useState(0);
     const [disabledTables, setDisabledTables] = useState<{ [key: number]: boolean }>({});
     const [numberOfSeatsArray, setNumberOfSeatsArray] = useState<Record<number, string | null>>({}); // Store table-specific placeholders
+  
+    useEffect(() => {
+        if (typeof window !== 'undefined') {
+            setRestaurantID(localStorage.getItem("restaurantID"));
+            setName(localStorage.getItem("name"));
+            setAddress(localStorage.getItem("address"));
+            setNumberOfTables(Number(localStorage.getItem("numberOfTables") || 1));
+            setOpeningHour(Number(localStorage.getItem("openHour") || 0));
+            setClosingHour(Number(localStorage.getItem("closeHour") || 0));
+            setIsActivated(localStorage.getItem("isActive"));
+        }
+    }, []);
 
     const handleOpenHour = (e: React.ChangeEvent<HTMLInputElement>) => {
         const newOpenHour = Number(e.target.value);
@@ -84,8 +96,8 @@ export default function EditRestaurantPage() {
     function createTable(i: number) {
         instance.post('/createTable', { "restaurantID": restaurantID, "tableID": i, "numberOfSeats": numberOfSeats })
             .then(function (response) {
-                let status = response.data.statusCode;
-                let resultComp = response.data.result;
+                // let status = response.data.statusCode;
+                // let resultComp = response.data.result;
             })
             .catch(function (error) {
                 return error;
@@ -103,6 +115,13 @@ export default function EditRestaurantPage() {
             storedNumberOfSeats[i] = localStorage.getItem(`numberOfSeats_${i}`);
         }
         setNumberOfSeatsArray(storedNumberOfSeats);
+        if (typeof window !== 'undefined') {
+            const storedNumberOfSeats: Record<number, string | null> = {};
+            for (let i = 0; i < numberOfTables; i++) {
+                storedNumberOfSeats[i] = localStorage.getItem(`numberOfSeats_${i}`);
+            }
+            setNumberOfSeatsArray(storedNumberOfSeats);
+        }
     }, [numberOfTables]);
 
     const tables = [];
@@ -120,7 +139,7 @@ export default function EditRestaurantPage() {
                     disabled={disabledTables[i] || isActivated === 'Y'}
                     onChange={handleNumberOfSeatsChange}
                 />
-                <Button type="button" disabled={disabledTables[i]  || isActivated === 'Y'} onClick={(e) =>
+                <Button type="button" disabled={disabledTables[i]  || isActivated === 'Y'} onClick={() =>
                 {
                     createTable(i);
                 }}> Confirm </Button>
@@ -138,10 +157,10 @@ export default function EditRestaurantPage() {
         if (checked) {
             setDialogOpen(true);
             setIsActivated('Y');
-            instance.post('/activateRestaurant', {"name":Name, "address":Address, "password":password, "openHour":openHour, "closeHour":closeHour, "numberOfTables":numberOfTables})
+            instance.post('/activateRestaurant', {"name":Name, "address":Address, "password":password, "numberOfTables":numberOfTables, "openHour":openHour, "closeHour":closeHour})
                 .then(function (response) {
-                    let status = response.data.statusCode;
-                    let resultComp = response.data.result;
+                    // let status = response.data.statusCode;
+                    // let resultComp = response.data.result;
                 })
                 .catch(function (error) {
                     return error;
@@ -156,8 +175,8 @@ export default function EditRestaurantPage() {
         if(checked){
             instance.post('/deleteRestaurant', {"name":Name, "address":Address, "password":password})
             .then(function (response) {
-                let status = response.data.statusCode
-                let resultComp = response.data.body
+                // let status = response.data.statusCode
+                // let resultComp = response.data.body
             })
             .catch(function (error) {
                 // this is a 500-type error, where there is no such API on the server side
@@ -185,15 +204,25 @@ export default function EditRestaurantPage() {
         if(checked){
             instance.post('/editRestaurant', {"password":password, "numberOfTables": numberOfTables, "openHour":openHour, "closeHour":closeHour})
                 .then(function (response) {
-                    let status = response.data.statusCode;
-                    let resultComp = response.data.body;
+                    // let status = response.data.statusCode
+                    // let resultComp = response.data.body
                 })
                 .catch(function (error) {
-                    return error;
-                });
-            router.push(`/`);
-        } else {
-            setDialogOpen(false);
+                    // this is a 500-type error, where there is no such API on the server side
+                    return error
+                })
+            instance.post('/editRestaurant', {"restaurantID":restaurantID, "tableID":i, "numberOfSeats":numberOfSeats})
+                .then(function (response) {
+                    // let status = response.data.statusCode
+                    // let resultComp = response.data.body
+                })
+                .catch(function (error) {
+                    // this is a 500-type error, where there is no such API on the server side
+                    return error
+                })
+        }
+        else{
+            setSaveDialogOpen(false);
         }
     };
 
@@ -247,8 +276,8 @@ export default function EditRestaurantPage() {
                                                     <button
                                                         className="px-4 py-2 bg-gray-200 rounded"
                                                         onClick={() => {
-                                                            handleChange(false);
-                                                            setDeleteDialogOpen(false);
+                                                            handleChange(false); // Reset the switch if the user cancels
+                                                            setDialogOpen(false);
                                                         }}
                                                     >
                                                         Cancel
@@ -256,8 +285,8 @@ export default function EditRestaurantPage() {
                                                     <button
                                                         className="px-4 py-2 bg-blue-600 text-white rounded"
                                                         onClick={() => {
-                                                            handleChange(true);
-                                                            setDeleteDialogOpen(false);
+                                                            handleChange(true); // Confirm the activation
+                                                            setDialogOpen(false);
                                                         }}
                                                     >
                                                         Confirm
