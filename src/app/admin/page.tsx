@@ -4,6 +4,10 @@ import React, {ReactNode, useState} from "react";
 import axios from "axios";
 import Header from "@/app/(components)/Header";
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
+import DateCalendar from "@/app/(components)/Date";
+import {Input} from "@/components/ui/input";
+
+import dayjs from "dayjs";
 
 interface Restaurant {
     restaurantID: string;
@@ -45,6 +49,8 @@ export default function Home() {
     const [isDeleteReservationModalOpen, setIsDeleteReservationModalOpen] = useState(false);
     const [cells, setCells] = useState<ReactNode[]>([]);
     const [isVisible, setIsVisible] = useState(false);
+    const [testDate, setTestDate] = useState("");
+    const [day, setDay] = useState<Date | undefined>(undefined);
 
     const handlePasswordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setAdminPassword(event.target.value);
@@ -59,6 +65,13 @@ export default function Home() {
             return "Active"
         } else {
             return "Inactive"
+        }
+    }
+
+    const handleDateChange = (date: Date) => {
+        if (date) {
+            const formattedDate = dayjs(date).format("YYYY-MM-DD");
+            setTestDate(formattedDate);
         }
     }
 
@@ -144,7 +157,10 @@ export default function Home() {
                 setLoading(false);
             });
     };
+    const handleDay = (date: Date | undefined) => {
 
+            setDay(date);
+    };
 
     const handleDeleteRestaurant = () => {
         if (!restaurantToDelete) {
@@ -188,80 +204,100 @@ export default function Home() {
     ));
     tables.push(
         <div>
-            <TableHead className="text-black font-black">
-                Available Seats
-            </TableHead>
-            <TableHead className="text-black font-black">Sum</TableHead>
-            <TableHead className="text-black font-black">Utilization</TableHead>
-            <TableHead className="text-black font-black">Availability</TableHead>
+            <TableHead>Utilization</TableHead>
+            <TableHead>Availability</TableHead>
         </div>
 
     )
-    const handleAvailabilityReport = (restaurantID: number) => {
+    const handleAvailabilityReport = (restaurantID: number, selectedDate: string) => {
         setCells([]);
         setIsVisible(false);
         instance
             .post('/adminGenerateAvailabilityReport', {
                 adminPass: adminPassword,
                 restaurantID: restaurantID,
-                day: today.toISOString().slice(0, 10),
+                day: selectedDate, // Use the selected date
             })
             .then(function (response) {
+                
                 const result = response.data.result;
                 setOpeningHour(response.data.result.openHour);
-                console.log("OpenHour: " + response.data.result.openHour);
                 setClosingHour(response.data.result.closeHour);
-                console.log("OpenHour: " + response.data.result.closeHour);
                 setNumberOfTables(response.data.result.numberOfTables);
-                console.log("OpenHour: " + response.data.result.numberOfTables);
-                console.log('Result: ' + result);
-                // // Instead of pushing to cells, create a new array
+                console.log("OpenHour: " + response.data.result.openHour);
+                console.log("CloseHour: " + response.data.result.closeHour);
+                console.log("NumberOfTables: " + response.data.result.numberOfTables);
+    
+                // Array to store rows for the table
                 const newCells = [];
+    
+                // Loop through each hour from opening to closing time
                 for (let i = openingHour; i <= closingHour; i++) {
+                    let totalReservedSeats = 0;
+                    let totalSeatsAvailable = 0;
+    
                     newCells.push(
                         <TableRow key={`rows-${i}`}>
+                            {/* Hour Column */}
                             <TableCell key={`time-${i}`}>{i}:00</TableCell>
+    
+                            {/* Loop through each table */}
                             {result === '0'
-                                ? Array.from({length: numberOfTables}, (_, j) => (
-                                    <TableCell className="text-green-700" key={`cell-${i}-${j}`} id={String(j + 1)}>
-                                        Available
-                                    </TableCell>
-                                ))
-                                : Array.from({length: numberOfTables}, (_, j) => {
-                                    const tableID = j + 1;
-                                    const tableCapacity = result.tableCapacity[j].numberOfSeats;
-                                    const tableData = result.reservations.find(
-                                        (reservation: Reservation) => reservation.tableID === tableID && reservation.time === i
-                                    );
-                                    console.log("tableData" + tableData);
-                                    return (
-                                            <TableCell key={`cells-${i}-${tableID}`} id={`table-${tableID}`}>
-                                                {tableData ? (
-                                                    tableData.numberOfSeats
-                                                ) : (
-                                                    <span className="text-green-700">Available ({tableCapacity})</span>
-                                                )}
-                                            </TableCell>
-                                    );
-                                })}
+                                ? Array.from({ length: numberOfTables }, (_, j) => (
+                                      <TableCell className="text-green-700" key={`cell-${i}-${j}`} id={String(j + 1)}>
+                                          Available
+                                      </TableCell>
+                                  ))
+                                : Array.from({ length: numberOfTables }, (_, j) => {
+                                      const tableID = j + 1;
+                                      const tableCapacity = result.tableCapacity[j].numberOfSeats;
+                                      const tableData = result.reservations.find(
+                                          (reservation: Reservation) => reservation.tableID === tableID && reservation.time === i
+                                      );
+    
+                                      const seatsReserved = tableData ? tableData.numberOfSeats : 0;
+                                      const seatsAvailable = tableCapacity - seatsReserved;
+                                      totalReservedSeats += seatsReserved;
+                                      totalSeatsAvailable += seatsAvailable;
+    
+                                      return (
+                                          <TableCell key={`cells-${i}-${tableID}`} id={`table-${tableID}`}>
+                                              {seatsReserved > 0 ? (
+                                                  seatsReserved
+                                              ) : (
+                                                  <span className="text-green-700">Available ({tableCapacity})</span>
+                                              )}
+                                          </TableCell>
+                                      );
+                                  })}
+    
+                            {/* Utilization and Availability Rate */}
+                            <TableCell key={`utilization-${i}`} className="text-center">
+                                {totalSeatsAvailable + totalReservedSeats > 0
+                                    ? ((totalReservedSeats / (totalSeatsAvailable + totalReservedSeats)) * 100).toFixed(2) + '%'
+                                    : '0%'}
+                            </TableCell>
+    
+                            <TableCell key={`availability-${i}`} className="text-center">
+                                {totalSeatsAvailable > 0
+                                    ? ((totalSeatsAvailable / (totalSeatsAvailable + totalReservedSeats)) * 100).toFixed(2) + '%'
+                                    : '0%'}
+                            </TableCell>
                         </TableRow>
                     );
                 }
-
-                // Use setCells to update the state with the new array
+    
+                // Set the table cells
                 setCells(newCells);
                 setReservationVisible(false);
-                // setRequestedToViewReservations(false);
                 setIsVisible(true);
-                // setCells([]);
-                // tables = [];
-                // Open the dialog after cells are updated
                 setIsDialogOpen(true);
             })
             .catch(function (error) {
                 console.error('Error generating availability report:', error);
             });
     };
+    
 
     return (
         <>
@@ -386,7 +422,7 @@ export default function Home() {
                                     </button>
                                     <button
                                         className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
-                                        onClick={() => handleAvailabilityReport(Number(restaurant.restaurantID))}
+                                        onClick={() => handleAvailabilityReport(Number(restaurant.restaurantID), "2024-12-14")}
                                     >
                                         Generate Availability Report
                                     </button>
@@ -400,7 +436,8 @@ export default function Home() {
                             </div>
                         ))}
                 </div>
-
+                <div><DateCalendar selectedDate={day} onDateChange={handleDay}/>
+                    </div>
                 {/* Scrollable List of Reservations */}
                 <div className="mt-4 w-full max-w-4xl h-80 overflow-y-auto border border-gray-200 rounded-lg shadow">
                     {loading && <p className="text-center">Loading...</p>}

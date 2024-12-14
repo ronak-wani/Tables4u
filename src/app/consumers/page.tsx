@@ -67,8 +67,8 @@ export default function Consumer() {
     return (
         <>
             <Header hidden={false}></Header>
-            <div className="flex justify-center items-center h-full mt-64">
-                <Card className="w-[600px]">
+            <div className="flex justify-center items-center h-screen"> {/* Full screen height */}
+                <Card className="w-[600px] max-h-[90vh] overflow-auto"> {/* Prevent overflow issues */}
                     <CardHeader>
                         <CardTitle>Cancel Reservation</CardTitle>
                         <CardDescription>Enter your Email and Confirmation Code</CardDescription>
@@ -99,11 +99,11 @@ export default function Consumer() {
                             </div>
                         </div>
                     </CardContent>
-
+    
                     {/* Reservation Details */}
                     {reservationDetails && (
                         <CardContent>
-                            <div>   
+                            <div>
                                 <h4>Reservation Details:</h4>
                                 <p><strong>Email:</strong> {reservationDetails.email}</p>
                                 <p><strong>Confirmation Code:</strong> {reservationDetails.confirmation}</p>
@@ -113,8 +113,7 @@ export default function Consumer() {
                             </div>
                         </CardContent>
                     )}
-
-
+    
                     <CardFooter className="flex justify-between">
                         <Link href="/">
                             <Button variant="outline">Back</Button>
