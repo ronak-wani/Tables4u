@@ -13,6 +13,10 @@ import Header from "@/app/(components)/Header";
 //     AlertDialogTrigger,
 // } from "@/components/ui/alert-dialog"
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
+import DateCalendar from "@/app/(components)/Date";
+import {Input} from "@/components/ui/input";
+
+import dayjs from "dayjs";
 
 interface Restaurant {
     restaurantID: string;
@@ -54,6 +58,8 @@ export default function Home() {
     const [isDeleteReservationModalOpen, setIsDeleteReservationModalOpen] = useState(false);
     const [cells, setCells] = useState<ReactNode[]>([]);
     const [isVisible, setIsVisible] = useState(false);
+    const [testDate, setTestDate] = useState("");
+    const [day, setDay] = useState<Date | undefined>(undefined);
 
     const handlePasswordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setAdminPassword(event.target.value);
@@ -68,6 +74,13 @@ export default function Home() {
             return "Active"
         } else {
             return "Inactive"
+        }
+    }
+
+    const handleDateChange = (date: Date) => {
+        if (date) {
+            const formattedDate = dayjs(date).format("YYYY-MM-DD");
+            setTestDate(formattedDate);
         }
     }
 
@@ -153,8 +166,11 @@ export default function Home() {
                 setLoading(false);
             });
     };
+    const handleDay = (date: Date | undefined) => {
 
-    const testDate = new Date("2024-12-14");
+            setDay(date);
+    };
+
     const handleDeleteRestaurant = () => {
         if (!restaurantToDelete) {
             setError("No restaurant selected for deletion.");
@@ -429,7 +445,8 @@ export default function Home() {
                             </div>
                         ))}
                 </div>
-
+                <div><DateCalendar selectedDate={day} onDateChange={handleDay}/>
+                    </div>
                 {/* Scrollable List of Reservations */}
                 <div className="mt-4 w-full max-w-4xl h-80 overflow-y-auto border border-gray-200 rounded-lg shadow">
                     {loading && <p className="text-center">Loading...</p>}
