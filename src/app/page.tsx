@@ -44,10 +44,25 @@ export default function Home() {
                         console.error("Failed to fetch restaurants. Status:", status);
                         setError("Failed to load restaurants.");
                     }
-                } else if (day && time && specificRestaurant.length === 0) {
+                } else if (day && time===-1 && specificRestaurant.length === 0) {
                     // Check if restaurants are closed for the selected day
                     const response = await instance.post("/checkClosedDay", {
+                        day: day.toISOString().slice(0, 10)
+                    });
+                    const {statusCode} = response.data;
+                    if (statusCode === 200) {
+                        setRestaurants(response.data.result || []);
+                        setError(null);
+                    } else {
+                        console.error("Failed to fetch closed day restaurants. Status:", statusCode);
+                        setError("Failed to load restaurants for the selected day.");
+                        setRestaurants([]);
+                    }
+                }
+                else if(day && time && specificRestaurant.length === 0){
+                    const response = await instance.post("/checkClosedDayTime", {
                         day: day.toISOString().slice(0, 10),
+                        time: time
                     });
                     const {statusCode} = response.data;
                     if (statusCode === 200) {
