@@ -177,6 +177,7 @@ export default function Home() {
                             placeholder="Find restaurants ..."
                             className={`pl-10 bg-white`}
                             onChange={handleSpecificRestaurant}
+                            disabled={!isFormValid}
                         />
                         <div className="absolute top-1/2 left-3 transform -translate-y-1/2">
                             <Search className="text-gray-500" size={20}/>
