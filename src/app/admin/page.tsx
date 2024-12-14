@@ -196,6 +196,8 @@ export default function Home() {
         </TableHead>
     ));
     const handleAvailabilityReport = (restaurantID: number) => {
+        setCells([]);
+        setIsVisible(false);
         instance
             .post('/adminGenerateAvailabilityReport', {
                 adminPass: adminPassword,
@@ -212,9 +214,9 @@ export default function Home() {
                 console.log("OpenHour: " + response.data.result.numberOfTables);
                 console.log('Result: ' + result);
                 // // Instead of pushing to cells, create a new array
-                // const newCells = [];
+                const newCells = [];
                 for (let i = openingHour; i <= closingHour; i++) {
-                    cells.push(
+                    newCells.push(
                         <TableRow key={`rows-${i}`}>
                             <TableCell key={`time-${i}`}>{i}:00</TableCell>
                             {result === '0'
@@ -233,10 +235,8 @@ export default function Home() {
                                     return (
                                         <TableCell key={`cells-${i}-${tableID}`} id={`table-${tableID}`}>
                                             {tableData ? (
-                                                // If a reservation exists, show the number of seats for that reservation
                                                 tableData.numberOfSeats
                                             ) : (
-                                                // Otherwise, show 'Available' with the table's capacity
                                                 <span className="text-green-700">Available ({tableCapacity})</span>
                                             )}
                                         </TableCell>
@@ -247,12 +247,12 @@ export default function Home() {
                 }
 
                 // Use setCells to update the state with the new array
-                setCells([cells]);
+                setCells(newCells);
                 setReservationVisible(false);
                 // setRequestedToViewReservations(false);
                 setIsVisible(true);
                 // setCells([]);
-                tables = [];
+                // tables = [];
                 // Open the dialog after cells are updated
                 setIsDialogOpen(true);
             })
