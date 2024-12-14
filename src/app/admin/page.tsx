@@ -37,6 +37,7 @@ const instance = axios.create({
 export default function Home() {
     const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
+    const [reservationVisible, setReservationVisible] = useState(false);
     const [openingHour, setOpeningHour] = useState<number>(0);
     const [closingHour, setClosingHour] = useState<number>(0);
     const [numberOfTables, setNumberOfTables] = useState<number>(0);
@@ -97,7 +98,8 @@ export default function Home() {
     };
 
     const handleViewReservations = (id: number) => {
-        setRequestedToViewReservations(true)
+        setRequestedToViewReservations(true);
+        setReservationVisible(true);
         setIsVisible(false);
         instance
             .post("/adminListRestaurantReservations", {adminPass: adminPassword, restaurantID: id})
@@ -188,6 +190,11 @@ export default function Home() {
                 setLoading(false);
             });
     };
+    let tables = Array.from({length: numberOfTables}, (_, i) => (
+        <TableHead key={`head-${i}`} className="text-black font-black">
+            Table #{i + 1}
+        </TableHead>
+    ));
     const handleAvailabilityReport = (restaurantID: number) => {
         instance
             .post('/adminGenerateAvailabilityReport', {
@@ -204,7 +211,6 @@ export default function Home() {
                 setNumberOfTables(response.data.result.numberOfTables);
                 console.log("OpenHour: " + response.data.result.numberOfTables);
                 console.log('Result: ' + result);
-
                 // // Instead of pushing to cells, create a new array
                 // const newCells = [];
                 for (let i = openingHour; i <= closingHour; i++) {
@@ -241,9 +247,12 @@ export default function Home() {
                 }
 
                 // Use setCells to update the state with the new array
-                setCells([...cells]);
-                setRequestedToViewReservations(false);
+                setCells([cells]);
+                setReservationVisible(false);
+                // setRequestedToViewReservations(false);
                 setIsVisible(true);
+                // setCells([]);
+                tables = [];
                 // Open the dialog after cells are updated
                 setIsDialogOpen(true);
             })
@@ -251,11 +260,7 @@ export default function Home() {
                 console.error('Error generating availability report:', error);
             });
     };
-    const tables = Array.from({length: numberOfTables}, (_, i) => (
-        <TableHead key={`head-${i}`} className="text-black font-black">
-            Table #{i + 1}
-        </TableHead>
-    ));
+
     return (
         <>
             <Header hidden={false}/>
@@ -415,7 +420,7 @@ export default function Home() {
                             </div>
                         )}
                     {!loading &&
-                        !error &&
+                        !error && reservationVisible &&
                         !(reservations.length === 0) &&
                         reservations.map((reservation) => (
                             <div key={reservation.confirmation}
