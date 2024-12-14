@@ -154,7 +154,7 @@ export default function Home() {
             });
     };
 
-
+    const testDate = new Date("2024-12-14");
     const handleDeleteRestaurant = () => {
         if (!restaurantToDelete) {
             setError("No restaurant selected for deletion.");
@@ -197,80 +197,100 @@ export default function Home() {
     ));
     tables.push(
         <div>
-            <TableHead>
-                Available Seats
-            </TableHead>
-            <TableHead>Sum</TableHead>
             <TableHead>Utilization</TableHead>
             <TableHead>Availability</TableHead>
         </div>
 
     )
-    const handleAvailabilityReport = (restaurantID: number) => {
+    const handleAvailabilityReport = (restaurantID: number, selectedDate: string) => {
         setCells([]);
         setIsVisible(false);
         instance
             .post('/adminGenerateAvailabilityReport', {
                 adminPass: adminPassword,
                 restaurantID: restaurantID,
-                day: today.toISOString().slice(0, 10),
+                day: selectedDate, // Use the selected date
             })
             .then(function (response) {
+                
                 const result = response.data.result;
                 setOpeningHour(response.data.result.openHour);
-                console.log("OpenHour: " + response.data.result.openHour);
                 setClosingHour(response.data.result.closeHour);
-                console.log("OpenHour: " + response.data.result.closeHour);
                 setNumberOfTables(response.data.result.numberOfTables);
-                console.log("OpenHour: " + response.data.result.numberOfTables);
-                console.log('Result: ' + result);
-                // // Instead of pushing to cells, create a new array
+                console.log("OpenHour: " + response.data.result.openHour);
+                console.log("CloseHour: " + response.data.result.closeHour);
+                console.log("NumberOfTables: " + response.data.result.numberOfTables);
+    
+                // Array to store rows for the table
                 const newCells = [];
+    
+                // Loop through each hour from opening to closing time
                 for (let i = openingHour; i <= closingHour; i++) {
+                    let totalReservedSeats = 0;
+                    let totalSeatsAvailable = 0;
+    
                     newCells.push(
                         <TableRow key={`rows-${i}`}>
+                            {/* Hour Column */}
                             <TableCell key={`time-${i}`}>{i}:00</TableCell>
+    
+                            {/* Loop through each table */}
                             {result === '0'
-                                ? Array.from({length: numberOfTables}, (_, j) => (
-                                    <TableCell className="text-green-700" key={`cell-${i}-${j}`} id={String(j + 1)}>
-                                        Available
-                                    </TableCell>
-                                ))
-                                : Array.from({length: numberOfTables}, (_, j) => {
-                                    const tableID = j + 1;
-                                    const tableCapacity = result.tableCapacity[j].numberOfSeats;
-                                    const tableData = result.reservations.find(
-                                        (reservation: Reservation) => reservation.tableID === tableID && reservation.time === i
-                                    );
-                                    console.log("tableData" + tableData);
-                                    return (
-                                        <TableCell key={`cells-${i}-${tableID}`} id={`table-${tableID}`}>
-                                            {tableData ? (
-                                                tableData.numberOfSeats
-                                            ) : (
-                                                <span className="text-green-700">Available ({tableCapacity})</span>
-                                            )}
-                                        </TableCell>
-                                    );
-                                })}
+                                ? Array.from({ length: numberOfTables }, (_, j) => (
+                                      <TableCell className="text-green-700" key={`cell-${i}-${j}`} id={String(j + 1)}>
+                                          Available
+                                      </TableCell>
+                                  ))
+                                : Array.from({ length: numberOfTables }, (_, j) => {
+                                      const tableID = j + 1;
+                                      const tableCapacity = result.tableCapacity[j].numberOfSeats;
+                                      const tableData = result.reservations.find(
+                                          (reservation: Reservation) => reservation.tableID === tableID && reservation.time === i
+                                      );
+    
+                                      const seatsReserved = tableData ? tableData.numberOfSeats : 0;
+                                      const seatsAvailable = tableCapacity - seatsReserved;
+                                      totalReservedSeats += seatsReserved;
+                                      totalSeatsAvailable += seatsAvailable;
+    
+                                      return (
+                                          <TableCell key={`cells-${i}-${tableID}`} id={`table-${tableID}`}>
+                                              {seatsReserved > 0 ? (
+                                                  seatsReserved
+                                              ) : (
+                                                  <span className="text-green-700">Available ({tableCapacity})</span>
+                                              )}
+                                          </TableCell>
+                                      );
+                                  })}
+    
+                            {/* Utilization and Availability Rate */}
+                            <TableCell key={`utilization-${i}`} className="text-center">
+                                {totalSeatsAvailable + totalReservedSeats > 0
+                                    ? ((totalReservedSeats / (totalSeatsAvailable + totalReservedSeats)) * 100).toFixed(2) + '%'
+                                    : '0%'}
+                            </TableCell>
+    
+                            <TableCell key={`availability-${i}`} className="text-center">
+                                {totalSeatsAvailable > 0
+                                    ? ((totalSeatsAvailable / (totalSeatsAvailable + totalReservedSeats)) * 100).toFixed(2) + '%'
+                                    : '0%'}
+                            </TableCell>
                         </TableRow>
                     );
                 }
-
-                // Use setCells to update the state with the new array
+    
+                // Set the table cells
                 setCells(newCells);
                 setReservationVisible(false);
-                // setRequestedToViewReservations(false);
                 setIsVisible(true);
-                // setCells([]);
-                // tables = [];
-                // Open the dialog after cells are updated
                 setIsDialogOpen(true);
             })
             .catch(function (error) {
                 console.error('Error generating availability report:', error);
             });
     };
+    
 
     return (
         <>
@@ -395,7 +415,7 @@ export default function Home() {
                                     </button>
                                     <button
                                         className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
-                                        onClick={() => handleAvailabilityReport(Number(restaurant.restaurantID))}
+                                        onClick={() => handleAvailabilityReport(Number(restaurant.restaurantID), "2024-12-14")}
                                     >
                                         Generate Availability Report
                                     </button>
