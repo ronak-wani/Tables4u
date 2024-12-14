@@ -3,15 +3,6 @@
 import React, {ReactNode, useState} from "react";
 import axios from "axios";
 import Header from "@/app/(components)/Header";
-// import {
-//     AlertDialog,
-//     AlertDialogCancel,
-//     AlertDialogContent,
-//     AlertDialogFooter,
-//     AlertDialogHeader,
-//     AlertDialogTitle,
-//     AlertDialogTrigger,
-// } from "@/components/ui/alert-dialog"
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
 
 interface Restaurant {
