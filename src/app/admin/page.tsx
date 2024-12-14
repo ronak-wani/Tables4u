@@ -197,12 +197,12 @@ export default function Home() {
     ));
     tables.push(
         <div>
-            <TableHead>
+            <TableHead className="text-black font-black">
                 Available Seats
             </TableHead>
-            <TableHead>Sum</TableHead>
-            <TableHead>Utilization</TableHead>
-            <TableHead>Availability</TableHead>
+            <TableHead className="text-black font-black">Sum</TableHead>
+            <TableHead className="text-black font-black">Utilization</TableHead>
+            <TableHead className="text-black font-black">Availability</TableHead>
         </div>
 
     )
@@ -244,13 +244,13 @@ export default function Home() {
                                     );
                                     console.log("tableData" + tableData);
                                     return (
-                                        <TableCell key={`cells-${i}-${tableID}`} id={`table-${tableID}`}>
-                                            {tableData ? (
-                                                tableData.numberOfSeats
-                                            ) : (
-                                                <span className="text-green-700">Available ({tableCapacity})</span>
-                                            )}
-                                        </TableCell>
+                                            <TableCell key={`cells-${i}-${tableID}`} id={`table-${tableID}`}>
+                                                {tableData ? (
+                                                    tableData.numberOfSeats
+                                                ) : (
+                                                    <span className="text-green-700">Available ({tableCapacity})</span>
+                                                )}
+                                            </TableCell>
                                     );
                                 })}
                         </TableRow>
