@@ -195,6 +195,17 @@ export default function Home() {
             Table #{i + 1}
         </TableHead>
     ));
+    tables.push(
+        <div>
+            <TableHead>
+                Available Seats
+            </TableHead>
+            <TableHead>Sum</TableHead>
+            <TableHead>Utilization</TableHead>
+            <TableHead>Availability</TableHead>
+        </div>
+
+    )
     const handleAvailabilityReport = (restaurantID: number) => {
         setCells([]);
         setIsVisible(false);
